@@ -11,6 +11,7 @@ whereas the .config folder falls under the Linux filesystem.
 
 ## TODO
 
+- Configure Neovim.
 - Configure Git Bash.
 - Configure btop theme.
 - Implement the install script to clone the files into the right directories.
