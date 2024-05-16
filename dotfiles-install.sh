@@ -21,11 +21,18 @@ apt install jq
 apt install tree
 apt install neovim
 
+# Install zoxide.
+curl -sSfL https://raw.githubusercontent.com/ajeetdsouza/zoxide/main/install.sh | sh
+
 # Configure Bash autocomplete.
 printf "\n# enable autocomplete\nbind 'set show-all-if-ambiguous on'\nbind 'TAB:menu-complete'\n" >> ~/.bashrc
 
 # Configure Starship to run when Bash starts.
 printf "\n# use starship\neval \"\$(starship init bash)\"\n" >> ~/.bashrc
+
+# Configure zoxide.
+printf "\n# zoxide\nexport PATH=\$PATH:/home/nicholas/.local/bin\n" >> ~/.profile
+printf "\n# enable zoxide\neval \"\$(zoxide init bash)\"\nalias z="zoxide"\n" >> ~/.bashrc
 
 # Configure fastfetch to run when Bash starts.
 printf "\n# show system information\nfastfetch\n" >> ~/.bashrc
