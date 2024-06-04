@@ -1,5 +1,7 @@
 # My Dotfiles
 
+*NOTE*: This is unfinished and severely outdated. I'll probably update this in the future when I finally have the energy for it.
+
 These are the dotfiles used to create my current workspace setup on my Asus Zephyrus G14.
 It represents a Windows 11 environment running WSL2 with Ubuntu 24.04.
 
