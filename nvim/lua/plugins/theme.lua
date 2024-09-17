@@ -1,14 +1,24 @@
 -- https://github.com/catppuccin/nvim
--- Catppuccin Mocha theme.
+-- https://github.com/stevearc/dressing.nvim
+-- https://github.com/goolord/alpha-nvim
 
 return {
-	"catppuccin/nvim",
-	name = "catppuccin",
-	priority = 1000,
-	opts = {
-		flavour = "mocha",
+	{
+		-- Catppuccin Mocha theme.
+		"catppuccin/nvim",
+		name = "catppuccin",
+		priority = 1000,
+		opts = {
+			flavour = "mocha",
+		},
+		config = function()
+			vim.cmd.colorscheme("catppuccin")
+		end,
 	},
-	config = function()
-		vim.cmd.colorscheme("catppuccin")
-	end,
+	{
+		-- Makes some of the UI look nicer.
+		"stevearc/dressing.nvim",
+		event = "VeryLazy",
+		opts = {},
+	},
 }
