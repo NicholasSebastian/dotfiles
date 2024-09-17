@@ -23,7 +23,7 @@ vim.api.nvim_create_autocmd("LspAttach", {
 		vim.keymap.set("n", "gr", telescope.lsp_references, { buffer = e.buf, desc = "Go to References" })
 		vim.keymap.set("n", "gt", vim.lsp.buf.type_definition, { buffer = e.buf, desc = "Go to Type Definition" })
 
-		vim.keymap.set({ "n", "v" }, "<leader>c", vim.lsp.buf.code_action, { buffer = e.buf, desc = "Code Actions" })
+		vim.keymap.set({ "n", "v" }, "<leader>ca", vim.lsp.buf.code_action, { buffer = e.buf, desc = "Code Actions" })
 		vim.keymap.set("n", "<leader>r", vim.lsp.buf.rename, { buffer = e.buf, desc = "Rename Instances" })
 	end,
 })
