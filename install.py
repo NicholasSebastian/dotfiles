@@ -3,6 +3,11 @@
 # Written by Nicholas Oliver Bahary
 # on September 16, 2024.
 
+# TODO: The stow function should check for collisions before stowing.
+# So far this implementation focuses on going oneway from system -> dotfiles.
+# In the case that a file already does exist in the system that also already exists
+# in the local dotfiles, we are to rename it into a backup (.bak) beforehand.
+
 import os
 import json
 
@@ -51,6 +56,7 @@ with open(source, "r") as sourcefile:
                 filepath = target[len(basedir) + 1 :]
                 if not os.path.exists(os.path.join(name, filepath)):
                     relpath, filename = os.path.split(filepath)
-                    ensuredir(os.path.join(name, relpath))
-                    move(target, name)
+                    localrelpath = os.path.join(name, relpath)
+                    ensuredir(localrelpath)
+                    move(target, localrelpath)
         stow(name, basedir)
