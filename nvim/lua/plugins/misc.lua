@@ -1,5 +1,6 @@
 -- https://github.com/folke/which-key.nvim
 -- https://github.com/folke/trouble.nvim
+-- https://github.com/nvim-pack/nvim-spectre
 -- https://github.com/mg979/vim-visual-multi
 -- https://github.com/folke/ts-comments.nvim
 
@@ -17,11 +18,22 @@ return {
 		},
 	},
   {
-    -- A tool to manage the warnings and errors of the current project.
+    -- Project errors and warnings panel.
     "folke/trouble.nvim",
     opts = {},
     cmd = "Trouble",
     keys = require("keybinds.trouble"),
+  },
+  {
+    -- Find and replace panel.
+    'nvim-pack/nvim-spectre',
+    dependencies = {
+      'nvim-lua/plenary.nvim'
+    },
+    config = function()
+      require("spectre").setup()
+      require("keybinds/misc").spectre()
+    end
   },
 	{
 		-- Allows for multiline cursors like in VScode.
