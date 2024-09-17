@@ -3,39 +3,38 @@
 # Written by Nicholas Oliver Bahary
 # on September 16, 2024.
 
-# TODO: The stow function should check for collisions before stowing.
-# So far this implementation focuses on going oneway from system -> dotfiles.
-# In the case that a file already does exist in the system that also already exists
-# in the local dotfiles, we are to rename it into a backup (.bak) beforehand.
-
 import os
 import json
 
 source = "stow.json"
 
-# Wrappers around shell commands.
-stow = lambda n, t: os.system("stow {0} -t {1}".format(n, t))
-ensuredir = lambda dir: os.system("mkdir -p " + dir)
-move = lambda s, d=None: os.system(
-    "mv {0} {1}".format(s, os.path.join(".", d) + os.path.sep if d else ".")
-)
 
-with open(source, "r") as sourcefile:
-    sourcestr = sourcefile.read()
-    sourcejson = json.loads(sourcestr)
-    directories, files = sourcejson["directories"], sourcejson["files"]
+def ensuredir(dir):
+    os.system("mkdir -p " + dir)
 
-    # Stow the directories.
+
+def move(src, dest=None):
+    dest = os.path.join(".", dest) if dest else "."
+    ensuredir(dest)
+    return os.system("mv {0} {1}".format(src, dest + os.path.sep))
+
+
+def stow(local, target):
+    ensuredir(target)
+    return os.system("stow {0} -t {1}".format(local, target))
+
+
+def stow_directories(directories):
     for target in directories:
         if not os.path.exists(target):
             continue
         name = os.path.basename(target)
         if not os.path.exists(name):
             move(target)
-        ensuredir(target)
         stow(name, target)
 
-    # Stow the files.
+
+def stow_files(files):
     for name, targets in files.items():
         if len(targets) == 0:
             continue
@@ -46,7 +45,6 @@ with open(source, "r") as sourcefile:
                 continue
             basedir, filename = os.path.split(target)
             if not os.path.exists(os.path.join(name, filename)):
-                ensuredir(name)
                 move(target, name)
         else:
             basedir = os.path.commonpath(targets)
@@ -56,7 +54,12 @@ with open(source, "r") as sourcefile:
                 filepath = target[len(basedir) + 1 :]
                 if not os.path.exists(os.path.join(name, filepath)):
                     relpath, filename = os.path.split(filepath)
-                    localrelpath = os.path.join(name, relpath)
-                    ensuredir(localrelpath)
-                    move(target, localrelpath)
+                    move(target, os.path.join(name, relpath))
         stow(name, basedir)
+
+
+with open(source, "r") as sourcefile:
+    sourcestr = sourcefile.read()
+    sourcejson = json.loads(sourcestr)
+    stow_directories(sourcejson["directories"])
+    stow_files(sourcejson["files"])
