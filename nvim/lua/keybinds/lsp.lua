@@ -14,7 +14,7 @@ vim.api.nvim_create_autocmd("LspAttach", {
 		vim.keymap.set("n", "<C-k>", vim.lsp.buf.signature_help, { buffer = e.buf })
 
 		-- Code formatting via none-ls.
-		vim.keymap.set("n", "<leader>ff", format_file, { buffer = e.buf, desc = "Format File" })
+		vim.keymap.set("n", "<leader>q", format_file, { buffer = e.buf, desc = "Format File" })
 
 		-- Gotos.
 		vim.keymap.set("n", "gd", vim.lsp.buf.definition, { buffer = e.buf, desc = "Go to Definition" })
@@ -24,6 +24,6 @@ vim.api.nvim_create_autocmd("LspAttach", {
 		vim.keymap.set("n", "gt", vim.lsp.buf.type_definition, { buffer = e.buf, desc = "Go to Type Definition" })
 
 		vim.keymap.set({ "n", "v" }, "<leader>ca", vim.lsp.buf.code_action, { buffer = e.buf, desc = "Code Actions" })
-		vim.keymap.set("n", "<leader>r", vim.lsp.buf.rename, { buffer = e.buf, desc = "Rename Instances" })
+		vim.keymap.set("n", "<leader>cr", vim.lsp.buf.rename, { buffer = e.buf, desc = "Rename All Instances" })
 	end,
 })
