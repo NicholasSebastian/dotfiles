@@ -14,34 +14,16 @@ vim.keymap.set("i", "<C-z>", "<Esc>ui") -- Undo.
 vim.keymap.set("i", "<S-Tab>", "<Esc>^i<BS>") -- Outdent.
 
 -- Moving the current selection vertically.
-local moveDown = ":m '>+1<CR>gv=gv"
-local moveUp = ":m '<-2<CR>gv=gv"
+local move_down = ":m '>+1<CR>gv=gv"
+local move_up = ":m '<-2<CR>gv=gv"
 
-vim.keymap.set("v", "J", moveDown)
-vim.keymap.set("v", "K", moveUp)
-vim.keymap.set("v", "<S-Down>", moveDown)
-vim.keymap.set("v", "<S-Up>", moveUp)
+vim.keymap.set("v", "J", move_down)
+vim.keymap.set("v", "K", move_up)
+vim.keymap.set("v", "<S-Down>", move_down)
+vim.keymap.set("v", "<S-Up>", move_up)
 
 -- Deleting the current selection.
 vim.keymap.set({ "n", "v" }, "<leader>d", '"_d', { desc = "Delete Selection" })
 
 -- Pasting without replacing the current copy register.
 vim.keymap.set("x", "<leader>p", '"_dP', { desc = "Lossless Paste" })
-
--- Split screen.
-vim.keymap.set("n", "<leader>sh", ":split<CR>", { desc = "Split Windows Horizontally" })
-vim.keymap.set("n", "<leader>sv", ":vsplit<CR>", { desc = "Split Windows Vertically" })
-vim.keymap.set("n", "<leader>sx", ":close<CR>", { desc = "Close current Split" })
-
--- Navigate between splits.
-vim.keymap.set("n", "<A-Left>", "<C-w>h")
-vim.keymap.set("n", "<A-Down>", "<C-w>j")
-vim.keymap.set("n", "<A-Up>", "<C-w>k")
-vim.keymap.set("n", "<A-Right>", "<C-w>l")
-
--- Tab controls.
-vim.keymap.set("n", "<leader>to", ":tabnew<CR>", { desc = "Open a new tab" })
-vim.keymap.set("n", "<leader>tx", ":tabclose<CR>", { desc = "Close the current tab" })
-vim.keymap.set("n", "<leader>tn", ":tabn<CR>", { desc = "Navigate to the next tab" })
-vim.keymap.set("n", "<leader>tp", ":tabp<CR>", { desc = "Navigate to the previous tab" })
-vim.keymap.set("n", "<leader>tf", ":tabnew %<CR>", { desc = "Open the current file in a new tab" })

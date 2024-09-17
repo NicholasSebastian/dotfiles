@@ -34,7 +34,6 @@ return {
         },
       },
     })
-    vim.cmd("Neotree filesystem reveal", {})
     require("keybinds/misc").neotree()
   end,
 }
