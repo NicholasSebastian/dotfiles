@@ -1,0 +1,25 @@
+{
+  "directories": [
+    "$HOME/.config/fastfetch",
+    "$HOME/.config/hypr",
+    "$HOME/.config/kitty",
+    "$HOME/.config/nvim",
+    "$HOME/.config/ranger",
+    "$HOME/.config/waybar",
+    "$HOME/.config/zed"
+  ],
+  "files": {
+    "shell": [
+      "$HOME/.profile",
+      "$HOME/.zshrc",
+      "$HOME/.zsh_profile"
+    ],
+    "git": [
+      "$HOME/.gitconfig"
+    ],
+    "spicetify": [
+      "$HOME/.config/spicetify/config-xpui.ini",
+      "$HOME/.config/spicetify/Themes"
+    ]
+  }
+}

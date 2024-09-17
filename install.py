@@ -4,31 +4,53 @@
 # on September 16, 2024.
 
 import os
+import json
 
-# Define all directories to stow here.
-targets = [
-    # "/etc/default/grub.d",
-    "$HOME/.profile",
-    "$HOME/.config/fastfetch",
-    "$HOME/.config/hypr",
-    "$HOME/.config/kitty",
-    "$HOME/.config/nvim",
-    "$HOME/.config/ranger",
-    # "$HOME/.config/spicetify/config-xpui.ini",
-    "$HOME/.config/waybar",
-    "$HOME/.config/zed",
-]
+source = "stow.json"
 
-# Stow every given directory here.
-for target in targets:
-    name = os.path.basename(target)
-    target = os.popen("echo " + target).read().rstrip()
-    if not os.path.exists(name):
-        os.system("mv " + target + " .")
-    if os.path.isdir(target):
-        os.system("mkdir -p " + target)
-        os.system("stow " + name + " -t " + target)
-    else:
-        localfile = os.getcwd() + "/" + name
-        os.system("ln -sf " + localfile + " " + target)
+# Wrappers around shell commands.
+stow = lambda n, t: os.system("stow {0} -t {1}".format(n, t))
+ensuredir = lambda dir: os.system("mkdir -p " + dir)
+move = lambda s, d=None: os.system(
+    "mv {0} {1}".format(s, os.path.join(".", d) + os.path.sep if d else ".")
+)
 
+with open(source, "r") as sourcefile:
+    sourcestr = sourcefile.read()
+    sourcejson = json.loads(sourcestr)
+    directories, files = sourcejson["directories"], sourcejson["files"]
+
+    # Stow the directories.
+    for target in directories:
+        if not os.path.exists(target):
+            continue
+        name = os.path.basename(target)
+        if not os.path.exists(name):
+            move(target)
+        ensuredir(target)
+        stow(name, target)
+
+    # Stow the files.
+    for name, targets in files.items():
+        if len(targets) == 0:
+            continue
+        basedir = None
+        if len(targets) == 1:
+            target = targets[0]
+            if not os.path.exists(target):
+                continue
+            basedir, filename = os.path.split(target)
+            if not os.path.exists(os.path.join(name, filename)):
+                ensuredir(name)
+                move(target, name)
+        else:
+            basedir = os.path.commonpath(targets)
+            for target in targets:
+                if not os.path.exists(target):
+                    continue
+                filepath = target[len(basedir) + 1 :]
+                if not os.path.exists(os.path.join(name, filepath)):
+                    relpath, filename = os.path.split(filepath)
+                    ensuredir(os.path.join(name, relpath))
+                    move(target, name)
+        stow(name, basedir)
