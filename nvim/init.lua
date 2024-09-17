@@ -18,6 +18,7 @@ vim.opt.rtp:prepend(lazypath)
 -- Source the options and keybinds files.
 require("options")
 require("keybinds/general")
+require("keybinds/splits-n-tabs")
 
 -- Load the 'plugins' directory into LazyNvim.
 require("lazy").setup("plugins")
