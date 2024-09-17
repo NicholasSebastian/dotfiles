@@ -13,28 +13,27 @@ return {
 			preset = "modern",
 			triggers = {
 				{ "<auto>", mode = "nixsotc" },
-				{ "<C>", mode = "n" },
 			},
 		},
 	},
-  {
-    -- Project errors and warnings panel.
-    "folke/trouble.nvim",
-    opts = {},
-    cmd = "Trouble",
-    keys = require("keybinds.trouble"),
-  },
-  {
-    -- Find and replace panel.
-    'nvim-pack/nvim-spectre',
-    dependencies = {
-      'nvim-lua/plenary.nvim'
-    },
-    config = function()
-      require("spectre").setup()
-      require("keybinds/misc").spectre()
-    end
-  },
+	{
+		-- Project errors and warnings panel.
+		"folke/trouble.nvim",
+		opts = {},
+		cmd = "Trouble",
+		keys = require("keybinds/trouble"),
+	},
+	{
+		-- Find and replace panel.
+		"nvim-pack/nvim-spectre",
+		dependencies = {
+			"nvim-lua/plenary.nvim",
+		},
+		config = function()
+			require("spectre").setup()
+			require("keybinds/misc").spectre()
+		end,
+	},
 	{
 		-- Allows for multiline cursors like in VScode.
 		"mg979/vim-visual-multi",
