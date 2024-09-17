@@ -14,6 +14,7 @@ return {
 		vim.keymap.set("n", "<leader>fs", function()
 			builtin.grep_string({ search = vim.fn.input("Grep > ") })
 		end, { desc = "Search in Files" })
+		vim.keymap.set("n", "<leader>?", builtin.help_tags, { desc = "Open Help Manual" })
 	end,
 
 	-- Autocomplete keybindings.

@@ -4,14 +4,14 @@ vim.g.maplocalleader = "\\"
 
 -- Normie shortcuts.
 vim.keymap.set({ "n", "v", "i" }, "<C-s>", "<Esc>:w<CR>") -- Save file.
-vim.keymap.set("n", "<C-a>", "ggVG")                      -- Select all.
-vim.keymap.set("v", "<C-c>", "y<Esc>i")                   -- Copy selection.
-vim.keymap.set("v", "<C-x>", "d<Esc>i")                   -- Cut selection.
-vim.keymap.set({ "n", "v" }, "<C-v>", "pi")               -- Paste.
-vim.keymap.set("i", "<C-v>", "<Esc>pi")                   -- Paste.
-vim.keymap.set("n", "<C-z>", "u")                         -- Undo.
-vim.keymap.set("i", "<C-z>", "<Esc>ui")                   -- Undo.
-vim.keymap.set("i", "<S-Tab>", "<Esc>^i<BS>")             -- Outdent.
+vim.keymap.set("n", "<C-a>", "ggVG") -- Select all.
+vim.keymap.set("v", "<C-c>", "y<Esc>i") -- Copy selection.
+vim.keymap.set("v", "<C-x>", "d<Esc>i") -- Cut selection.
+vim.keymap.set({ "n", "v" }, "<C-v>", "pi") -- Paste.
+vim.keymap.set("i", "<C-v>", "<Esc>pi") -- Paste.
+vim.keymap.set("n", "<C-z>", "u") -- Undo.
+vim.keymap.set("i", "<C-z>", "<Esc>ui") -- Undo.
+vim.keymap.set("i", "<S-Tab>", "<Esc>^i<BS>") -- Outdent.
 
 -- Moving the current selection vertically.
 local moveDown = ":m '>+1<CR>gv=gv"

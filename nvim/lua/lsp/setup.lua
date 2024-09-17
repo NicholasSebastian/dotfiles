@@ -2,19 +2,21 @@ local config = require("lspconfig")
 local util = require("lspconfig/util")
 local autocomplete = require("cmp_nvim_lsp").default_capabilities()
 
-config.cssls.setup({ capabilities = autocomplete })
-config.dockerls.setup({ capabilities = autocomplete })
-config.eslint.setup({ capabilities = autocomplete })
+-- HTML, HTMX, Svelte, and Templ.
 config.html.setup({ capabilities = autocomplete })
 config.htmx.setup({ capabilities = autocomplete })
-config.jsonls.setup({ capabilities = autocomplete })
-config.pyright.setup({ capabilities = autocomplete })
-config.ruff.setup({ capabilities = autocomplete })
 config.svelte.setup({ capabilities = autocomplete })
-config.tailwindcss.setup({ capabilities = autocomplete })
-config.ts_ls.setup({ capabilities = autocomplete })
 config.templ.setup({ capabilities = autocomplete })
 
+-- CSS and Tailwind.
+config.cssls.setup({ capabilities = autocomplete })
+config.tailwindcss.setup({ capabilities = autocomplete })
+
+-- Javascript and Typescript.
+config.eslint.setup({ capabilities = autocomplete })
+config.ts_ls.setup({ capabilities = autocomplete })
+
+-- Lua.
 config.lua_ls.setup({
 	capabilities = autocomplete,
 	settings = {
@@ -26,6 +28,11 @@ config.lua_ls.setup({
 	},
 })
 
+-- Python.
+config.pyright.setup({ capabilities = autocomplete })
+config.ruff.setup({ capabilities = autocomplete })
+
+-- Golang.
 config.gopls.setup({
 	capabilities = autocomplete,
 	cmd = { "gopls" },
@@ -42,9 +49,22 @@ config.gopls.setup({
 	},
 })
 
+-- Rust.
 config.rust_analyzer.setup({
 	capabilities = autocomplete,
+	filetypes = { "rust" },
+	root_dir = util.root_pattern("Cargo.toml"),
 	settings = {
-		["rust-analyzer"] = {},
+		["rust-analyzer"] = {
+			cargo = {
+				allFeatures = true,
+			},
+		},
 	},
 })
+
+-- Misc.
+config.jsonls.setup({ capabilities = autocomplete })
+config.dockerls.setup({ capabilities = autocomplete })
+config.nginx_language_server.setup({ capabilities = autocomplete })
+config.hyprls.setup({ capabilities = autocomplete })
