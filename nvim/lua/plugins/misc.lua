@@ -1,4 +1,5 @@
 -- https://github.com/folke/which-key.nvim
+-- https://github.com/folke/trouble.nvim
 -- https://github.com/mg979/vim-visual-multi
 -- https://github.com/folke/ts-comments.nvim
 
@@ -15,6 +16,13 @@ return {
 			},
 		},
 	},
+  {
+    -- A tool to manage the warnings and errors of the current project.
+    "folke/trouble.nvim",
+    opts = {},
+    cmd = "Trouble",
+    keys = require("keybinds.trouble"),
+  },
 	{
 		-- Allows for multiline cursors like in VScode.
 		"mg979/vim-visual-multi",
