@@ -3,26 +3,30 @@
 -- https://github.com/neovim/nvim-lspconfig
 
 return {
-  {
-    -- Package manager for LSPs, linters, formatters, etc.
-    "williamboman/mason.nvim",
-    config = function()
-      require("mason").setup()
-    end,
-  },
-  {
-    -- Bridges Mason and lspconfig.
-    "williamboman/mason-lspconfig.nvim",
-    opts = {
-      ensure_installed = require("lsp/installed").mason,
-    },
-  },
-  {
-    -- Default configs for the Neovim LSP.
-    "neovim/nvim-lspconfig",
-    config = function()
-      require("lsp/setup")
-      require("keybinds/lsp")
-    end,
-  },
+	{
+		-- Package manager for LSPs, linters, formatters, etc.
+		"williamboman/mason.nvim",
+		config = function()
+			require("mason").setup()
+		end,
+	},
+	{
+		-- Default configs for the Neovim LSP.
+		"neovim/nvim-lspconfig",
+		config = function()
+			require("lsp/setup")
+			require("keybinds/lsp")
+		end,
+	},
+	{
+		-- Bridges Mason and lspconfig.
+		"williamboman/mason-lspconfig.nvim",
+		dependencies = {
+			"neovim/nvim-lspconfig",
+			"williamboman/mason.nvim",
+		},
+		opts = {
+			ensure_installed = require("lsp/installed").mason,
+		},
+	},
 }

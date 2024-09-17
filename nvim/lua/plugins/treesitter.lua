@@ -9,8 +9,11 @@ return {
 		configs.setup({
 			ensure_installed = require("lsp/installed").treesitter,
 			auto_install = true,
-      sync_install = false,
-			highlight = { enable = true },
+			sync_install = false,
+			highlight = {
+				enable = true,
+				use_languagetree = true,
+			},
 			indent = { enable = true },
 		})
 	end,

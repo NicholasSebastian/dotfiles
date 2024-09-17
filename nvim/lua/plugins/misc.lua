@@ -1,3 +1,4 @@
+-- https://github.com/folke/which-key.nvim
 -- https://github.com/mg979/vim-visual-multi
 -- https://github.com/folke/ts-comments.nvim
 
@@ -25,17 +26,5 @@ return {
 		opts = {},
 		event = "VeryLazy",
 		enabled = vim.fn.has("nvim-0.10.0") == 1,
-	},
-	{
-		-- Colour previews for Tailwind class autocompletion.
-		"roobert/tailwindcss-colorizer-cmp.nvim",
-		config = function()
-			require("tailwindcss-colorizer-cmp").setup({
-				color_square_width = 2,
-			})
-			require("cmp").config.formatting = {
-				format = require("tailwindcss-colorizer-cmp").formatter,
-			}
-		end,
 	},
 }

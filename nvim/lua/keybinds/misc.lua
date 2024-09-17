@@ -20,9 +20,12 @@ return {
 	autocomplete = function()
 		local cmp = require("cmp")
 		return cmp.mapping.preset.insert({
-			["<C-q>"] = cmp.mapping.abort(),
+			["<C-e>"] = cmp.mapping.abort(),
 			["<C-space>"] = cmp.mapping.complete(),
-			["<CR>"] = cmp.mapping.confirm({ select = true }),
+			["<CR>"] = cmp.mapping.confirm({
+				behavior = cmp.ConfirmBehavior.Insert,
+				select = true,
+			}),
 		})
 	end,
 }

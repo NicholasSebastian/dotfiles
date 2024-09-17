@@ -15,8 +15,8 @@ vim.api.nvim_create_autocmd("LspAttach", {
     vim.keymap.set("n", "<leader>ff", format_file, { buffer = e.buf, desc = "Format File" })
 
     -- Gotos.
-    vim.keymap.set("n", "gD", vim.lsp.buf.declaration, { buffer = e.buf, desc = "Go to Declaration" })
     vim.keymap.set("n", "gd", vim.lsp.buf.definition, { buffer = e.buf, desc = "Go to Definition" })
+    vim.keymap.set("n", "gD", vim.lsp.buf.declaration, { buffer = e.buf, desc = "Go to Declaration" })
     vim.keymap.set("n", "gi", vim.lsp.buf.implementation, { buffer = e.buf, desc = "Go to Implementation" })
     vim.keymap.set("n", "gr", vim.lsp.buf.references, { buffer = e.buf, desc = "Go to References" })
     vim.keymap.set("n", "gt", vim.lsp.buf.type_definition, { buffer = e.buf, desc = "Go to Type Definition" })
