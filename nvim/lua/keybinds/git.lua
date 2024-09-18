@@ -26,15 +26,15 @@ return function(bufnr)
 	map("n", "[h", gs.prev_hunk, "Prev Git Hunk")
 
 	-- Hunk actions.
-	map("n", "<leader>gs", gs.stage_hunk, "Git Add section")
+	map("n", "<leader>ga", gs.stage_hunk, "Git Add section")
 	map("n", "<leader>gr", gs.reset_hunk, "Git Reset section")
-	map("v", "<leader>gs", stage_current_hunk, "Git Add section")
+	map("v", "<leader>ga", stage_current_hunk, "Git Add section")
 	map("v", "<leader>gr", reset_current_hunk, "Git Reset section")
 	map("n", "<leader>gu", gs.undo_stage_hunk, "Undo Git Add section")
 	map("n", "<leader>gp", gs.preview_hunk, "Preview Git section")
 
 	-- Buffer actions.
-	map("n", "<leader>gS", gs.stage_buffer, "Git Add the current file")
+	map("n", "<leader>gA", gs.stage_buffer, "Git Add the current file")
 	map("n", "<leader>gR", gs.reset_buffer, "Git Reset the current file")
 
 	-- Blame.
@@ -46,5 +46,5 @@ return function(bufnr)
 	map("n", "<leader>gD", diffthis, "Toggle Git Diffs")
 
 	-- Text object for hunks.
-	map({ "o", "x" }, "ih", ":<C-U>Gitsigns select_hunk<CR>", "Gitsigns Select Hunk")
+	map({ "o", "x" }, "ih", ":<C-U>Gitsigns select_hunk<CR>", "select git section")
 end
