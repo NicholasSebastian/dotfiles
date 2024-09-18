@@ -10,6 +10,8 @@ config.templ.setup({ capabilities = autocomplete })
 
 -- CSS and Tailwind.
 config.cssls.setup({ capabilities = autocomplete })
+config.cssmodules_ls.setup({ capabilities = autocomplete })
+config.css_variables.setup({ capabilities = autocomplete })
 config.tailwindcss.setup({ capabilities = autocomplete })
 
 -- Javascript and Typescript.

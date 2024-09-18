@@ -3,8 +3,10 @@
 return {
 	mason = {
 		"cssls",
+		"cssmodules_ls",
+		"css_variables",
 		"dockerls",
-		"eslint",
+		-- "eslint_d",
 		"gopls",
 		"html",
 		"htmx",
