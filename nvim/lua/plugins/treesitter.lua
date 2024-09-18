@@ -7,7 +7,7 @@ return {
 	config = function()
 		local configs = require("nvim-treesitter.configs")
 		configs.setup({
-			ensure_installed = require("lsp/installed").treesitter,
+			ensure_installed = require("lsp/syntaxes"),
 			auto_install = true,
 			sync_install = false,
 			highlight = {
