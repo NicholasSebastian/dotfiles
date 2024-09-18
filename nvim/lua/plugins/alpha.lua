@@ -36,9 +36,8 @@ return {
 		require("alpha").setup(dashboard.config)
 
 		-- Show the Alpha dashboard and Neotree file tree at start.
-		vim.cmd("Alpha", {})
-		vim.schedule(function()
-			vim.cmd("Neotree filesystem reveal", {})
-		end)
+		if vim.fn.argc() == 0 then
+			vim.cmd("Alpha")
+		end
 	end,
 }

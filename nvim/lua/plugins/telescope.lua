@@ -9,9 +9,6 @@ return {
 		dependencies = {
 			"nvim-lua/plenary.nvim",
 		},
-		config = function()
-			require("keybinds/misc").telescope()
-		end,
 	},
 	{
 		-- This makes it so that vim.ui.select uses Telescope as a picker instead.

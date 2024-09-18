@@ -31,7 +31,6 @@ return {
 		},
 		config = function()
 			require("spectre").setup()
-			require("keybinds/misc").spectre()
 		end,
 	},
 	{
