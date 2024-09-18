@@ -17,19 +17,7 @@ return {
 		vim.keymap.set("n", "<leader>?", builtin.help_tags, { desc = "Open Help Manual" })
 	end,
 
-	-- Autocomplete keybindings.
-	autocomplete = function()
-		local cmp = require("cmp")
-		return cmp.mapping.preset.insert({
-			["<C-e>"] = cmp.mapping.abort(),
-			["<C-space>"] = cmp.mapping.complete(),
-			["<CR>"] = cmp.mapping.confirm({
-				behavior = cmp.ConfirmBehavior.Insert,
-				select = true,
-			}),
-		})
-	end,
-
+	-- Spectre keybindings.
 	spectre = function()
 		local open_spectre = '<cmd>lua require("spectre").toggle()<CR>'
 		local spectre_current_n = '<cmd>lua require("spectre").open_visual({ select_word=true })<CR>'
@@ -40,5 +28,18 @@ return {
 		vim.keymap.set("n", "<leader>ffw", spectre_current_n, { desc = "Replace Current Word" })
 		vim.keymap.set("v", "<leader>ffw", spectre_current_v, { desc = "Replace Current Word" })
 		vim.keymap.set("n", "<leader>fff", spectre_file, { desc = "Replace in Current File" })
+	end,
+
+	-- Autocomplete keybindings.
+	autocomplete = function()
+		local cmp = require("cmp")
+		return cmp.mapping.preset.insert({
+			["<Esc>"] = cmp.mapping.abort(),
+			["<C-space>"] = cmp.mapping.complete(),
+			["<CR>"] = cmp.mapping.confirm({
+				behavior = cmp.ConfirmBehavior.Insert,
+				select = true,
+			}),
+		})
 	end,
 }

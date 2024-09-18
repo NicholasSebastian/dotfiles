@@ -13,10 +13,10 @@ vim.keymap.set("n", "<C-z>", "u") -- Undo.
 vim.keymap.set("i", "<C-z>", "<Esc>ui") -- Undo.
 vim.keymap.set("i", "<S-Tab>", "<Esc>^i<BS>") -- Outdent.
 
--- Moving the current selection vertically.
 local move_down = ":m '>+1<CR>gv=gv"
 local move_up = ":m '<-2<CR>gv=gv"
 
+-- Moving the current selection vertically.
 vim.keymap.set("v", "J", move_down)
 vim.keymap.set("v", "K", move_up)
 vim.keymap.set("v", "<S-Down>", move_down)
