@@ -5,8 +5,7 @@ local augroup = vim.api.nvim_create_augroup("LspFormatting", {})
 
 return {
 	{
-    -- Wraps linters and formatters to act like an LSP.
-    -- Provides code formatting functionality.
+		-- Wraps linters and formatters to act like an LSP.
 		"nvimtools/none-ls.nvim",
 		dependencies = {
 			"nvimtools/none-ls-extras.nvim",
