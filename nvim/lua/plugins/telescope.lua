@@ -8,13 +8,20 @@ return {
 		tag = "0.1.8",
 		dependencies = {
 			"nvim-lua/plenary.nvim",
+			"nvim-tree/nvim-web-devicons",
+
+			-- This apparently makes it faster.
+			{ "nvim-telescope/telescope-fzf-native.nvim", build = "make" },
 		},
 	},
 	{
 		-- This makes it so that vim.ui.select uses Telescope as a picker instead.
 		"nvim-telescope/telescope-ui-select.nvim",
 		config = function()
-			require("telescope").load_extension("ui-select")
+			local telescope = require("telescope")
+			telescope.setup({ defaults = { path_display = { "smart" } } })
+			telescope.load_extension("fzf")
+			telescope.load_extension("ui-select")
 		end,
 	},
 }

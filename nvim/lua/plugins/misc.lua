@@ -1,7 +1,6 @@
 -- https://github.com/folke/which-key.nvim
 -- https://github.com/folke/trouble.nvim
 -- https://github.com/nvim-pack/nvim-spectre
--- https://github.com/mg979/vim-visual-multi
 
 return {
 	{
@@ -31,10 +30,5 @@ return {
 		config = function()
 			require("spectre").setup()
 		end,
-	},
-	{
-		-- Allows for multiline cursors like in VScode.
-		"mg979/vim-visual-multi",
-		branch = "master",
 	},
 }
