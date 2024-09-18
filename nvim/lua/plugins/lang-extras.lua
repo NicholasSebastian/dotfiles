@@ -1,7 +1,15 @@
+-- https://github.com/folke/ts-comments.nvim
 -- https://github.com/olexsmir/gopher.nvim
 -- https://github.com/roobert/tailwindcss-colorizer-cmp.nvim
 
 return {
+  {
+    -- Tiny formatter for code comments.
+    "folke/ts-comments.nvim",
+    opts = {},
+    event = "VeryLazy",
+    enabled = vim.fn.has("nvim-0.10.0") == 1,
+  },
 	{
 		-- Adds useful commands for when working on Golang code.
 		"olexsmir/gopher.nvim",

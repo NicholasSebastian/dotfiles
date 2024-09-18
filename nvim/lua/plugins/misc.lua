@@ -2,7 +2,6 @@
 -- https://github.com/folke/trouble.nvim
 -- https://github.com/nvim-pack/nvim-spectre
 -- https://github.com/mg979/vim-visual-multi
--- https://github.com/folke/ts-comments.nvim
 
 return {
 	{
@@ -37,12 +36,5 @@ return {
 		-- Allows for multiline cursors like in VScode.
 		"mg979/vim-visual-multi",
 		branch = "master",
-	},
-	{
-		-- Tiny formatter for code comments.
-		"folke/ts-comments.nvim",
-		opts = {},
-		event = "VeryLazy",
-		enabled = vim.fn.has("nvim-0.10.0") == 1,
 	},
 }
