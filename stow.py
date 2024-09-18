@@ -10,7 +10,8 @@ source = "stow.json"
 
 
 def ensuredir(dir):
-    os.system("mkdir -p " + dir)
+    if not os.path.exists(dir):
+        os.system("mkdir -p " + dir)
 
 
 def move(src, dest=None):
@@ -24,8 +25,13 @@ def stow(local, target):
     return os.system("stow {0} -t {1}".format(local, target))
 
 
+def expand_path(path):
+    return os.popen("echo " + path).read().rstrip()
+
+
 def stow_directories(directories):
     for target in directories:
+        target = expand_path(target)
         if not os.path.exists(target):
             continue
         name = os.path.basename(target)
@@ -40,15 +46,16 @@ def stow_files(files):
             continue
         basedir = None
         if len(targets) == 1:
-            target = targets[0]
+            target = expand_path(targets[0])
             if not os.path.exists(target):
                 continue
             basedir, filename = os.path.split(target)
             if not os.path.exists(os.path.join(name, filename)):
                 move(target, name)
         else:
-            basedir = os.path.commonpath(targets)
+            basedir = expand_path(os.path.commonpath(targets))
             for target in targets:
+                target = expand_path(target)
                 if not os.path.exists(target):
                     continue
                 filepath = target[len(basedir) + 1 :]
