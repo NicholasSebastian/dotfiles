@@ -1,4 +1,5 @@
--- Be sure to install the below linters/formatters in Mason.
+-- Sources of linters and formatters for None-Ls.
+-- Be sure to also install the corresponding packages in Mason.
 
 local null_ls = require("null-ls")
 
