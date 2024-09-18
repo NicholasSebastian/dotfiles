@@ -1,6 +1,7 @@
 {
   "directories": [
     "$HOME/.config/fastfetch",
+    "$HOME/.config/fish",
     "$HOME/.config/hypr",
     "$HOME/.config/kitty",
     "$HOME/.config/nvim",
