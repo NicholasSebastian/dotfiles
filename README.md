@@ -19,3 +19,8 @@ Maybe I'll tidy it up again in the future. But probably uneccessary as it works 
 chmod +x setup.py
 ./setup.py
 ```
+
+### Notes to self
+
+The pipewire configuration includes noise suppression using the noise-suppression-for-voice package.  
+The config needs the path to librnnoise_ladspa.so to be specified, which can be found simply with "pacman -Ql noise-suppression-for-voice".

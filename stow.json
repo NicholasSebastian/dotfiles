@@ -6,14 +6,13 @@
     "$HOME/.config/hypr",
     "$HOME/.config/kitty",
     "$HOME/.config/nvim",
+    "$HOME/.config/pipewire",
     "$HOME/.config/waybar",
     "$HOME/.config/yazi",
     "$HOME/.config/zed"
   ],
   "files": {
-    "git": [
-      "$HOME/.gitconfig"
-    ],
+    "git": ["$HOME/.gitconfig"],
     "spicetify": [
       "$HOME/.config/spicetify/config-xpui.ini",
       "$HOME/.config/spicetify/Themes"
