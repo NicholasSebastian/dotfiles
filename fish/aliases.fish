@@ -10,6 +10,10 @@ alias btop='htop'
 alias du='dust'
 alias find='fd'
 
+# Vim aliases
+alias vi='nvim'
+alias vim='nvim'
+
 # Common use
 alias grubup="sudo grub-mkconfig -o /boot/grub/grub.cfg"
 alias fixpacman="sudo rm /var/lib/pacman/db.lck"
