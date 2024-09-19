@@ -45,6 +45,10 @@ return {
 		opts = {
 			theme = "dracula",
 			extensions = { "mason", "neo-tree", "trouble" },
+			options = {
+				component_separators = "",
+				section_separators = { left = "", right = "" },
+			},
 		},
 	},
 }
