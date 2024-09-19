@@ -10,11 +10,6 @@
     "$HOME/.config/zed"
   ],
   "files": {
-    "shell": [
-      "$HOME/.profile",
-      "$HOME/.zshrc",
-      "$HOME/.zsh_profile"
-    ],
     "git": [
       "$HOME/.gitconfig"
     ],
