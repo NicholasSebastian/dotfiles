@@ -5,8 +5,8 @@
     "$HOME/.config/hypr",
     "$HOME/.config/kitty",
     "$HOME/.config/nvim",
-    "$HOME/.config/ranger",
     "$HOME/.config/waybar",
+    "$HOME/.config/yazi",
     "$HOME/.config/zed"
   ],
   "files": {
