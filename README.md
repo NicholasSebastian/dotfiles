@@ -22,5 +22,17 @@ chmod +x setup.py
 
 ### Notes to self
 
+#### Pipewire Noise Suppression
+
 The pipewire configuration includes noise suppression using the noise-suppression-for-voice package.  
 The config needs the path to librnnoise_ladspa.so to be specified, which can be found simply with "pacman -Ql noise-suppression-for-voice".
+
+#### Installing the Affinity Suite
+
+Refer to https://github.com/Twig6943/AffinityOnLinux
+
+```sh
+bash -c "$(curl -s https://raw.githubusercontent.com/Twig6943/AffinityOnLinux/main/AffinityScripts/AffinityPhoto.sh)"
+bash -c "$(curl -s https://raw.githubusercontent.com/Twig6943/AffinityOnLinux/main/AffinityScripts/AffinityDesigner.sh)"
+bash -c "$(curl -s https://raw.githubusercontent.com/Twig6943/AffinityOnLinux/main/AffinityScripts/AffinityPublisher.sh)"
+```
