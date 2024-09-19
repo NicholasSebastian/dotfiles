@@ -4,6 +4,12 @@ alias la='eza -a --color=always --group-directories-first --git --icons --no-use
 alias ll='eza -l --color=always --group-directories-first --git --icons --no-user --no-time --no-permissions'  # long format
 alias lt='eza -aT --color=always --group-directories-first --git --icons --no-user --no-time --no-permissions' # tree listing
 
+# More replacements
+alias top='htop'
+alias btop='htop'
+alias du='dust'
+alias find='fd'
+
 # Common use
 alias grubup="sudo grub-mkconfig -o /boot/grub/grub.cfg"
 alias fixpacman="sudo rm /var/lib/pacman/db.lck"
