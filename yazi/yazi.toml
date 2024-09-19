@@ -2,3 +2,7 @@
 show_hidden = true
 scrolloff = 8
 
+[opener]
+edit = [
+	{ run = 'nvim "$@"', desc = "Neovim", block = true, for = "unix" },
+]
