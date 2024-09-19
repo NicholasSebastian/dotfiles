@@ -1,2 +1,4 @@
 [manager]
 show_hidden = true
+scrolloff = 8
+
