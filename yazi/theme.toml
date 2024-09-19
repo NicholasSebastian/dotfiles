@@ -1,7 +1,3 @@
 [flavor]
 use = "catppuccin-mocha"
 
-[opener]
-rules = [
-  { run = 'nvim "$@"', desc = "Neovim", block = true, for = "unix" }
-]
