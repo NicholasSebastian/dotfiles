@@ -62,6 +62,9 @@ alias jctl="journalctl -p 3 -xb"
 # Recent installed packages
 alias rip="expac --timefmt='%Y-%m-%d %T' '%l\t%n %v' | sort | tail -200 | nl"
 
+# Fix broken ntfs partitions (specific to my ROG zephyrus laptop setup)
+alias fixntfs="sudo ntfsfix /dev/nvme0n1p4 && sudo ntfsfix /dev/nvme0n1p6 && sudo ntfsfix /dev/nvme0n1p7 && sudo ntfsfix /dev/nvme0n1p8" 
+
 # Fish command history
 function history
     builtin history --show-time='%F %T '
