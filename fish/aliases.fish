@@ -5,6 +5,7 @@ alias ll='eza -l --color=always --group-directories-first --git --icons --no-use
 alias lt='eza -aT --color=always --group-directories-first --git --icons --no-user --no-time --no-permissions' # tree listing
 
 # More replacements
+alias cd='z'
 alias top='htop'
 alias btop='htop'
 alias du='dust'
@@ -13,6 +14,10 @@ alias find='fd'
 # Vim aliases
 alias vi='nvim'
 alias vim='nvim'
+
+# TUI file explorer aliases
+alias ranger='yazi'
+alias lf='yazi'
 
 # Common use
 alias grubup="sudo grub-mkconfig -o /boot/grub/grub.cfg"
