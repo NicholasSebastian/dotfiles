@@ -16,7 +16,7 @@
     "spacing": 5, // Gaps between modules (4px)
 
     "modules-left": [
-        //"custom/rofi",
+        "custom/rofi",
         "hyprland/workspaces",
         //"hyprland/submap",
         "temperature",
@@ -56,14 +56,11 @@
         "format": " |",
         "tooltip": false
     },
-
-
     "custom/rofi": {
         "format": "",
         "tooltip": false,
-        "on-click-right": "nwg-drawer",
-        "on-click": "wofi --show run",
-        "on-click-middle": "pkill -9 wofi"
+        "on-click": "rofi -show drun",
+        "on-click-middle": "pkill -9 rofi"
     },
     "custom/screenshot_t":{
         "format":"",
@@ -290,7 +287,7 @@
 
     "hyprland/workspaces": {
         "all-outputs": true,
-        "format": "{name}",
+        "format": "{icon}",
         "format-icons": {
             "1": "一",
             "2": "二",

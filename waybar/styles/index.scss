@@ -1,3 +1,5 @@
+@use "colours";
+
 * {
   font-family: "JetBrainsMono Nerd Font";
   font-size: 8pt;
@@ -9,9 +11,6 @@
 }
 
 #waybar {
-  background-color: #11111b;
+  background-color: colours.$mocha-crust;
   border-radius: 10pt;
-  padding-top: 10pt;
 }
-
-/*# sourceMappingURL=style.css.map */
