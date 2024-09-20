@@ -1,3 +1,4 @@
 #!/usr/bin/bash
-grimblast copy output || exit
+
+grim -g "$(slurp)" - | wl-copy -t image/png
 notify-send "Screenshot copied to clipboard"
