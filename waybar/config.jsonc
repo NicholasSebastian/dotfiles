@@ -9,16 +9,20 @@
   "margin-right": 4,
   "modules-left": [
     "custom/rofi",
-    "hyprland/workspaces"
+    "hyprland/workspaces",
+    "hyprland/window"
     // TODO
   ],
   "modules-center": [
     "clock"
-    // TODO
   ],
   "modules-right": [
-    // TODO
+    "memory",
     "tray",
+    "backlight",
+    "pulseaudio",
+    "battery",
+    "custom/screenshot",
     "custom/power"
   ],
   "custom/rofi": {
@@ -35,14 +39,99 @@
     "sort-by-number": true,
     "active-only": false
   },
+  "memory": {
+    "interval": 30,
+    "format": " Mem {used}GiB",
+    "max-length": 13,
+    "tooltip": false
+  },
+  "hyprland/window": {
+    "format": "{title}",
+    "separate-outputs": true,
+    "rewrite": {
+      "(.*) — Mozilla Firefox": "󰈹  Firefox",
+      "(.*) — Zen Browser": "󰈹  Zen Browser",
+      "(.*) - Visual Studio Code": "󰨞  Visual Studio Code",
+      "(.*) - Obsidian(.*)": "󱓧  Obsidian",
+      "(.*) Spotify Premium": "󰓇  Spotify",
+      "(.*) Spotify Free": "󰓇  Spotify",
+      "~ - fish": "  nicholas@rog-zephyrus",
+      "nwg-look": "  GTK Settings",
+      "Qt6 Configuration Tool": "  QT Settings",
+      "blueman-manager": "Bluetooth Settings"
+    }
+  },
   "clock": {
     "format": "  {:%a %e %b %H:%M}",
-    "tooltip-format": "<big>{:%Y %B}</big>\n<tt><small>{calendar}</small></tt>",
-    "today-format": "<b>{}</b>"
+    "tooltip-format": "<tt>{calendar}</tt>",
+    "calendar": {
+      "mode": "month",
+      "format": {
+        "months": "<span color='#cdd6f4'><b>{}</b></span>",
+        "days": "<span color='#cdd6f4'><b>{}</b></span>",
+        "weeks": "<span color='#cdd6f4'><b>W{}</b></span>",
+        "weekdays": "<span color='#cdd6f4'><b>{}</b></span>",
+        "today": "<span color='#f38ba8'><b>{}</b></span>"
+      }
+    }
   },
   "tray": {
     "icon-size": 15,
     "spacing": 10
+  },
+  "backlight": {
+    "format": "{icon} <b>{percent}%</b>",
+    "format-icons": [
+      "󰃞",
+      "󰃟",
+      "󰃠"
+    ],
+    "tooltip": false
+  },
+  "pulseaudio": {
+    "format": "{icon} <b>{volume}%</b>",
+    "format-muted": " 󰝟 ",
+    "format-bluetooth": "{icon}  <b>{volume}%</b>",
+    "format-bluetooth-muted": "󰝟 ",
+    "format-icons": {
+      "headset": "",
+      "default": [
+        "󰕿",
+        "󰖀",
+        "󰕾"
+      ]
+    },
+    "tooltip": true,
+    "on-click": "pavucontrol",
+    "ignored-sinks": [
+      "JamesDSP Sink",
+      "HDA NVidia Digital Stereo (HDMI)"
+    ]
+  },
+  "battery": {
+    "format": "{icon} {capacity}%",
+    "format-plugged": " {capacity}%",
+    "format-icons": [
+      "",
+      "",
+      "",
+      "",
+      ""
+    ],
+    "max-length": 25,
+    "tooltip": true,
+    "interval": 5,
+    "states": {
+      "good": 70,
+      "warning": 30,
+      "critical": 15
+    }
+  },
+  "custom/screenshot": {
+    "format": "",
+    "on-click": "~/.config/waybar/scripts/screenshot_full",
+    "on-click-right": "~/.config/waybar/scripts/screenshot_area",
+    "tooltip-format": "Left-click: Full Screen Screenshot\nRight-click: Area Screenshot"
   },
   "custom/power": {
     "format": "",
