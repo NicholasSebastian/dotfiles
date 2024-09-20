@@ -8,7 +8,7 @@ return {
   null_ls.builtins.formatting.stylua,
 
   -- JavaScript
-  null_ls.builtins.formatting.prettierd,
+  null_ls.builtins.formatting.prettierd.with({ extra_args = { "--trailing-comma", "none" } }),
   require("none-ls.diagnostics.eslint_d"),
   require("none-ls.code_actions.eslint_d"),
 
@@ -24,4 +24,7 @@ return {
 
   -- Tailwind
   null_ls.builtins.formatting.rustywind,
+
+  -- Git
+  null_ls.builtins.code_actions.gitsigns,
 }
