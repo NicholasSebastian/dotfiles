@@ -2,7 +2,7 @@
 
 * {
   font-family: "JetBrainsMono Nerd Font";
-  font-size: 8pt;
+  font-size: 8.5pt;
   font-weight: 800;
   margin: 0;
   padding: 0;
@@ -11,6 +11,53 @@
 }
 
 #waybar {
-  background-color: colours.$mocha-crust;
-  border-radius: 10pt;
+  background: none;
+
+  >box.horizontal {
+    background-color: colours.$mocha-crust;
+    box-shadow: 0 0 4pt colours.$mocha-crust;
+    border-radius: 12pt;
+    margin: 6pt;
+    padding: 2pt;
+  }
+}
+
+#custom-rofi {
+  margin-left: 7pt;
+  padding-right: 3pt;
+  font-size: 12pt;
+}
+
+#workspaces {
+  margin-left: 6pt;
+
+  button {
+    color: colours.$mocha-surface2;
+
+    &.active {
+      color: colours.$mocha-pink;
+    }
+  }
+}
+
+#tray {
+  margin-right: 10pt;
+
+  menu {
+    background-color: colours.$mocha-base;
+    padding: 2pt;
+
+    * {
+      margin: 2pt;
+    }
+
+    check {
+      margin-right: 4pt;
+    }
+  }
+}
+
+#custom-power {
+  margin-right: 10pt;
+  font-size: 10pt;
 }

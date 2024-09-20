@@ -3,21 +3,30 @@
 {
   "layer": "top",
   "position": "top",
-  "margin-top": 5,
+  "margin-top": 0,
   "margin-bottom": 0,
-  "margin-left": 10,
-  "margin-right": 10,
+  "margin-left": 4,
+  "margin-right": 4,
   "modules-left": [
+    "custom/rofi",
     "hyprland/workspaces"
     // TODO
   ],
-  //"modules-center": [
-  // TODO
-  //],
+  "modules-center": [
+    "clock"
+    // TODO
+  ],
   "modules-right": [
     // TODO
-    "clock"
+    "tray",
+    "custom/power"
   ],
+  "custom/rofi": {
+    "format": "\udb82\udcc7",
+    "tooltip": false,
+    "on-click": "rofi -show drun",
+    "on-click-middle": "pkill -9 rofi"
+  },
   "hyprland/workspaces": {
     "all-outputs": true,
     "format": "{name}",
@@ -30,5 +39,14 @@
     "format": "  {:%a %e %b %H:%M}",
     "tooltip-format": "<big>{:%Y %B}</big>\n<tt><small>{calendar}</small></tt>",
     "today-format": "<b>{}</b>"
+  },
+  "tray": {
+    "icon-size": 15,
+    "spacing": 10
+  },
+  "custom/power": {
+    "format": "",
+    "tooltip": false,
+    "on-click": "wlogout"
   }
 }
