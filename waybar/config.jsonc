@@ -11,6 +11,7 @@
     "modules-left": [
       "custom/rofi",
       "hyprland/workspaces",
+      "mpris",
       "hyprland/window"
     ],
     "modules-center": [
@@ -30,7 +31,7 @@
       "on-click": "rofi -show drun",
       "on-click-middle": "pkill -9 rofi",
       "tooltip-format": "{}",
-      "exec": "~/.config/waybar/modules/cheatsheet.py",
+      "exec": "~/.config/waybar/scripts/cheatsheet.py",
       "interval": "once"
     },
     "hyprland/workspaces": {
@@ -41,23 +42,32 @@
       "sort-by-number": true,
       "active-only": false
     },
-    "memory": {
-      "interval": 30,
-      "format": " Mem {used}GiB",
-      "max-length": 13,
-      "tooltip": false
+    "mpris": {
+      "format": "{player_icon} {artist} - {title}",
+      "format-paused": "{status_icon} {artist} - {title}",
+      "tooltip-format": "{player} ({status})\r{artist} - {title}\rTrack Length: {length}",
+      "title-len": 20,
+      "player-icons": {
+        "default": "▶",
+        "mpv": "",
+        "spotify": "󰓇"
+      },
+      "status-icons": {
+        "paused": "",
+        "stopped": ""
+      }
     },
     "hyprland/window": {
       "format": "{title}",
       "separate-outputs": true,
       "rewrite": {
-        "(.*) — Mozilla Firefox": "󰈹  Firefox",
-        "(.*) — Zen Browser": "󰈹  Zen Browser",
-        "(.*) - Visual Studio Code": "󰨞  Visual Studio Code",
+        "(.*) — Mozilla Firefox": "󰈹  $1",
+        "(.*) — Zen Browser": "󰈹  Zen - $1",
+        "(.*) - Google Chrome": "  $1",
+        "(.*) - Visual Studio Code": "󰨞  $1",
+        "(.*) - nvim": "  $1",
         "(.*) - Obsidian(.*)": "󱓧  Obsidian",
-        "(.*) Spotify Premium": "󰓇  Spotify",
-        "(.*) Spotify Free": "󰓇  Spotify",
-        "~ - fish": "  nicholas@rog-zephyrus",
+        "(.*) - fish": "  $1",
         "nwg-look": "  GTK Settings",
         "Qt6 Configuration Tool": "  QT Settings",
         "blueman-manager": "Bluetooth Settings"
@@ -76,6 +86,12 @@
           "today": "<span color='#f38ba8'><b>{}</b></span>"
         }
       }
+    },
+    "memory": {
+      "interval": 30,
+      "format": " Mem {used}GiB",
+      "max-length": 13,
+      "tooltip": false
     },
     "tray": {
       "icon-size": 15,

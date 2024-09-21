@@ -45,8 +45,17 @@
   }
 }
 
+#mpris {
+  background: colours.$mocha-base;
+  color: colours.$mocha-green;
+  border-radius: 12pt;
+  margin-left: 15pt;
+  padding: 0 8pt;
+}
+
 #window {
   margin-left: 15pt;
+  margin-right: 20pt;
 }
 
 #memory {
