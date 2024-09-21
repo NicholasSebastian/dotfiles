@@ -27,12 +27,12 @@
 #workspaces button.active {
   color: #f38ba8;
 }
-#workspaces button:hover, #workspaces button:focused {
+#workspaces button:hover, #workspaces button:focus {
   background: none;
   border-color: transparent;
   box-shadow: none;
 }
-#workspaces button:hover:not(.active):not(.visible), #workspaces button:focused:not(.active):not(.visible) {
+#workspaces button:hover:not(.active):not(.visible), #workspaces button:focus:not(.active):not(.visible) {
   color: #9399b2;
 }
 
