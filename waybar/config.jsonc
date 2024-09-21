@@ -165,6 +165,7 @@
       "custom/obsidian",
       "custom/neovim",
       "custom/zed",
+      "custom/docker",
       "custom/beekeeper-studio",
       "custom/figma",
       "custom/excalidraw",
@@ -259,6 +260,11 @@
       "format": "{} ",
       "tooltip-format": "Zed",
       "on-click": "flatpak run dev.zed.Zed ~/Projects"
+    },
+    "custom/docker": {
+      "format": "{} ",
+      "tooltip-format": "Docker Desktop",
+      "on-click": "systemctl --user start docker-desktop"
     },
     "custom/beekeeper-studio": {
       "format": "{} ",
