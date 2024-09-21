@@ -153,8 +153,8 @@
       "custom/telegram",
       "custom/whatsapp",
       "custom/adobe-photoshop",
-      "custom/affinity-designer",
       "custom/affinity-photo",
+      "custom/affinity-designer",
       "custom/affinity-publisher",
       "custom/davinci-resolve",
       "custom/steam",
@@ -210,22 +210,22 @@
     "custom/adobe-photoshop": {
       "format": "{} ",
       "tooltip-format": "Adobe Photoshop",
-      "on-click": "bash /home/nicholas/.photoshopCCV19/launcher/launcher.sh"
+      "on-click": "/home/nicholas/.config/waybar/scripts/adobe_photoshop.sh"
     },
     "custom/affinity-photo": {
       "format": "{} ",
       "tooltip-format": "Affinity Photo",
-      "on-click": "env WINEPREFIX=/home/nicholas/.AffinityLinux /home/nicholas/.AffinityLinux/ElementalWarriorWine/bin/wine \"/home/nicholas/.AffinityLinux/drive_c/Program Files/Affinity/Photo 2/Photo.exe\""
+      "on-click": "/home/nicholas/.config/waybar/scripts/affinity_photo.sh"
     },
     "custom/affinity-designer": {
       "format": "{} ",
       "tooltip-format": "Affinity Designer",
-      "on-click": "env WINEPREFIX=/home/nicholas/.AffinityLinux /home/nicholas/.AffinityLinux/ElementalWarriorWine/bin/wine \"/home/nicholas/.AffinityLinux/drive_c/Program Files/Affinity/Designer 2/Designer.exe\""
+      "on-click": "/home/nicholas/.config/waybar/scripts/affinity_designer.sh"
     },
     "custom/affinity-publisher": {
       "format": "{} ",
       "tooltip-format": "Affinity Publisher",
-      "on-click": "env WINEPREFIX=/home/nicholas/.AffinityLinux /home/nicholas/.AffinityLinux/ElementalWarriorWine/bin/wine \"/home/nicholas/.AffinityLinux/drive_c/Program Files/Affinity/Publisher 2/Publisher.exe\""
+      "on-click": "/home/nicholas/.config/waybar/scripts/affinity_publisher.sh"
     },
     "custom/davinci-resolve": {
       "format": "{} ",
