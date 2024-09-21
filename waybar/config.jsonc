@@ -180,6 +180,7 @@
       "custom/heroic",
       "custom/obsidian",
       "custom/neovim",
+      "custom/vs-code",
       "custom/zed",
       "custom/docker",
       "custom/beekeeper-studio",
@@ -271,6 +272,11 @@
       "format": "{} ",
       "tooltip-format": "Neovim",
       "on-click": "kitty --class kitty-neovim -d ~/Projects --hold nvim"
+    },
+    "custom/vs-code": {
+      "format": "{} ",
+      "tooltip-format": "Visual Studio Code",
+      "on-click": "vscodium"
     },
     "custom/zed": {
       "format": "{} ",

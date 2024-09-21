@@ -336,6 +336,17 @@
   margin: 0 2pt;
 }
 
+#custom-vs-code {
+  background: transparent;
+  background-image: url("/home/nicholas/.config/waybar/icons/vs-code.svg");
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: 28pt;
+  font-size: 28pt;
+  padding: 0 6pt;
+  margin: 0 2pt;
+}
+
 #custom-docker {
   background: transparent;
   background-image: url("/home/nicholas/.config/waybar/icons/docker.svg");
