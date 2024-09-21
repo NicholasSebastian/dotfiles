@@ -1,4 +1,8 @@
 @use "colours";
+@use "bar";
+@use "dock";
+
+// Press META + SHIFT + R to update the styles.
 
 * {
   margin: 0;
@@ -10,121 +14,11 @@
   transition-duration: 0.5s;
 }
 
-#waybar {
+#waybar.bottom {
   background: none;
-
-  >box.horizontal {
-    background: colours.$mocha-crust;
-    box-shadow: 0 0 4pt colours.$mocha-crust;
-    border-radius: 12pt;
-    margin: 6pt;
-    padding: 2pt;
-  }
 }
 
-#custom-rofi {
-  margin-left: 7pt;
-  padding-right: 3pt;
-  font-size: 12pt;
-}
-
-#workspaces {
-  margin-left: 12pt;
-
-  button {
-    color: colours.$mocha-surface2;
-
-    &.visible {
-      color: colours.$mocha-blue;
-    }
-
-    &.active {
-      color: colours.$mocha-red;
-    }
-
-    &:hover,
-    &:focused {
-      background: none;
-      border-color: transparent;
-      box-shadow: none;
-
-      &:not(.active):not(.visible) {
-        color: colours.$mocha-overlay2;
-      }
-    }
-  }
-}
-
-#window {
-  margin-left: 15pt;
-}
-
-#memory {
-  color: colours.$mocha-peach;
-  margin-right: 12pt;
-}
-
-#tray {
-  margin-right: 10pt;
-
-  menu {
-    background: colours.$mocha-base;
-    padding: 2pt;
-
-    * {
-      margin: 2pt;
-    }
-
-    check {
-      margin-right: 4pt;
-    }
-  }
-}
-
-@keyframes blink {
-  to {
-    background-color: rgba(30, 34, 42, 0.5);
-    color: colours.$mocha-text;
-  }
-}
-
-#backlight {
-  color: colours.$mocha-mauve;
-  margin-right: 10pt;
-}
-
-#pulseaudio {
-  color: colours.$mocha-sapphire;
-  margin-right: 10pt;
-}
-
-#battery {
-  color: colours.$mocha-yellow;
-  margin-right: 12pt;
-}
-
-#battery.full,
-#battery.good,
-#battery.charging,
-#battery.plugged {
-  color: colours.$mocha-green;
-}
-
-#battery.critical:not(.charging) {
-  color: colours.$mocha-red;
-  animation-name: blink;
-  animation-duration: 0.5s;
-  animation-timing-function: linear;
-  animation-iteration-count: infinite;
-  animation-direction: alternate;
-}
-
-#custom-screenshot {
-  margin-right: 15pt;
-  font-size: 10pt;
-}
-
-#custom-power {
-  margin-right: 10pt;
-  font-size: 10pt;
+tooltip {
+  background: colours.$mocha-crust;
+  border-radius: 5pt;
 }

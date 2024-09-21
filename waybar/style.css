@@ -1,17 +1,7 @@
-* {
-  margin: 0;
-  padding: 0;
-  font-family: "JetBrainsMono Nerd Font";
-  font-size: 8.5pt;
-  font-weight: 800;
-  transition-property: background;
-  transition-duration: 0.5s;
-}
-
-#waybar {
+#waybar.top {
   background: none;
 }
-#waybar > box.horizontal {
+#waybar.top > box.horizontal {
   background: #11111b;
   box-shadow: 0 0 4pt #11111b;
   border-radius: 12pt;
@@ -114,6 +104,253 @@
 #custom-power {
   margin-right: 10pt;
   font-size: 10pt;
+}
+
+#waybar.bottom box.modules-center {
+  background: #181825;
+  padding: 0 4pt;
+  border-top-left-radius: 10pt;
+  border-top-right-radius: 10pt;
+  box-shadow: 0 0 2pt #11111b;
+}
+
+#custom-file-manager {
+  background: transparent;
+  background-image: url("/home/nicholas/.config/waybar/icons/file-manager.svg");
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: 28pt;
+  font-size: 28pt;
+  padding: 0 6pt;
+  margin: 0 2pt;
+}
+
+#custom-terminal {
+  background: transparent;
+  background-image: url("/home/nicholas/.config/waybar/icons/terminal.svg");
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: 28pt;
+  font-size: 28pt;
+  padding: 0 6pt;
+  margin: 0 2pt;
+}
+
+#custom-zen {
+  background: transparent;
+  background-image: url("/home/nicholas/.config/waybar/icons/zen.svg");
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: 28pt;
+  font-size: 28pt;
+  padding: 0 6pt;
+  margin: 0 2pt;
+}
+
+#custom-spotify {
+  background: transparent;
+  background-image: url("/home/nicholas/.config/waybar/icons/spotify.svg");
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: 28pt;
+  font-size: 28pt;
+  padding: 0 6pt;
+  margin: 0 2pt;
+}
+
+#custom-obs-studio {
+  background: transparent;
+  background-image: url("/home/nicholas/.config/waybar/icons/obs-studio.svg");
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: 28pt;
+  font-size: 28pt;
+  padding: 0 6pt;
+  margin: 0 2pt;
+}
+
+#custom-discord {
+  background: transparent;
+  background-image: url("/home/nicholas/.config/waybar/icons/discord.svg");
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: 28pt;
+  font-size: 28pt;
+  padding: 0 6pt;
+  margin: 0 2pt;
+}
+
+#custom-telegram {
+  background: transparent;
+  background-image: url("/home/nicholas/.config/waybar/icons/telegram.svg");
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: 28pt;
+  font-size: 28pt;
+  padding: 0 6pt;
+  margin: 0 2pt;
+}
+
+#custom-whatsapp {
+  background: transparent;
+  background-image: url("/home/nicholas/.config/waybar/icons/whatsapp.svg");
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: 28pt;
+  font-size: 28pt;
+  padding: 0 6pt;
+  margin: 0 2pt;
+}
+
+#custom-adobe-photoshop {
+  background: transparent;
+  background-image: url("/home/nicholas/.config/waybar/icons/adobe-photoshop.svg");
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: 28pt;
+  font-size: 28pt;
+  padding: 0 6pt;
+  margin: 0 2pt;
+}
+
+#custom-affinity-designer {
+  background: transparent;
+  background-image: url("/home/nicholas/.config/waybar/icons/affinity-designer.svg");
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: 28pt;
+  font-size: 28pt;
+  padding: 0 6pt;
+  margin: 0 2pt;
+}
+
+#custom-affinity-photo {
+  background: transparent;
+  background-image: url("/home/nicholas/.config/waybar/icons/affinity-photo.svg");
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: 28pt;
+  font-size: 28pt;
+  padding: 0 6pt;
+  margin: 0 2pt;
+}
+
+#custom-affinity-publisher {
+  background: transparent;
+  background-image: url("/home/nicholas/.config/waybar/icons/affinity-publisher.svg");
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: 28pt;
+  font-size: 28pt;
+  padding: 0 6pt;
+  margin: 0 2pt;
+}
+
+#custom-davinci-resolve {
+  background: transparent;
+  background-image: url("/home/nicholas/.config/waybar/icons/davinci-resolve.png");
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: 28pt;
+  font-size: 28pt;
+  padding: 0 6pt;
+  margin: 0 2pt;
+}
+
+#custom-steam {
+  background: transparent;
+  background-image: url("/home/nicholas/.config/waybar/icons/steam.svg");
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: 28pt;
+  font-size: 28pt;
+  padding: 0 6pt;
+  margin: 0 2pt;
+}
+
+#custom-lutris {
+  background: transparent;
+  background-image: url("/home/nicholas/.config/waybar/icons/lutris.svg");
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: 28pt;
+  font-size: 28pt;
+  padding: 0 6pt;
+  margin: 0 2pt;
+}
+
+#custom-heroic {
+  background: transparent;
+  background-image: url("/home/nicholas/.config/waybar/icons/heroic.svg");
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: 28pt;
+  font-size: 28pt;
+  padding: 0 6pt;
+  margin: 0 2pt;
+}
+
+#custom-obsidian {
+  background: transparent;
+  background-image: url("/home/nicholas/.config/waybar/icons/obsidian.svg");
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: 28pt;
+  font-size: 28pt;
+  padding: 0 6pt;
+  margin: 0 2pt;
+}
+
+#custom-excalidraw {
+  background: transparent;
+  background-image: url("/home/nicholas/.config/waybar/icons/excalidraw.png");
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: 28pt;
+  font-size: 28pt;
+  padding: 0 6pt;
+  margin: 0 2pt;
+}
+
+#custom-figma {
+  background: transparent;
+  background-image: url("/home/nicholas/.config/waybar/icons/figma.svg");
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: 28pt;
+  font-size: 28pt;
+  padding: 0 6pt;
+  margin: 0 2pt;
+}
+
+#custom-postman {
+  background: transparent;
+  background-image: url("/home/nicholas/.config/waybar/icons/postman.svg");
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: 28pt;
+  font-size: 28pt;
+  padding: 0 6pt;
+  margin: 0 2pt;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  font-family: "JetBrainsMono Nerd Font";
+  font-size: 8.5pt;
+  font-weight: 800;
+  transition-property: background;
+  transition-duration: 0.5s;
+}
+
+#waybar.bottom {
+  background: none;
+}
+
+tooltip {
+  background: #11111b;
+  border-radius: 5pt;
 }
 
 /*# sourceMappingURL=style.css.map */

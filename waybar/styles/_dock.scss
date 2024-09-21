@@ -1,0 +1,51 @@
+@use "sass:string";
+@use "colours";
+
+$iconSize: 28pt;
+$iconGap: 2pt;
+$iconDir: "/home/nicholas/.config/waybar/icons/";
+$icons: (
+  "file-manager.svg",
+  "terminal.svg",
+  "zen.svg",
+  "spotify.svg",
+  "obs-studio.svg",
+  "discord.svg",
+  "telegram.svg",
+  "whatsapp.svg",
+  "adobe-photoshop.svg",
+  "affinity-designer.svg",
+  "affinity-photo.svg",
+  "affinity-publisher.svg",
+  "davinci-resolve.png",
+  "steam.svg",
+  "lutris.svg",
+  "heroic.svg",
+  "obsidian.svg",
+  "excalidraw.png",
+  "figma.svg",
+  "postman.svg"
+);
+
+#waybar.bottom box.modules-center {
+  background: colours.$mocha-mantle;
+  padding: 0 4pt;
+  border-top-left-radius: 10pt;
+  border-top-right-radius: 10pt;
+  box-shadow: 0 0 2pt colours.$mocha-crust;
+}
+
+@each $icon in $icons {
+  $name: string.slice($icon, 1, -5);
+
+  #custom-#{$name} {
+    background: transparent;
+    background-image: url($iconDir + $icon);
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: $iconSize;
+    font-size: $iconSize;
+    padding: 0 6pt;
+    margin: 0 $iconGap;
+  }
+}

@@ -1,141 +1,268 @@
 // Written by Nicholas Oliver Bahary
 // on 14 September 2024
-{
-  "layer": "top",
-  "position": "top",
-  "margin-top": 0,
-  "margin-bottom": 0,
-  "margin-left": 4,
-  "margin-right": 4,
-  "modules-left": [
-    "custom/rofi",
-    "hyprland/workspaces",
-    "hyprland/window"
-    // TODO
-  ],
-  "modules-center": [
-    "clock"
-  ],
-  "modules-right": [
-    "memory",
-    "tray",
-    "backlight",
-    "pulseaudio",
-    "battery",
-    "custom/screenshot",
-    "custom/power"
-  ],
-  "custom/rofi": {
-    "format": "\udb82\udcc7",
-    "tooltip": false,
-    "on-click": "rofi -show drun",
-    "on-click-middle": "pkill -9 rofi"
-  },
-  "hyprland/workspaces": {
-    "all-outputs": true,
-    "format": "{name}",
-    "on-scroll-up": "hyprctl dispatch workspace e+1 1>/dev/null",
-    "on-scroll-down": "hyprctl dispatch workspace e-1 1>/dev/null",
-    "sort-by-number": true,
-    "active-only": false
-  },
-  "memory": {
-    "interval": 30,
-    "format": " Mem {used}GiB",
-    "max-length": 13,
-    "tooltip": false
-  },
-  "hyprland/window": {
-    "format": "{title}",
-    "separate-outputs": true,
-    "rewrite": {
-      "(.*) — Mozilla Firefox": "󰈹  Firefox",
-      "(.*) — Zen Browser": "󰈹  Zen Browser",
-      "(.*) - Visual Studio Code": "󰨞  Visual Studio Code",
-      "(.*) - Obsidian(.*)": "󱓧  Obsidian",
-      "(.*) Spotify Premium": "󰓇  Spotify",
-      "(.*) Spotify Free": "󰓇  Spotify",
-      "~ - fish": "  nicholas@rog-zephyrus",
-      "nwg-look": "  GTK Settings",
-      "Qt6 Configuration Tool": "  QT Settings",
-      "blueman-manager": "Bluetooth Settings"
-    }
-  },
-  "clock": {
-    "format": "  {:%a %e %b %H:%M}",
-    "tooltip-format": "<tt>{calendar}</tt>",
-    "calendar": {
-      "mode": "month",
-      "format": {
-        "months": "<span color='#cdd6f4'><b>{}</b></span>",
-        "days": "<span color='#cdd6f4'><b>{}</b></span>",
-        "weeks": "<span color='#cdd6f4'><b>W{}</b></span>",
-        "weekdays": "<span color='#cdd6f4'><b>{}</b></span>",
-        "today": "<span color='#f38ba8'><b>{}</b></span>"
-      }
-    }
-  },
-  "tray": {
-    "icon-size": 15,
-    "spacing": 10
-  },
-  "backlight": {
-    "format": "{icon} <b>{percent}%</b>",
-    "format-icons": [
-      "󰃞",
-      "󰃟",
-      "󰃠"
+[
+  {
+    "layer": "top",
+    "position": "top",
+    "margin-top": 0,
+    "margin-bottom": 0,
+    "margin-left": 4,
+    "margin-right": 4,
+    "modules-left": [
+      "custom/rofi",
+      "hyprland/workspaces",
+      "hyprland/window"
     ],
-    "tooltip": false
-  },
-  "pulseaudio": {
-    "format": "{icon} <b>{volume}%</b>",
-    "format-muted": " 󰝟 ",
-    "format-bluetooth": "{icon}  <b>{volume}%</b>",
-    "format-bluetooth-muted": "󰝟 ",
-    "format-icons": {
-      "headset": "",
-      "default": [
-        "󰕿",
-        "󰖀",
-        "󰕾"
+    "modules-center": [
+      "clock"
+    ],
+    "modules-right": [
+      "memory",
+      "tray",
+      "backlight",
+      "pulseaudio",
+      "battery",
+      "custom/screenshot",
+      "custom/power"
+    ],
+    "custom/rofi": {
+      "format": "\udb82\udcc7",
+      "tooltip": false,
+      "on-click": "rofi -show drun",
+      "on-click-middle": "pkill -9 rofi"
+    },
+    "hyprland/workspaces": {
+      "all-outputs": true,
+      "format": "{name}",
+      "on-scroll-up": "hyprctl dispatch workspace e+1 1>/dev/null",
+      "on-scroll-down": "hyprctl dispatch workspace e-1 1>/dev/null",
+      "sort-by-number": true,
+      "active-only": false
+    },
+    "memory": {
+      "interval": 30,
+      "format": " Mem {used}GiB",
+      "max-length": 13,
+      "tooltip": false
+    },
+    "hyprland/window": {
+      "format": "{title}",
+      "separate-outputs": true,
+      "rewrite": {
+        "(.*) — Mozilla Firefox": "󰈹  Firefox",
+        "(.*) — Zen Browser": "󰈹  Zen Browser",
+        "(.*) - Visual Studio Code": "󰨞  Visual Studio Code",
+        "(.*) - Obsidian(.*)": "󱓧  Obsidian",
+        "(.*) Spotify Premium": "󰓇  Spotify",
+        "(.*) Spotify Free": "󰓇  Spotify",
+        "~ - fish": "  nicholas@rog-zephyrus",
+        "nwg-look": "  GTK Settings",
+        "Qt6 Configuration Tool": "  QT Settings",
+        "blueman-manager": "Bluetooth Settings"
+      }
+    },
+    "clock": {
+      "format": "  {:%a %e %b %H:%M}",
+      "tooltip-format": "<tt>{calendar}</tt>",
+      "calendar": {
+        "mode": "month",
+        "format": {
+          "months": "<span color='#cdd6f4'><b>{}</b></span>",
+          "days": "<span color='#cdd6f4'><b>{}</b></span>",
+          "weeks": "<span color='#cdd6f4'><b>W{}</b></span>",
+          "weekdays": "<span color='#cdd6f4'><b>{}</b></span>",
+          "today": "<span color='#f38ba8'><b>{}</b></span>"
+        }
+      }
+    },
+    "tray": {
+      "icon-size": 15,
+      "spacing": 10
+    },
+    "backlight": {
+      "format": "{icon} <b>{percent}%</b>",
+      "format-icons": [
+        "󰃞",
+        "󰃟",
+        "󰃠"
+      ],
+      "tooltip": false
+    },
+    "pulseaudio": {
+      "format": "{icon} <b>{volume}%</b>",
+      "format-muted": " 󰝟 ",
+      "format-bluetooth": "{icon}  <b>{volume}%</b>",
+      "format-bluetooth-muted": "󰝟 ",
+      "format-icons": {
+        "headset": "",
+        "default": [
+          "󰕿",
+          "󰖀",
+          "󰕾"
+        ]
+      },
+      "tooltip": true,
+      "on-click": "pavucontrol",
+      "ignored-sinks": [
+        "JamesDSP Sink",
+        "HDA NVidia Digital Stereo (HDMI)"
       ]
     },
-    "tooltip": true,
-    "on-click": "pavucontrol",
-    "ignored-sinks": [
-      "JamesDSP Sink",
-      "HDA NVidia Digital Stereo (HDMI)"
-    ]
-  },
-  "battery": {
-    "format": "{icon} {capacity}%",
-    "format-plugged": " {capacity}%",
-    "format-icons": [
-      "",
-      "",
-      "",
-      "",
-      ""
-    ],
-    "max-length": 25,
-    "tooltip": true,
-    "interval": 5,
-    "states": {
-      "good": 70,
-      "warning": 30,
-      "critical": 15
+    "battery": {
+      "format": "{icon} {capacity}%",
+      "format-plugged": " {capacity}%",
+      "format-icons": [
+        "",
+        "",
+        "",
+        "",
+        ""
+      ],
+      "max-length": 25,
+      "tooltip": true,
+      "interval": 5,
+      "states": {
+        "good": 70,
+        "warning": 30,
+        "critical": 15
+      }
+    },
+    "custom/screenshot": {
+      "format": "",
+      "on-click": "~/.config/waybar/scripts/screenshot_full.sh",
+      "on-click-right": "~/.config/waybar/scripts/screenshot_area.sh",
+      "tooltip-format": "Left-click: Full Screen Screenshot\nRight-click: Area Screenshot"
+    },
+    "custom/power": {
+      "format": "",
+      "tooltip": false,
+      "on-click": "wlogout"
     }
   },
-  "custom/screenshot": {
-    "format": "",
-    "on-click": "~/.config/waybar/scripts/screenshot_full",
-    "on-click-right": "~/.config/waybar/scripts/screenshot_area",
-    "tooltip-format": "Left-click: Full Screen Screenshot\nRight-click: Area Screenshot"
-  },
-  "custom/power": {
-    "format": "",
-    "tooltip": false,
-    "on-click": "wlogout"
+  {
+    "layer": "top",
+    "position": "bottom",
+    "modules-center": [
+      "custom/file-manager",
+      "custom/terminal",
+      "custom/zen",
+      "custom/spotify",
+      "custom/obs-studio",
+      "custom/discord",
+      "custom/telegram",
+      "custom/whatsapp",
+      "custom/adobe-photoshop",
+      "custom/affinity-designer",
+      "custom/affinity-photo",
+      "custom/affinity-publisher",
+      "custom/davinci-resolve",
+      "custom/obsidian",
+      "custom/steam",
+      "custom/lutris",
+      "custom/heroic",
+      "custom/figma",
+      "custom/excalidraw",
+      "custom/postman"
+    ],
+    "custom/file-manager": {
+      "format": "{} ",
+      "tooltip-format": "File Manager",
+      "on-click": "kitty --hold yazi"
+    },
+    "custom/terminal": {
+      "format": "{} ",
+      "tooltip-format": "Kitty",
+      "on-click": "kitty"
+    },
+    "custom/zen": {
+      "format": "{} ",
+      "tooltip-format": "Zen Browser",
+      "on-click": "flatpak run io.github.zen_browser.zen"
+    },
+    "custom/spotify": {
+      "format": "{} ",
+      "tooltip-format": "Spotify",
+      "on-click": "flatpak run com.spotify.Client"
+    },
+    "custom/obs-studio": {
+      "format": "{} ",
+      "tooltip-format": "OBS Studio",
+      "on-click": "obs"
+    },
+    "custom/discord": {
+      "format": "{} ",
+      "tooltip-format": "Discord",
+      "on-click": "flatpak run dev.vencord.Vesktop"
+    },
+    "custom/telegram": {
+      "format": "{} ",
+      "tooltip-format": "Telegram",
+      "on-click": "telegram-desktop"
+    },
+    "custom/whatsapp": {
+      "format": "{} ",
+      "tooltip-format": "WhatsApp",
+      "on-click": "firefoxpwa site launch 01J87X8PCDY36KMBX73TZZVH5H"
+    },
+    "custom/adobe-photoshop": {
+      "format": "{} ",
+      "tooltip-format": "Adobe Photoshop",
+      "on-click": "bash /home/nicholas/.photoshopCCV19/launcher/launcher.sh"
+    },
+    "custom/affinity-photo": {
+      "format": "{} ",
+      "tooltip-format": "Affinity Photo",
+      "on-click": "env WINEPREFIX=/home/nicholas/.AffinityLinux /home/nicholas/.AffinityLinux/ElementalWarriorWine/bin/wine \"/home/nicholas/.AffinityLinux/drive_c/Program Files/Affinity/Photo 2/Photo.exe\""
+    },
+    "custom/affinity-designer": {
+      "format": "{} ",
+      "tooltip-format": "Affinity Designer",
+      "on-click": "env WINEPREFIX=/home/nicholas/.AffinityLinux /home/nicholas/.AffinityLinux/ElementalWarriorWine/bin/wine \"/home/nicholas/.AffinityLinux/drive_c/Program Files/Affinity/Designer 2/Designer.exe\""
+    },
+    "custom/affinity-publisher": {
+      "format": "{} ",
+      "tooltip-format": "Affinity Publisher",
+      "on-click": "env WINEPREFIX=/home/nicholas/.AffinityLinux /home/nicholas/.AffinityLinux/ElementalWarriorWine/bin/wine \"/home/nicholas/.AffinityLinux/drive_c/Program Files/Affinity/Publisher 2/Publisher.exe\""
+    },
+    "custom/davinci-resolve": {
+      "format": "{} ",
+      "tooltip-format": "Davinci Resolve",
+      "on-click": "/opt/resolve/bin/resolve"
+    },
+    "custom/steam": {
+      "format": "{} ",
+      "tooltip-format": "Steam",
+      "on-click": "steam"
+    },
+    "custom/lutris": {
+      "format": "{} ",
+      "tooltip-format": "Lutris",
+      "on-click": "lutris"
+    },
+    "custom/heroic": {
+      "format": "{} ",
+      "tooltip-format": "Heroic Launcher",
+      "on-click": "heroic"
+    },
+    "custom/obsidian": {
+      "format": "{} ",
+      "tooltip-format": "Obsidian",
+      "on-click": "obsidian"
+    },
+    "custom/excalidraw": {
+      "format": "{} ",
+      "tooltip-format": "Excalidraw",
+      "on-click": "firefoxpwa site launch 01J87WZTDWK71S16B6EFCZK7KN"
+    },
+    "custom/figma": {
+      "format": "{} ",
+      "tooltip-format": "Figma",
+      "on-click": "figma-linux"
+    },
+    "custom/postman": {
+      "format": "{} ",
+      "tooltip-format": "Postman",
+      "on-click": "postman"
+    }
   }
-}
+]
