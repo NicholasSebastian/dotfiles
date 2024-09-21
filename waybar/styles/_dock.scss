@@ -29,12 +29,17 @@ $icons: (
   "postman.svg"
 );
 
-#waybar.bottom box.modules-center {
-  background: colours.$mocha-mantle;
-  padding: 0 4pt;
-  border-top-left-radius: 10pt;
-  border-top-right-radius: 10pt;
-  box-shadow: 0 0 2pt colours.$mocha-crust;
+#waybar.bottom {
+  background: none;
+
+  box.modules-center {
+    background: colours.$mocha-mantle;
+    margin-top: 5pt;
+    padding: 0 4pt;
+    border-top-left-radius: 10pt;
+    border-top-right-radius: 10pt;
+    box-shadow: 0 0 3pt colours.$mocha-mantle;
+  }
 }
 
 @each $icon in $icons {

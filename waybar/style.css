@@ -106,12 +106,16 @@
   font-size: 10pt;
 }
 
+#waybar.bottom {
+  background: none;
+}
 #waybar.bottom box.modules-center {
   background: #181825;
+  margin-top: 5pt;
   padding: 0 4pt;
   border-top-left-radius: 10pt;
   border-top-right-radius: 10pt;
-  box-shadow: 0 0 2pt #11111b;
+  box-shadow: 0 0 3pt #181825;
 }
 
 #custom-file-manager {
@@ -364,10 +368,6 @@
   font-weight: 800;
   transition-property: background;
   transition-duration: 0.5s;
-}
-
-#waybar.bottom {
-  background: none;
 }
 
 tooltip {
