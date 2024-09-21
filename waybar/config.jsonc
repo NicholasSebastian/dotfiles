@@ -45,7 +45,7 @@
     "mpris": {
       "format": "{player_icon} {artist} - {title}",
       "format-paused": "{status_icon} {artist} - {title}",
-      "tooltip-format": "{player} ({status})\r{artist} - {title}\rTrack Length: {length}",
+      "tooltip-format": "{player} ({status})\r{artist} - {title}\r\rLeft-Click:   Play / Pause\rMiddle-Click: Previous Track\rRight-Click:  Next Track",
       "title-len": 20,
       "player-icons": {
         "default": "▶",
