@@ -327,6 +327,17 @@
   margin: 0 2pt;
 }
 
+#custom-beekeeper-studio {
+  background: transparent;
+  background-image: url("/home/nicholas/.config/waybar/icons/beekeeper-studio.svg");
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: 28pt;
+  font-size: 28pt;
+  padding: 0 6pt;
+  margin: 0 2pt;
+}
+
 #custom-excalidraw {
   background: transparent;
   background-image: url("/home/nicholas/.config/waybar/icons/excalidraw.png");
@@ -372,6 +383,7 @@
 
 tooltip {
   background: #11111b;
+  color: #cdd6f4;
   border-radius: 5pt;
 }
 

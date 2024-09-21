@@ -27,9 +27,11 @@
     ],
     "custom/rofi": {
       "format": "\udb82\udcc7",
-      "tooltip": false,
       "on-click": "rofi -show drun",
-      "on-click-middle": "pkill -9 rofi"
+      "on-click-middle": "pkill -9 rofi",
+      "tooltip-format": "{}",
+      "exec": "~/.config/waybar/modules/cheatsheet.py",
+      "interval": "once"
     },
     "hyprland/workspaces": {
       "all-outputs": true,
@@ -163,6 +165,7 @@
       "custom/obsidian",
       "custom/neovim",
       "custom/zed",
+      "custom/beekeeper-studio",
       "custom/figma",
       "custom/excalidraw",
       "custom/postman"
@@ -210,22 +213,22 @@
     "custom/adobe-photoshop": {
       "format": "{} ",
       "tooltip-format": "Adobe Photoshop",
-      "on-click": "/home/nicholas/.config/waybar/scripts/adobe_photoshop.sh"
+      "on-click": "~/.config/waybar/scripts/adobe_photoshop.sh"
     },
     "custom/affinity-photo": {
       "format": "{} ",
       "tooltip-format": "Affinity Photo",
-      "on-click": "/home/nicholas/.config/waybar/scripts/affinity_photo.sh"
+      "on-click": "~/.config/waybar/scripts/affinity_photo.sh"
     },
     "custom/affinity-designer": {
       "format": "{} ",
       "tooltip-format": "Affinity Designer",
-      "on-click": "/home/nicholas/.config/waybar/scripts/affinity_designer.sh"
+      "on-click": "~/.config/waybar/scripts/affinity_designer.sh"
     },
     "custom/affinity-publisher": {
       "format": "{} ",
       "tooltip-format": "Affinity Publisher",
-      "on-click": "/home/nicholas/.config/waybar/scripts/affinity_publisher.sh"
+      "on-click": "~/.config/waybar/scripts/affinity_publisher.sh"
     },
     "custom/davinci-resolve": {
       "format": "{} ",
@@ -256,6 +259,11 @@
       "format": "{} ",
       "tooltip-format": "Zed",
       "on-click": "flatpak run dev.zed.Zed ~/Projects"
+    },
+    "custom/beekeeper-studio": {
+      "format": "{} ",
+      "tooltip-format": "Beekeeper Studio",
+      "on-click": "beekeeper-studio"
     },
     "custom/obsidian": {
       "format": "{} ",
