@@ -301,6 +301,28 @@
   margin: 0 2pt;
 }
 
+#custom-neovim {
+  background: transparent;
+  background-image: url("/home/nicholas/.config/waybar/icons/neovim.svg");
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: 28pt;
+  font-size: 28pt;
+  padding: 0 6pt;
+  margin: 0 2pt;
+}
+
+#custom-zed {
+  background: transparent;
+  background-image: url("/home/nicholas/.config/waybar/icons/zed.svg");
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: 28pt;
+  font-size: 28pt;
+  padding: 0 6pt;
+  margin: 0 2pt;
+}
+
 #custom-excalidraw {
   background: transparent;
   background-image: url("/home/nicholas/.config/waybar/icons/excalidraw.png");

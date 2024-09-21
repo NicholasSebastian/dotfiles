@@ -157,10 +157,12 @@
       "custom/affinity-photo",
       "custom/affinity-publisher",
       "custom/davinci-resolve",
-      "custom/obsidian",
       "custom/steam",
       "custom/lutris",
       "custom/heroic",
+      "custom/obsidian",
+      "custom/neovim",
+      "custom/zed",
       "custom/figma",
       "custom/excalidraw",
       "custom/postman"
@@ -168,7 +170,7 @@
     "custom/file-manager": {
       "format": "{} ",
       "tooltip-format": "File Manager",
-      "on-click": "kitty --hold yazi"
+      "on-click": "kitty --class kitty-yazi --hold yazi"
     },
     "custom/terminal": {
       "format": "{} ",
@@ -244,6 +246,16 @@
       "format": "{} ",
       "tooltip-format": "Heroic Launcher",
       "on-click": "heroic"
+    },
+    "custom/neovim": {
+      "format": "{} ",
+      "tooltip-format": "Neovim",
+      "on-click": "kitty --class kitty-neovim -d ~/Projects --hold nvim"
+    },
+    "custom/zed": {
+      "format": "{} ",
+      "tooltip-format": "Zed",
+      "on-click": "flatpak run dev.zed.Zed ~/Projects"
     },
     "custom/obsidian": {
       "format": "{} ",
