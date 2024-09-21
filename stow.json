@@ -5,6 +5,7 @@
     "$HOME/.config/fish",
     "$HOME/.config/hypr",
     "$HOME/.config/kitty",
+    "$HOME/.config/mako",
     "$HOME/.config/nvim",
     "$HOME/.config/pipewire",
     "$HOME/.config/waybar",
@@ -12,7 +13,9 @@
     "$HOME/.config/zed"
   ],
   "files": {
-    "git": ["$HOME/.gitconfig"],
+    "git": [
+      "$HOME/.gitconfig"
+    ],
     "spicetify": [
       "$HOME/.config/spicetify/config-xpui.ini",
       "$HOME/.config/spicetify/Themes"
