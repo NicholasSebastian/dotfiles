@@ -9,6 +9,7 @@
     "$HOME/.config/nvim",
     "$HOME/.config/pipewire",
     "$HOME/.config/waybar",
+    "$HOME/.config/wlogout",
     "$HOME/.config/yazi",
     "$HOME/.config/zed"
   ],
