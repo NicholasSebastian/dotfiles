@@ -17,6 +17,7 @@
 configuration {
 	modi:                       "drun,run,filebrowser,window";
     show-icons:                 true;
+	  icon-theme: "Papirus";
     display-drun:               "";
     display-run:                "";
     display-filebrowser:        "";
@@ -264,7 +265,7 @@ mode-switcher{
     text-color:                  @foreground-colour;
 }
 button {
-    padding:                     5px 15px 5px 10px;
+    padding:                     6px 15px 6px 10px;
     border:                      0px solid;
     border-radius:               10px;
     border-color:                @border-colour;
