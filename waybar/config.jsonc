@@ -28,7 +28,7 @@
     ],
     "custom/rofi": {
       "format": "\udb82\udcc7",
-      "on-click": "rofi -show drun",
+      "on-click": "~/.config/rofi/launcher.sh",
       "on-click-middle": "pkill -9 rofi",
       "tooltip-format": "{}",
       "exec": "~/.config/waybar/scripts/cheatsheet.py",
@@ -66,8 +66,9 @@
         "(.*) - Google Chrome": "  $1",
         "(.*) - Visual Studio Code": "󰨞  $1",
         "(.*) - nvim": "  $1",
-        "(.*) - Obsidian(.*)": "󱓧  Obsidian",
+        "(.*) - Obsidian(.*)": "󱓧  $1",
         "(.*) - fish": "  $1",
+        "yazi: (.*)": "  $1",
         "nwg-look": "  GTK Settings",
         "Qt6 Configuration Tool": "  QT Settings",
         "blueman-manager": "Bluetooth Settings"
@@ -155,7 +156,7 @@
     "custom/power": {
       "format": "",
       "tooltip": false,
-      "on-click": "wlogout"
+      "on-click": "~/.config/rofi/powermenu.sh"
     }
   },
   {

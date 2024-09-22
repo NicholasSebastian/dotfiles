@@ -11,7 +11,6 @@ keybinds = {
         "SUPER + SPACE": "App Launcher",
         "SUPER + Q": "Terminal",
         "SUPER + E": "File Explorer",
-        "SUPER + R": "Run Command",
         "SUPER + A": "Screenshot",
         "SUPER + L": "Lock Screen",
         "SUPER + B": "Zen Browser",

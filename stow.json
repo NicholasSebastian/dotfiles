@@ -8,6 +8,7 @@
     "$HOME/.config/mako",
     "$HOME/.config/nvim",
     "$HOME/.config/pipewire",
+    "$HOME/.config/rofi",
     "$HOME/.config/waybar",
     "$HOME/.config/yazi",
     "$HOME/.config/zed"
