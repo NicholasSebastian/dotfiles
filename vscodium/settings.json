@@ -2,5 +2,8 @@
     "workbench.colorTheme": "Catppuccin Mocha",
     "window.customTitleBarVisibility": "auto",
     "window.menuBarVisibility": "compact",
-    "window.titleBarStyle": "custom"
+    "window.titleBarStyle": "custom",
+    "security.workspace.trust.untrustedFiles": "open",
+    "editor.fontFamily": "'JetBrainsMono Nerd Font', monospace",
+    "editor.fontLigatures": true
 }
