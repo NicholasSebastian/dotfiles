@@ -108,6 +108,10 @@
   animation-direction: alternate;
 }
 
+#custom-color-picker {
+  margin-right: 17pt;
+}
+
 #custom-screenshot {
   margin-right: 18pt;
   font-size: 10pt;

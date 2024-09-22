@@ -23,6 +23,7 @@
       "backlight",
       "pulseaudio",
       "battery",
+      "custom/color-picker",
       "custom/screenshot",
       "custom/power"
     ],
@@ -146,6 +147,11 @@
         "critical": 15
       },
       "on-click": "rog-control-center"
+    },
+    "custom/color-picker": {
+      "format": "",
+      "on-click": "hyprpicker -an && notify-send 'Colour copied to clipboard'",
+      "tooltip-format": "Color Picker"
     },
     "custom/screenshot": {
       "format": "",
