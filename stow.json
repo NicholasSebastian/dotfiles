@@ -20,6 +20,9 @@
     "spicetify": [
       "$HOME/.config/spicetify/config-xpui.ini",
       "$HOME/.config/spicetify/Themes"
+    ],
+    "vscodium": [
+      "$HOME/.config/VSCodium/User/settings.json"
     ]
   }
 }
