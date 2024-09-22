@@ -405,6 +405,17 @@
   margin: 0 2pt;
 }
 
+#custom-calculator {
+  background: transparent;
+  background-image: url("/home/nicholas/.config/waybar/icons/calculator.svg");
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: 28pt;
+  font-size: 28pt;
+  padding: 0 6pt;
+  margin: 0 2pt;
+}
+
 * {
   margin: 0;
   padding: 0;

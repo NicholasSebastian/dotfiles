@@ -179,15 +179,16 @@
       "custom/steam",
       "custom/lutris",
       "custom/heroic",
-      "custom/obsidian",
       "custom/neovim",
       "custom/vs-code",
       "custom/zed",
       "custom/docker",
       "custom/beekeeper-studio",
+      "custom/postman",
       "custom/figma",
       "custom/excalidraw",
-      "custom/postman"
+      "custom/calculator",
+      "custom/obsidian"
     ],
     "custom/file-manager": {
       "format": "{} ",
@@ -313,6 +314,11 @@
       "format": "{} ",
       "tooltip-format": "Postman",
       "on-click": "postman"
+    },
+    "custom/calculator": {
+      "format": "{} ",
+      "tooltip-format": "Calculator",
+      "on-click": "qalculate-gtk"
     }
   }
 ]
