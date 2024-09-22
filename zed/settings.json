@@ -10,8 +10,8 @@
   "buffer_font_family": "JetBrainsMono Nerd Font",
   "preferred_line_length": 120,
   "theme": {
-    "mode": "system",
-    "light": "Catppuccin Mocha",
+    "mode": "dark",
+    "light": "Catppuccin Latte",
     "dark": "Catppuccin Mocha"
   }
 }
