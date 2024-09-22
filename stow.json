@@ -11,7 +11,8 @@
     "$HOME/.config/rofi",
     "$HOME/.config/waybar",
     "$HOME/.config/yazi",
-    "$HOME/.config/zed"
+    "$HOME/.config/zed",
+    "$HOME/.local/share/fonts"
   ],
   "files": {
     "git": [
