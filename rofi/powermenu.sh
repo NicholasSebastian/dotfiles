@@ -67,15 +67,7 @@ run_cmd() {
 			amixer set Master mute
 			systemctl suspend
 		elif [[ $1 == '--logout' ]]; then
-			if [[ "$DESKTOP_SESSION" == 'openbox' ]]; then
-				openbox --exit
-			elif [[ "$DESKTOP_SESSION" == 'bspwm' ]]; then
-				bspc quit
-			elif [[ "$DESKTOP_SESSION" == 'i3' ]]; then
-				i3-msg exit
-			elif [[ "$DESKTOP_SESSION" == 'plasma' ]]; then
-				qdbus org.kde.ksmserver /KSMServer logout 0 0 0
-			fi
+			hyprctl dispatch exit
 		fi
 	else
 		exit 0
@@ -92,7 +84,7 @@ case ${chosen} in
 		run_cmd --reboot
         ;;
     $lock)
-		swaylock
+		hyprlock
         ;;
     $suspend)
 		run_cmd --suspend
