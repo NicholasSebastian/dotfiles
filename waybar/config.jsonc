@@ -28,7 +28,7 @@
     ],
     "custom/rofi": {
       "format": "\udb82\udcc7",
-      "on-click": "~/.config/rofi/launcher.sh",
+      "on-click": "rofi -show drun",
       "on-click-middle": "pkill -9 rofi",
       "tooltip-format": "{}",
       "exec": "~/.config/waybar/scripts/cheatsheet.py",
