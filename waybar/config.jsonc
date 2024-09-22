@@ -151,7 +151,7 @@
       "format": "",
       "on-click": "~/.config/waybar/scripts/screenshot_full.sh",
       "on-click-right": "~/.config/waybar/scripts/screenshot_area.sh",
-      "tooltip-format": "Left-click: Full Screen Screenshot\nRight-click: Area Screenshot"
+      "tooltip-format": "Left-click:  Full Screen Screenshot\nRight-click: Area Screenshot"
     },
     "custom/power": {
       "format": "",

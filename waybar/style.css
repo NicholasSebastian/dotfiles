@@ -21,6 +21,9 @@
 #workspaces button {
   color: #585b70;
 }
+#workspaces button:not(:first-child) {
+  margin-left: 2pt;
+}
 #workspaces button.visible {
   color: #89b4fa;
 }
@@ -86,7 +89,7 @@
 
 #battery {
   color: #f9e2af;
-  margin-right: 12pt;
+  margin-right: 15pt;
 }
 
 #battery.full,
@@ -106,7 +109,7 @@
 }
 
 #custom-screenshot {
-  margin-right: 15pt;
+  margin-right: 18pt;
   font-size: 10pt;
 }
 

@@ -24,6 +24,10 @@
   button {
     color: colours.$mocha-surface2;
 
+    &:not(:first-child) {
+      margin-left: 2pt;
+    }
+
     &.visible {
       color: colours.$mocha-blue;
     }
@@ -99,7 +103,7 @@
 
 #battery {
   color: colours.$mocha-yellow;
-  margin-right: 12pt;
+  margin-right: 15pt;
 }
 
 #battery.full,
@@ -119,7 +123,7 @@
 }
 
 #custom-screenshot {
-  margin-right: 15pt;
+  margin-right: 18pt;
   font-size: 10pt;
 }
 
