@@ -2,6 +2,8 @@
 
 My personal dotfiles containing all my configurations for my Linux system, development apps, etc.
 
+![Desktop](https://github.com/NicholasSebastian/dotfiles/screenshots/desktop.png)
+
 ### Prerequisites
 
 Make sure you have the following packages installed for this to work:  
