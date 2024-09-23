@@ -5,6 +5,9 @@
 	email = nicholashendrata110900@gmail.com
 	name = Nicholas Oliver Bahary
 
+[includeIf "gitdir:~/Work/"]
+  path = .gitconfig-work
+
 [core]
   pager = delta
 
