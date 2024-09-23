@@ -206,7 +206,8 @@
     "custom/file-manager": {
       "format": "{} ",
       "tooltip-format": "File Manager",
-      "on-click": "kitty --class kitty-yazi --hold yazi"
+      "on-click": "pcmanfm",
+      "on-click-right": "kitty --class kitty-yazi --hold yazi"
     },
     "custom/terminal": {
       "format": "{} ",
