@@ -1,6 +1,7 @@
 {
   "directories": [
     "$HOME/.config/bat",
+    "$HOME/.config/cava",
     "$HOME/.config/fastfetch",
     "$HOME/.config/fish",
     "$HOME/.config/hypr",
@@ -12,6 +13,7 @@
     "$HOME/.config/waybar",
     "$HOME/.config/waypaper",
     "$HOME/.config/yazi",
+    "$HOME/.config/zathura",
     "$HOME/.config/zed",
     "$HOME/.local/share/fonts"
   ],
