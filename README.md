@@ -77,8 +77,8 @@ obsidian
 
 ### Installation
 
-I do use GNU stow but not in a rather unconventional way.  
-Make sure to use the included install.py script because my setup involves a weird mix of Stow and regular symbolic links.
+I do use GNU stow but in a rather unconventional way.  
+Make sure to use the included install.py script because my setup involves mapping Stow to varying target directories.
 Maybe I'll tidy it up again in the future. But probably uneccessary as it works the way its supposed to already.
 
 ```sh
