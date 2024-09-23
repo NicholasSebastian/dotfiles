@@ -9,11 +9,12 @@ desc_colour = "#fab387"
 keybinds = {
     "SHORTCUTS": {
         "SUPER + SPACE": "App Launcher",
-        "SUPER + Q": "Terminal",
         "SUPER + E": "File Explorer",
+        "SUPER + B": "Zen Browser",
+        "SUPER + Q": "Terminal",
         "SUPER + A": "Screenshot",
         "SUPER + L": "Lock Screen",
-        "SUPER + B": "Zen Browser",
+        "SUPER + DELETE": "Process Viewer",
     },
     "WINDOW CONTROLS": {
         "SUPER + C": "Close Window",
