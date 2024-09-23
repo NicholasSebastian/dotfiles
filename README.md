@@ -4,10 +4,31 @@ My personal dotfiles containing all my configurations for my Linux system, devel
 
 ### Prerequisites
 
-Make sure you have the following packages installed for this to work:
+Make sure you have the following packages installed for this to work:  
+```
+stow
+python
+```
 
-- stow
-- python
+#### Packages
+
+A none exhaustive list of the packages you'll probably wanna have for all this to work the way its expected to:  
+
+```
+hyprpaper
+hyprlock
+hypridle
+hyprpicker
+swww
+waypaper
+waybar
+mako
+rofi
+grim
+slurp
+...the list goes on...
+
+```
 
 ### Installation
 
