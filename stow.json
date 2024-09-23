@@ -10,6 +10,7 @@
     "$HOME/.config/pipewire",
     "$HOME/.config/rofi",
     "$HOME/.config/waybar",
+    "$HOME/.config/waypaper",
     "$HOME/.config/yazi",
     "$HOME/.config/zed",
     "$HOME/.local/share/fonts"
