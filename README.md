@@ -50,6 +50,12 @@ The config needs the path to librnnoise_ladspa.so to be specified, which can be 
 
 #### Installing the Affinity Suite
 
+##### Manual Installation
+
+Refer to https://codeberg.org/wanesty/affinity-wine-docs/src/branch/guide-wine9.13-part3
+
+##### Automatic Installation
+
 Refer to https://github.com/Twig6943/AffinityOnLinux
 
 ```sh
