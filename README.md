@@ -15,19 +15,64 @@ python
 A none exhaustive list of the packages you'll probably wanna have for all this to work the way its expected to:  
 
 ```
-hyprpaper
-hyprlock
-hypridle
-hyprpicker
 swww
 waypaper
 waybar
+hyprlock
+hypridle
 mako
 rofi
+noise-surpression-for-voice
+polkit-kde-agent
+nm-applet
 grim
 slurp
-...the list goes on...
+hyprpicker
+spicetify   # check its website for installation instructions.
+kitty
+yazi
+fish
+fastfetch
+bat
+htop
+```
 
+#### Extras
+```
+cava
+jamesdsp
+asusctltray
+```
+
+#### Default Dock Apps
+
+Here is a list of all the apps hardcoded onto the dock. You don't have to install these but you'll probably want to edit the waybar dock config then.
+```
+pcmanfm
+zen-browser
+spotify
+obs-studio
+vesktop
+telegram-desktop
+whatsapp-web        # web app
+adobe-photoshop     # wine
+affinity-photo      # wine
+affinity-designer   # wine
+affinity-publisher  # wine
+davinci-resolve
+steam
+lutris
+heroic
+neovim
+vscodium
+zed
+docker
+beekeeper-studio
+postman
+figma-linux
+excalidraw          # web app
+qalculate-gtk
+obsidian
 ```
 
 ### Installation
