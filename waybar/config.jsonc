@@ -151,7 +151,7 @@
     },
     "custom/color-picker": {
       "format": "",
-      "on-click": "hyprpicker -an && notify-send 'Colour copied to clipboard'",
+      "on-click": "hyprpicker -an && notify-send 'Colour copied to clipboard'", // Show the colour in the notification with wl-paste.
       "tooltip-format": "Color Picker"
     },
     "custom/screenshot": {
