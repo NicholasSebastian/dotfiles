@@ -1,0 +1,14 @@
+[pyprland]
+plugins = [
+  "layout_center"
+  # I wanted to use the scratchpads plugin too but its still kinda shit.
+]
+
+[layout_center]
+margin = 60
+offset = [0, -5]
+next = "movefocus r"
+prev = "movefocus l"
+next2 = "movefocus d"
+prev2 = "movefocus u"
+
