@@ -5,7 +5,6 @@
 -- https://github.com/hrsh7th/cmp-nvim-lsp
 
 return {
-	{ "hrsh7th/cmp-nvim-lsp" }, -- Autocomplete source for the Neovim LSP.
 	{
 		"L3MON4D3/LuaSnip", -- Autocomplete source for nvim-cmp.
 		dependencies = {
@@ -20,8 +19,18 @@ return {
 	{
 		-- Autocomplete for Neovim. This will defer to LuaSnip.
 		"hrsh7th/nvim-cmp",
+		lazy = true,
+		event = { "BufReadPre", "BufNewFile" },
+		dependencies = {
+			{ "hrsh7th/cmp-nvim-lsp" }, -- Autocomplete source for the Neovim LSP.
+			{ "hrsh7th/cmp-nvim-lua" }, -- Autocomplete source for the Neovim's Lua API.
+			{ "hrsh7th/cmp-buffer" },
+			{ "hrsh7th/cmp-path" },
+			{ "onsails/lspkind.nvim" }, -- Icons for the autocomplete items.
+		},
 		config = function()
 			local cmp = require("cmp")
+			local config = require("lsp/autocomplete")
 			cmp.setup({
 				snippet = {
 					expand = function(args)
@@ -32,14 +41,10 @@ return {
 					completion = cmp.config.window.bordered(),
 					documentation = cmp.config.window.bordered(),
 				},
-				mapping = require("keybinds/autocomplete"),
-				sources = cmp.config.sources({
-					{ name = "luasnip" }, -- The snippets defined above.
-				}, {
-					{ name = "nvim_lsp" },
-					{ name = "path" }, -- File system paths.
-					{ name = "buffer" }, -- The contents of the current open file.
-				}),
+				mapping = require("keybinds/nvim-cmp"),
+				sources = config.sources,
+				formatting = config.formatting,
+				sorting = config.sorting,
 			})
 		end,
 	},
