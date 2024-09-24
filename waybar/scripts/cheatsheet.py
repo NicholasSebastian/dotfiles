@@ -21,6 +21,7 @@ keybinds = {
         "SUPER + F": "Fullscreen",
         "SUPER + V": "Toggle Floating",
         "SUPER + J": "Toggle Split",
+        "SUPER + O": "Toggle Center",
         "SUPER + P": "Toggle Pseudo",
         "SUPER + ARROW": "Move Current Focus",
         "CTRL + SHIFT + ARROW": "Resize Window",
