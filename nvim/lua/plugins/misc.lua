@@ -21,14 +21,4 @@ return {
 		cmd = "Trouble",
 		keys = require("keybinds/trouble"),
 	},
-	{
-		-- Find and replace panel.
-		"nvim-pack/nvim-spectre",
-		dependencies = {
-			"nvim-lua/plenary.nvim",
-		},
-		config = function()
-			require("spectre").setup()
-		end,
-	},
 }
