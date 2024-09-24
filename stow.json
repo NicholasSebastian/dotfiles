@@ -19,7 +19,8 @@
   ],
   "files": {
     "git": [
-      "$HOME/.gitconfig"
+      "$HOME/.gitconfig",
+      "$HOME/.gitconfig-personal"
     ],
     "spicetify": [
       "$HOME/.config/spicetify/config-xpui.ini",

@@ -1,9 +1,8 @@
-[credential]
-  helper = store
+[includeIf "gitdir:~/dotfiles"]
+  path = .gitconfig-personal
 
-[user]
-	email = nicholashendrata110900@gmail.com
-	name = Nicholas Oliver Bahary
+[includeIf "gitdir:/mnt/projects/"]
+  path = .gitconfig-personal
 
 [includeIf "gitdir:/mnt/work/"]
   path = .gitconfig-work
@@ -23,3 +22,6 @@
 
 [diff]
   colorMoved = default
+
+[safe]
+	directory = *
