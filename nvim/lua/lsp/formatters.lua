@@ -3,14 +3,27 @@
 
 local null_ls = require("null-ls")
 
+local eslint_config = {
+  condition = function(utils)
+    return utils.root_has_file({
+      ".eslintrc",
+      ".eslintrc.js",
+      ".eslintrc.cjs",
+      ".eslintrc.yaml",
+      ".eslintrc.yml",
+      ".eslintrc.json",
+    })
+  end,
+}
+
 return {
   -- Lua
   null_ls.builtins.formatting.stylua,
 
   -- JavaScript
   null_ls.builtins.formatting.prettierd.with({ extra_args = { "--trailing-comma", "none" } }),
-  require("none-ls.diagnostics.eslint_d"),
-  require("none-ls.code_actions.eslint_d"),
+  require("none-ls.diagnostics.eslint").with(eslint_config),
+  require("none-ls.code_actions.eslint").with(eslint_config),
 
   -- GoLang
   null_ls.builtins.formatting.gofmt,
