@@ -5,7 +5,7 @@
 	email = nicholashendrata110900@gmail.com
 	name = Nicholas Oliver Bahary
 
-[includeIf "gitdir:~/Work/"]
+[includeIf "gitdir:/mnt/work/"]
   path = .gitconfig-work
 
 [core]
