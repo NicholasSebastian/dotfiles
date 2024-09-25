@@ -1,10 +1,5 @@
 local builtin = require("telescope.builtin")
 
-local open_spectre = '<cmd>lua require("spectre").toggle()<CR>'
-local spectre_current_n = '<cmd>lua require("spectre").open_visual({ select_word=true })<CR>'
-local spectre_current_v = '<esc><cmd>lua require("spectre").open_visual()<CR>'
-local spectre_file = '<cmd>lua require("spectre").open_file_search({ select_word=true })<CR>'
-
 -- NeoTree keybindings.
 vim.keymap.set("n", "<C-b>", ":Neotree<CR>")
 vim.keymap.set("n", "<leader>b", ":Neotree<CR>", { desc = "Open the File Tree" })
