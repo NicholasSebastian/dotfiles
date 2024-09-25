@@ -17,6 +17,8 @@ python
 A none exhaustive list of the packages you'll probably wanna have for all this to work the way its expected to:  
 
 ```
+hyprland
+pyprland
 swww
 waypaper
 waybar
@@ -44,6 +46,7 @@ htop
 cava
 jamesdsp
 asusctltray
+zathura
 ```
 
 #### Default Dock Apps
