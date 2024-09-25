@@ -4,79 +4,75 @@
 local null_ls = require("null-ls")
 
 local eslint_config = {
-	condition = function(utils)
-		return utils.root_has_file({
-			"eslint.config.js",
-			"eslint.config.mjs",
-			"eslint.config.cjs",
-			"eslint.config.ts",
-			"eslint.config.mts",
-			"eslint.config.cts",
-		})
-	end,
+  condition = function(utils)
+    return utils.root_has_file({
+      "eslint.config.js",
+      "eslint.config.mjs",
+      "eslint.config.cjs",
+      "eslint.config.ts",
+      "eslint.config.mts",
+      "eslint.config.cts",
+    })
+  end,
 }
 
 return {
-	-- Lua
-	null_ls.builtins.formatting.stylua,
-	null_ls.builtins.diagnostics.selene,
+  -- Lua
+  null_ls.builtins.formatting.stylua,
+  null_ls.builtins.diagnostics.selene,
 
-	-- JavaScript
-	null_ls.builtins.formatting.prettierd.with({ extra_args = { "--trailing-comma", "none" } }),
-	require("none-ls.diagnostics.eslint").with(eslint_config),
-	require("none-ls.code_actions.eslint").with(eslint_config),
+  -- JavaScript
+  null_ls.builtins.formatting.prettierd.with({ extra_args = { "--trailing-comma", "none" } }),
+  require("none-ls.diagnostics.eslint").with(eslint_config),
+  require("none-ls.code_actions.eslint").with(eslint_config),
 
-	-- GoLang
-	null_ls.builtins.formatting.gofmt, -- Already a part of Gopls.
-	null_ls.builtins.formatting.goimports,
-	null_ls.builtins.diagnostics.golangci_lint,
-	null_ls.builtins.code_actions.gomodifytags,
+  -- GoLang
+  null_ls.builtins.formatting.gofmt,         -- Already a part of Gopls.
+  null_ls.builtins.formatting.goimports,
+  null_ls.builtins.diagnostics.golangci_lint, -- Might double up with Gopls. Maybe. Maybe not.
+  null_ls.builtins.code_actions.gomodifytags,
 
-	-- Python
-	null_ls.builtins.formatting.black,
-	null_ls.builtins.formatting.isort,
-	null_ls.builtins.diagnostics.mypy,
-	require("none-ls.diagnostics.ruff"),
+  -- Python
+  null_ls.builtins.formatting.black,
+  null_ls.builtins.formatting.isort,
+  null_ls.builtins.diagnostics.mypy,
+  require("none-ls.diagnostics.ruff"),
 
-	-- Rust
-	require("none-ls.formatting.rustfmt"),
+  -- Rust
+  require("none-ls.formatting.rustfmt"),
 
-	-- CSS, SCSS, SASS, LESS
-	null_ls.builtins.formatting.stylelint,
-	null_ls.builtins.diagnostics.stylelint,
+  -- CSS, SCSS, SASS, LESS
+  null_ls.builtins.formatting.stylelint,
+  null_ls.builtins.diagnostics.stylelint,
 
-	-- Tailwind
-	null_ls.builtins.formatting.rustywind,
+  -- Tailwind
+  null_ls.builtins.formatting.rustywind,
 
-	-- SQL
-	null_ls.builtins.formatting.sqlfluff,
-	null_ls.builtins.diagnostics.sqlfluff,
+  -- SQL
+  null_ls.builtins.formatting.sqlfluff,
+  null_ls.builtins.diagnostics.sqlfluff, -- Might double up with the SQL LSP.
 
-	-- Protocol Buffers
-	null_ls.builtins.formatting.buf,
-	null_ls.builtins.diagnostics.buf,
+  -- Protocol Buffers
+  null_ls.builtins.formatting.buf,
+  null_ls.builtins.diagnostics.buf, -- Might double up with the PB LSP.
 
-	-- Makefiles
-	null_ls.builtins.diagnostics.checkmake,
+  -- Makefiles
+  null_ls.builtins.diagnostics.checkmake,
 
-	-- Docker files
-	null_ls.builtins.diagnostics.hadolint,
+  -- Docker files
+  null_ls.builtins.diagnostics.hadolint, -- Might double up with the Docker LSP.
 
-	-- YAML
-	null_ls.builtins.formatting.yamlfmt,
-	require("none-ls.diagnostics.yamllint"),
+  -- YAML
+  null_ls.builtins.formatting.yamlfmt,
+  require("none-ls.diagnostics.yamllint"), -- Might double up with the YAML LSP.
 
-	-- Git
-	null_ls.builtins.code_actions.gitsigns, -- No need to install anything.
+  -- Git
+  null_ls.builtins.code_actions.gitsigns, -- No need to install anything.
 
-	-- Markdown
-	null_ls.builtins.formatting.remark,
-	null_ls.builtins.diagnostics.markdownlint,
+  -- Markdown
+  null_ls.builtins.formatting.remark,
+  null_ls.builtins.diagnostics.markdownlint,
 
-	-- Shell scripts
-	null_ls.builtins.formatting.shfmt,
-
-	-- HTML
-	-- null_ls.builtins.formatting.tidy, -- Not available in Mason.
-	-- null_ls.builtins.diagnostics.tidy, -- Not available in Mason.
+  -- Shell scripts
+  null_ls.builtins.formatting.shfmt,
 }
