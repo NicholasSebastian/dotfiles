@@ -21,4 +21,4 @@ require("keybinds/general")
 
 -- Load the 'plugins' directory into LazyNvim.
 require("lazy").setup("plugins")
-require("keybinds/misc")
+require("keybinds/others")
