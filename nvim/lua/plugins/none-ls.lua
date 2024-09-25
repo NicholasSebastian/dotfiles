@@ -12,7 +12,7 @@ return {
     },
     config = function()
       require("null-ls").setup({
-        sources = require("lsp/formatters"),
+        sources = require("lsp/formatters-linters"),
         on_attach = function(client, bufnr)
           -- Auto formats on save.
           if client.supports_method("textDocument/formatting") then

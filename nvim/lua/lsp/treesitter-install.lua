@@ -12,6 +12,7 @@ return {
   "hyprlang",
   "javascript",
   "json",
+  "json5",
   "jsonc",
   "lua",
   "make",

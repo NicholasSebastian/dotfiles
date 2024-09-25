@@ -14,7 +14,7 @@ return {
 		-- Default configs for the Neovim LSP.
 		"neovim/nvim-lspconfig",
 		config = function()
-			require("lsp/config")
+			require("lsp/lsp-config")
 			require("keybinds/lsp")
 		end,
 	},
@@ -22,11 +22,11 @@ return {
 		-- Bridges Mason and lspconfig.
 		"williamboman/mason-lspconfig.nvim",
 		dependencies = {
-			"neovim/nvim-lspconfig",
 			"williamboman/mason.nvim",
+			"neovim/nvim-lspconfig",
 		},
 		opts = {
-			ensure_installed = require("lsp/languages"),
+			ensure_installed = require("lsp/mason-install"),
 		},
 	},
 }

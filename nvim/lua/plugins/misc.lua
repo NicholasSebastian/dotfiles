@@ -1,6 +1,5 @@
 -- https://github.com/folke/which-key.nvim
 -- https://github.com/folke/trouble.nvim
--- https://github.com/nvim-pack/nvim-spectre
 
 return {
 	{
