@@ -28,9 +28,6 @@ config.pyright.setup({ capabilities = autocomplete })
 -- Bash and Fish shell script.
 config.bashls.setup({ capabilities = autocomplete })
 
--- SQL.
-config.sqls.setup({ capabilities = autocomplete }) -- Kinda shit.
-
 -- Protocol Buffers.
 config.pbls.setup({ capabilities = autocomplete })
 
@@ -49,75 +46,75 @@ config.hyprls.setup({ capabilities = autocomplete })
 
 -- Lua.
 config.lua_ls.setup({
-	capabilities = autocomplete,
-	settings = {
-		Lua = {
-			diagnostics = {
-				enable = false, -- Let selene handle linting.
-			},
-		},
-	},
+  capabilities = autocomplete,
+  settings = {
+    Lua = {
+      diagnostics = {
+        enable = false, -- Let selene handle linting.
+      },
+    },
+  },
 })
 
 -- Golang.
 config.gopls.setup({
-	capabilities = autocomplete,
-	cmd = { "gopls" },
-	filetypes = { "go", "gomod", "gowork", "gotmpl" },
-	root_dir = util.root_pattern("go.work", "go.mod", ".git"),
-	settings = {
-		gopls = {
-			completeUnimported = true,
-			usePlaceholders = true,
-			analyses = {
-				unusedparams = true,
-			},
-		},
-	},
+  capabilities = autocomplete,
+  cmd = { "gopls" },
+  filetypes = { "go", "gomod", "gowork", "gotmpl" },
+  root_dir = util.root_pattern("go.work", "go.mod", ".git"),
+  settings = {
+    gopls = {
+      completeUnimported = true,
+      usePlaceholders = true,
+      analyses = {
+        unusedparams = true,
+      },
+    },
+  },
 })
 
 -- Rust.
 config.rust_analyzer.setup({
-	capabilities = autocomplete,
-	filetypes = { "rust" },
-	root_dir = util.root_pattern("Cargo.toml"),
-	settings = {
-		["rust-analyzer"] = {
-			cargo = {
-				allFeatures = true,
-			},
-		},
-	},
+  capabilities = autocomplete,
+  filetypes = { "rust" },
+  root_dir = util.root_pattern("Cargo.toml"),
+  settings = {
+    ["rust-analyzer"] = {
+      cargo = {
+        allFeatures = true,
+      },
+    },
+  },
 })
 
 -- JSON.
 config.jsonls.setup({
-	capabilities = autocomplete,
-	settings = {
-		json = {
-			schemas = schemastore.json.schemas(),
-			validate = { enable = true },
-			format = { enable = true },
-		},
-	},
+  capabilities = autocomplete,
+  settings = {
+    json = {
+      schemas = schemastore.json.schemas(),
+      validate = { enable = true },
+      format = { enable = true },
+    },
+  },
 })
 
 -- YAML.
 config.yamlls.setup({
-	capabilities = autocomplete,
-	settings = {
-		redhat = {
-			telemetry = { enabled = false },
-		},
-		yaml = {
-			schemas = schemastore.yaml.schemas(),
-			validate = { enable = true },
-			format = { enable = true },
-			keyOrdering = { enable = false },
-			schemaStore = {
-				enable = false,
-				url = "",
-			},
-		},
-	},
+  capabilities = autocomplete,
+  settings = {
+    redhat = {
+      telemetry = { enabled = false },
+    },
+    yaml = {
+      schemas = schemastore.yaml.schemas(),
+      validate = { enable = true },
+      format = { enable = true },
+      keyOrdering = { enable = false },
+      schemaStore = {
+        enable = false,
+        url = "",
+      },
+    },
+  },
 })
