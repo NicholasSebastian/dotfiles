@@ -48,3 +48,7 @@ fish_add_path /home/nicholas/.spicetify
 
 # Rust
 source "$HOME/.cargo/env.fish"
+
+# Bun
+set --export BUN_INSTALL "$HOME/.bun"
+set --export PATH $BUN_INSTALL/bin $PATH
