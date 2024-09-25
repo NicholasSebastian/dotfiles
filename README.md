@@ -40,11 +40,19 @@ fish
 fastfetch
 bat
 htop
+catppuccin-gtk-theme-mocha   # its in the AUR
+lightly-qt
+numix-circle-icon-theme-git
 ```
 
 ### Extras
 
 ```txt
+nwg-look
+dconf-editor
+qt5ct
+qt6ct
+kvantum
 cava
 jamesdsp
 asusctltray
