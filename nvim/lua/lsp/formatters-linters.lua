@@ -70,7 +70,9 @@ return {
 
   -- Markdown
   null_ls.builtins.formatting.remark,
-  null_ls.builtins.diagnostics.markdownlint,
+  null_ls.builtins.diagnostics.markdownlint.with({
+    extra_args = { "--disable", "MD013", "MD034" }, -- Disable Line Length and Bare URL rules.
+  }),
 
   -- Shell scripts
   null_ls.builtins.formatting.shfmt,
