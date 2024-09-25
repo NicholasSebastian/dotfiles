@@ -371,6 +371,17 @@
   margin: 0 2pt;
 }
 
+#custom-wireshark {
+  background: transparent;
+  background-image: url("/home/nicholas/.config/waybar/icons/wireshark.svg");
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: 28pt;
+  font-size: 28pt;
+  padding: 0 6pt;
+  margin: 0 2pt;
+}
+
 #custom-beekeeper-studio {
   background: transparent;
   background-image: url("/home/nicholas/.config/waybar/icons/beekeeper-studio.svg");

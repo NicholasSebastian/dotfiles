@@ -196,6 +196,7 @@
       "custom/vs-code",
       "custom/zed",
       "custom/docker",
+      "custom/wireshark",
       "custom/beekeeper-studio",
       "custom/postman",
       "custom/figma",
@@ -303,6 +304,11 @@
       "format": "{} ",
       "tooltip-format": "Docker Desktop",
       "on-click": "systemctl --user start docker-desktop"
+    },
+    "custom/wireshark": {
+      "format": "{} ",
+      "tooltip-format": "Wireshark",
+      "on-click": "wireshark"
     },
     "custom/beekeeper-studio": {
       "format": "{} ",
