@@ -50,7 +50,9 @@ return {
 
   -- SQL
   null_ls.builtins.formatting.sqlfluff,
-  null_ls.builtins.diagnostics.sqlfluff, -- Might double up with the SQL LSP.
+  null_ls.builtins.diagnostics.sqlfluff.with({                     -- Might double up with the SQL LSP.
+    extra_args = { "--dialect", "ansi", "--exclude-rules", "RF04" }, -- Disable keyword limitation.
+  }),
 
   -- Protocol Buffers
   null_ls.builtins.formatting.buf,
