@@ -43,6 +43,7 @@ return {
 
   -- CSS, SCSS, SASS, LESS
   null_ls.builtins.formatting.stylelint,
+  -- null_ls.builtins.diagnostics.stylelint, -- Annoying cause it always begs for a config file.
 
   -- Tailwind
   null_ls.builtins.formatting.rustywind,
