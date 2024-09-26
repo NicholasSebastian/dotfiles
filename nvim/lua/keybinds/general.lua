@@ -37,7 +37,7 @@ vim.keymap.set("n", "<leader>tp", ":tabp<CR>", { desc = "Navigate to the previou
 
 -- Split screen.
 vim.keymap.set("n", "<leader>sh", ":split<CR>", { desc = "Split Windows Horizontally" })
-vim.keymap.set("n", "<leader>sv", ":vsplit<CR>", { desc = "Split Windows Vertically" })
+vim.keymap.set("n", "<leader>ss", ":vsplit<CR>", { desc = "Split Windows Vertically" })
 vim.keymap.set("n", "<leader>sx", ":close<CR>", { desc = "Close Current Split" })
 
 -- Navigate between splits.
