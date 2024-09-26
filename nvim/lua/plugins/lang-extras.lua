@@ -16,31 +16,6 @@ return {
     end,
   },
   {
-    -- Colour highlighting.
-    "norcalli/nvim-colorizer.lua",
-    config = function()
-      require("colorizer").setup({
-        "html",
-        "javascriptreact",
-        "typescriptreact",
-        "css",
-        "scss",
-        "sass",
-        "less",
-      }, {
-        RGB = true,      -- #RGB hex codes
-        RRGGBB = true,   -- #RRGGBB hex codes
-        names = true,    -- "Name" codes like Blue
-        RRGGBBAA = true, -- #RRGGBBAA hex codes
-        rgb_fn = true,   -- CSS rgb() and rgba() functions
-        hsl_fn = true,   -- CSS hsl() and hsla() functions
-        css = true,      -- Enable all CSS features: rgb_fn, hsl_fn, names, RGB, RRGGBB
-        css_fn = false,  -- Enable all CSS *functions*: rgb_fn, hsl_fn
-        mode = "background", -- Set the display mode.
-      })
-    end,
-  },
-  {
     -- Colour previews for Tailwind class autocompletion.
     "roobert/tailwindcss-colorizer-cmp.nvim",
     config = function()
@@ -66,6 +41,38 @@ return {
     build = function() -- (optional) will update plugin's deps on every update
       vim.cmd.GoInstallDeps()
     end,
+  },
+  {
+    -- Extends C# omnisharp LSP functionality.
+    "Hoffs/omnisharp-extended-lsp.nvim",
+    lazy = true,
+  },
+  {
+    -- Adds a venv selector for Python.
+    "linux-cultist/venv-selector.nvim",
+    branch = "regexp", -- Use this branch for the new version
+    cmd = "VenvSelect",
+    opts = {
+      settings = {
+        options = {
+          notify_user_on_venv_activation = true,
+        },
+      },
+    },
+    ft = "python",
+    keys = {
+      { "<leader>cv", "<cmd>:VenvSelect<cr>", desc = "Select VirtualEnv", ft = "python" },
+    },
+  },
+  {
+    -- Adds autocompletion and a context menu for Cargo.toml files.
+    "Saecki/crates.nvim",
+    event = { "BufRead Cargo.toml" },
+    opts = {
+      completion = {
+        cmp = { enabled = true },
+      },
+    },
   },
   {
     -- Adds schemas for common JSON/YAML files (e.g. eslintrc, prettierrc, tsconfig, etc).

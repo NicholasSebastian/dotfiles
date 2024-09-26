@@ -24,6 +24,8 @@ return {
 		dependencies = {
 			{ "hrsh7th/cmp-nvim-lsp" }, -- Autocomplete source for the Neovim LSP.
 			{ "hrsh7th/cmp-nvim-lua" }, -- Autocomplete source for the Neovim's Lua API.
+      { "petertriho/cmp-git", opts = {} }, -- Autocomplete source for Git.
+      { "Saecki/crates.nvim" }, -- Autocomplete source for Cargo.toml.
 			{ "hrsh7th/cmp-buffer" },
 			{ "hrsh7th/cmp-path" },
 			{ "onsails/lspkind.nvim" }, -- Icons for the autocomplete items.
@@ -41,7 +43,7 @@ return {
 					completion = cmp.config.window.bordered(),
 					documentation = cmp.config.window.bordered(),
 				},
-				mapping = require("keybinds/nvim-cmp"),
+				mapping = require("keybinds/autocomplete"),
 				sources = config.sources,
 				formatting = config.formatting,
 				sorting = config.sorting,

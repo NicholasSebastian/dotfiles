@@ -17,9 +17,11 @@ return {
     { name = "nvim_lsp" },
     { name = "luasnip", option = { use_show_condition = false } },
   }, {
-    { name = "nvim_lua" },                  -- For editing Neovim lua configs.
-    { name = "buffer",  max_item_count = 10 }, -- The contents of the current open file.
-    { name = "path" },                      -- File system paths.
+    { name = "nvim_lua" }, -- For editing Neovim lua configs.
+    { name = "git" },    -- Git files.
+    { name = "crates" }, -- For editing Cargo.toml.
+    { name = "buffer" }, -- The contents of the current open file.
+    { name = "path" },   -- File system paths.
   }),
   formatting = {
     expandable_indicator = true,
