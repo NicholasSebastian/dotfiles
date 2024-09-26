@@ -2,6 +2,7 @@
 -- https://github.com/kylechui/nvim-surround
 -- https://github.com/numToStr/Comment.nvim
 -- https://github.com/mg979/vim-visual-multi
+-- https://github.com/ggandor/leap.nvim
 
 return {
 	{
@@ -26,7 +27,7 @@ return {
 		end,
 	},
 	{
-    -- Adds useful keybindings for surrounding blocks of text.
+		-- Adds useful keybindings for surrounding blocks of text.
 		"kylechui/nvim-surround",
 		version = "*",
 		event = "VeryLazy",
@@ -39,29 +40,17 @@ return {
 		"mg979/vim-visual-multi",
 		branch = "master",
 	},
-  {
-		-- Colour highlighting.
-		"norcalli/nvim-colorizer.lua",
-		config = function()
-			require("colorizer").setup({
-				"html",
-				"javascriptreact",
-				"typescriptreact",
-				"css",
-				"scss",
-				"sass",
-				"less",
-			}, {
-				RGB = true, -- #RGB hex codes
-				RRGGBB = true, -- #RRGGBB hex codes
-				names = true, -- "Name" codes like Blue
-				RRGGBBAA = true, -- #RRGGBBAA hex codes
-				rgb_fn = true, -- CSS rgb() and rgba() functions
-				hsl_fn = true, -- CSS hsl() and hsla() functions
-				css = true, -- Enable all CSS features: rgb_fn, hsl_fn, names, RGB, RRGGBB
-				css_fn = false, -- Enable all CSS *functions*: rgb_fn, hsl_fn
-				mode = "background", -- Set the display mode.
-			})
-		end,
+	{
+		-- Highlights all instances of the current word at the cursor's position.
+		"RRethy/vim-illuminate",
+		event = "VeryLazy",
+		opts = {
+			delay = 200,
+			large_file_cutoff = 2000,
+			large_file_overrides = {
+				providers = { "lsp", "treesitter", "regex" },
+			},
+		},
+		config = require("keybinds/illuminate"),
 	},
 }

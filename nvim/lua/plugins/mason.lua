@@ -3,30 +3,35 @@
 -- https://github.com/neovim/nvim-lspconfig
 
 return {
-	{
-		-- Package manager for LSPs, linters, formatters, etc.
-		"williamboman/mason.nvim",
-		config = function()
-			require("mason").setup()
-		end,
-	},
-	{
-		-- Default configs for the Neovim LSP.
-		"neovim/nvim-lspconfig",
-		config = function()
-			require("lsp/lsp-config")
-			require("keybinds/lsp")
-		end,
-	},
-	{
-		-- Bridges Mason and lspconfig.
-		"williamboman/mason-lspconfig.nvim",
-		dependencies = {
-			"williamboman/mason.nvim",
-			"neovim/nvim-lspconfig",
-		},
-		opts = {
-			ensure_installed = require("lsp/mason-install"),
-		},
-	},
+  {
+    -- Package manager for LSPs, linters, formatters, etc.
+    "williamboman/mason.nvim",
+    config = function()
+      require("mason").setup()
+    end,
+  },
+  {
+    -- Default configs for the Neovim LSP.
+    "neovim/nvim-lspconfig",
+    opts = {
+      document_highlight = {
+        enabled = false, -- Because we're letting Illuminate handle highlighting.
+      },
+    },
+    config = function()
+      require("lsp/lsp-config")
+      require("keybinds/lsp")
+    end,
+  },
+  {
+    -- Bridges Mason and lspconfig.
+    "williamboman/mason-lspconfig.nvim",
+    dependencies = {
+      "williamboman/mason.nvim",
+      "neovim/nvim-lspconfig",
+    },
+    opts = {
+      ensure_installed = require("lsp/mason-install"),
+    },
+  },
 }

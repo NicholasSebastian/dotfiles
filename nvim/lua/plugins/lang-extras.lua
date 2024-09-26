@@ -1,7 +1,5 @@
 -- https://github.com/windwp/nvim-ts-autotag
 -- https://github.com/olexsmir/gopher.nvim
--- https://github.com/norcalli/nvim-colorizer.lua
--- https://github.com/roobert/tailwindcss-colorizer-cmp.nvim
 -- https://github.com/b0o/SchemaStore.nvim?tab=readme-ov-file
 
 return {
@@ -13,18 +11,6 @@ return {
     },
     config = function()
       require("nvim-ts-autotag").setup({})
-    end,
-  },
-  {
-    -- Colour previews for Tailwind class autocompletion.
-    "roobert/tailwindcss-colorizer-cmp.nvim",
-    config = function()
-      require("tailwindcss-colorizer-cmp").setup({
-        color_square_width = 2,
-      })
-      require("cmp").config.formatting = {
-        format = require("tailwindcss-colorizer-cmp").formatter,
-      }
     end,
   },
   {
