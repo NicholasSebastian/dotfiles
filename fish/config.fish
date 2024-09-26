@@ -52,3 +52,7 @@ source "$HOME/.cargo/env.fish"
 # Bun
 set --export BUN_INSTALL "$HOME/.bun"
 set --export PATH $BUN_INSTALL/bin $PATH
+
+# C-sharp
+set --export PATH "$HOME/.dotnet/tools" $PATH
+
