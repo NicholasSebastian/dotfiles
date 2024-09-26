@@ -11,9 +11,9 @@ return {
 		priority = 1000,
 		opts = {
 			flavour = "mocha",
-      integrations = {
-        overseer = true
-      }
+			integrations = {
+				overseer = true,
+			},
 		},
 		config = function()
 			vim.cmd.colorscheme("catppuccin")
@@ -26,6 +26,27 @@ return {
 		opts = {},
 	},
 	{
+		-- Adds a cool bar at the bottom.
+		"nvim-lualine/lualine.nvim",
+		dependencies = {
+			"nvim-tree/nvim-web-devicons",
+			"letieu/harpoon-lualine",
+		},
+		opts = {
+			theme = "dracula",
+			extensions = { "lazy", "mason", "fzf", "neo-tree", "trouble", "overseer" },
+			sections = {
+				lualine_x = {
+					{ "harpoon2", color_active = { fg = "#89b4fb" } },
+				},
+			},
+			options = {
+				component_separators = "",
+				section_separators = { left = "", right = "" },
+			},
+		},
+	},
+	{
 		-- Makes the tabs look better.
 		"akinsho/bufferline.nvim",
 		version = "*",
@@ -36,21 +57,6 @@ return {
 			options = {
 				mode = "tabs",
 				separator_style = "slant",
-			},
-		},
-	},
-	{
-		-- Adds a cool bar at the bottom.
-		"nvim-lualine/lualine.nvim",
-		dependencies = {
-			"nvim-tree/nvim-web-devicons",
-		},
-		opts = {
-			theme = "dracula",
-			extensions = { "mason", "neo-tree", "trouble" },
-			options = {
-				component_separators = "",
-				section_separators = { left = "", right = "" },
 			},
 		},
 	},
