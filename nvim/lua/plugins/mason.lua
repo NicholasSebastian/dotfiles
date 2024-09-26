@@ -13,11 +13,6 @@ return {
   {
     -- Default configs for the Neovim LSP.
     "neovim/nvim-lspconfig",
-    opts = {
-      document_highlight = {
-        enabled = false, -- Because we're letting Illuminate handle highlighting.
-      },
-    },
     config = function()
       require("lsp/lsp-config")
       require("keybinds/lsp")
