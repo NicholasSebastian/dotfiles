@@ -1,5 +1,5 @@
 -- https://github.com/ThePrimeagen/harpoon/tree/harpoon2
--- ThePrimeAgen's plugin. Allows easy switching between marked files.
+-- ThePrimeagen's plugin. Allows easy switching between marked files.
 
 return {
 	"ThePrimeagen/harpoon",
