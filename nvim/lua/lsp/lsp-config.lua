@@ -33,7 +33,7 @@ config.bashls.setup({ capabilities = autocomplete })
 config.pbls.setup({ capabilities = autocomplete })
 
 -- TOML.
-config.taplo.setup({ capabilities = autocomplete, keys = { keybinds.toml } })
+config.taplo.setup({ capabilities = autocomplete, keys = keybinds.toml })
 
 -- Markdown.
 config.marksman.setup({ capabilities = autocomplete })
@@ -142,7 +142,7 @@ config.omnisharp.setup({
       return require("omnisharp_extended").handler(...)
     end,
   },
-  keys = { keybinds.csharp },
+  keys = keybinds.csharp,
 })
 
 -- JSON.
