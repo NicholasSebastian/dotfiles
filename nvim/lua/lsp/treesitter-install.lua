@@ -2,11 +2,8 @@
 
 return {
 	"bash",
-  "c_sharp",
-	"css",
-	"html",
+	"c_sharp",
 	"hyprlang",
-	"javascript",
 	"lua",
 	"make",
 	"markdown",
@@ -17,15 +14,19 @@ return {
 	"regex",
 	"rust",
 	"ron",
-	"scss",
-	"svelte",
 	"sql",
-	"templ",
 	"toml",
 	"tsx",
-	"typescript",
 	"xml",
 	"yaml",
+
+	-- HTML, CSS, JS, TS, Svelte
+	"html",
+	"css",
+	"scss",
+	"javascript",
+	"typescript",
+	"svelte",
 
 	-- JSON
 	"json",
@@ -42,9 +43,10 @@ return {
 	-- Docker
 	"dockerfile",
 
-	-- Golang
+	-- Golang, Templ
 	"go",
 	"gomod",
 	"gowork",
 	"gosum",
+	"templ",
 }
