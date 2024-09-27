@@ -53,7 +53,7 @@ return {
 
 	-- SQL
 	null_ls.builtins.formatting.sqlfluff,
-	null_ls.builtins.diagnostics.sqlfluff.with({ -- Might double up with the SQL LSP.
+	null_ls.builtins.diagnostics.sqlfluff.with({
 		extra_args = { "--dialect", "ansi", "--exclude-rules", "RF04" }, -- Disable keyword limitation.
 	}),
 
