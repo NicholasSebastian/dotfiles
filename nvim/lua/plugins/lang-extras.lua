@@ -4,16 +4,6 @@
 
 return {
   {
-    -- Automatically opens/closes/renames html, jsx, tsx, svelte, etc. tag pairs.
-    "windwp/nvim-ts-autotag",
-    dependencies = {
-      "nvim-treesitter/nvim-treesitter",
-    },
-    config = function()
-      require("nvim-ts-autotag").setup({})
-    end,
-  },
-  {
     -- Adds useful commands for when working on Golang code.
     "olexsmir/gopher.nvim",
     ft = "go",
@@ -37,6 +27,7 @@ return {
     -- Adds a venv selector for Python.
     "linux-cultist/venv-selector.nvim",
     branch = "regexp", -- Use this branch for the new version
+    ft = "python",
     cmd = "VenvSelect",
     opts = {
       settings = {
@@ -45,7 +36,6 @@ return {
         },
       },
     },
-    ft = "python",
     keys = {
       { "<leader>cv", "<cmd>:VenvSelect<cr>", desc = "Select VirtualEnv", ft = "python" },
     },

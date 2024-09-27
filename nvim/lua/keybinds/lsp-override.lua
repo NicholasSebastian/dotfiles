@@ -7,14 +7,6 @@ local show_crate_docs = function()
 end
 
 return {
-	csharp = {
-		"gd",
-		require("omnisharp_extended").telescope_lsp_definitions,
-		desc = "Go to Definition",
-	},
-	toml = {
-		"K",
-		show_crate_docs,
-		desc = "Show Crate Documentation",
-	},
+	csharp = { "gd", require("omnisharp_extended").telescope_lsp_definitions, desc = "Go to Definition" },
+	toml = { "K", show_crate_docs, desc = "Show Crate Documentation" },
 }

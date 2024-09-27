@@ -31,7 +31,7 @@ return {
       dashboard.button("f", "  > Find File", ":cd $HOME/Workspace | Telescope find_files<CR>"),
       dashboard.button("r", "  > Recent", ":Telescope oldfiles<CR>"),
       dashboard.button("s", "  > Settings", ":e $MYVIMRC | :cd %:p:h | pwd<CR>"),
-      dashboard.button("q", "  > Quit NVIM", ":qa<CR>"),
+      dashboard.button("q", "󰿅  > Quit NVIM", ":qa<CR>"),
     }
     require("alpha").setup(dashboard.config)
 
