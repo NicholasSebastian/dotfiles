@@ -2,7 +2,18 @@
 
 My personal dotfiles containing all my configurations for my Linux system, development apps, etc.
 
-![Desktop](https://github.com/NicholasSebastian/dotfiles/blob/master/screenshots/desktop.png)
+![Desktop](https://github.com/NicholasSebastian/dotfiles/blob/master/screenshots/screenshot_desktop.jpg)
+
+<table width="100%">
+    <tr>
+        <td><img src="https://github.com/NicholasSebastian/dotfiles/blob/master/screenshots/screenshot_neovim.jpg"/></td>
+        <td><img src="https://github.com/NicholasSebastian/dotfiles/blob/master/screenshots/screenshot_spotify.jpg"/></td>
+    </tr>
+    <tr>
+        <td><img src="https://github.com/NicholasSebastian/dotfiles/blob/master/screenshots/screenshot_steam.jpg"/></td>
+        <td><img src="https://github.com/NicholasSebastian/dotfiles/blob/master/screenshots/screenshot_photoshop.jpg"/></td>
+    </tr>
+</table>
 
 ## Prerequisites
 
