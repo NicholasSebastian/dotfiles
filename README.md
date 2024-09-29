@@ -15,6 +15,14 @@ My personal dotfiles containing all my configurations for my Linux system, devel
     </tr>
 </table>
 
+## Important Note
+
+The installation instructions below were made for my own personal use case in mind and are not yet tested!
+Therefore I don't even know if it actually works!
+But if your really interested in some particular part, I suggest you just cheat from or manually copy and paste the config files you want!\ <br />
+Some things another thing to note is how some of the config files may have my name in it,
+or like how my git config file is in it so you might not (or rather should not) accidentally override your own with mine!
+
 ## Prerequisites
 
 Make sure you have the following packages installed for this to work:
