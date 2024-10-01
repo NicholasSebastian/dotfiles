@@ -184,6 +184,7 @@
       "custom/discord",
       "custom/telegram",
       "custom/whatsapp",
+      "custom/darktable",
       "custom/adobe-photoshop",
       "custom/affinity-photo",
       "custom/affinity-designer",
@@ -244,6 +245,11 @@
       "format": "{} ",
       "tooltip-format": "WhatsApp",
       "on-click": "firefoxpwa site launch 01J87X8PCDY36KMBX73TZZVH5H"
+    },
+    "custom/darktable": {
+      "format": "{} ",
+      "tooltip-format": "Darktable",
+      "on-click": "darktable"
     },
     "custom/adobe-photoshop": {
       "format": "{} ",

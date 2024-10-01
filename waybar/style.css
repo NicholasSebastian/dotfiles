@@ -228,6 +228,17 @@
   margin: 0 2pt;
 }
 
+#custom-darktable {
+  background: transparent;
+  background-image: url("/home/nicholas/.config/waybar/icons/darktable.svg");
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: 28pt;
+  font-size: 28pt;
+  padding: 0 6pt;
+  margin: 0 2pt;
+}
+
 #custom-adobe-photoshop {
   background: transparent;
   background-image: url("/home/nicholas/.config/waybar/icons/adobe-photoshop.svg");
