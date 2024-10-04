@@ -190,8 +190,8 @@
       "custom/affinity-designer",
       "custom/affinity-publisher",
       "custom/davinci-resolve",
+      "custom/ryujinx",
       "custom/steam",
-      "custom/lutris",
       "custom/heroic",
       "custom/neovim",
       "custom/vs-code",
@@ -290,6 +290,11 @@
       "format": "{} ",
       "tooltip-format": "Heroic Launcher",
       "on-click": "heroic"
+    },
+    "custom/ryujinx": {
+      "format": "{} ",
+      "tooltip-format": "Ryujinx",
+      "on-click": "flatpak run --socket=wayland org.ryujinx.Ryujinx"
     },
     "custom/neovim": {
       "format": "{} ",

@@ -305,9 +305,9 @@
   margin: 0 2pt;
 }
 
-#custom-lutris {
+#custom-heroic {
   background: transparent;
-  background-image: url("/home/nicholas/.config/waybar/icons/lutris.svg");
+  background-image: url("/home/nicholas/.config/waybar/icons/heroic.svg");
   background-position: center;
   background-repeat: no-repeat;
   background-size: 28pt;
@@ -316,9 +316,20 @@
   margin: 0 2pt;
 }
 
-#custom-heroic {
+#custom-ryujinx {
   background: transparent;
-  background-image: url("/home/nicholas/.config/waybar/icons/heroic.svg");
+  background-image: url("/home/nicholas/.config/waybar/icons/ryujinx.svg");
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: 28pt;
+  font-size: 28pt;
+  padding: 0 6pt;
+  margin: 0 2pt;
+}
+
+#custom-lutris {
+  background: transparent;
+  background-image: url("/home/nicholas/.config/waybar/icons/lutris.svg");
   background-position: center;
   background-repeat: no-repeat;
   background-size: 28pt;
