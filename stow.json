@@ -23,6 +23,9 @@
     "$HOME/.local/share/fonts"
   ],
   "files": {
+    "default-apps": [
+      "$HOME/.config/mimeapps.list"
+    ],
     "git": [
       "$HOME/.gitconfig",
       "$HOME/.gitconfig-personal"
