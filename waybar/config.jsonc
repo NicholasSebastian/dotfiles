@@ -309,7 +309,7 @@
     "custom/zed": {
       "format": "{} ",
       "tooltip-format": "Zed",
-      "on-click": "flatpak run dev.zed.Zed ~/Projects"
+      "on-click": "zed ~/Projects"
     },
     "custom/docker": {
       "format": "{} ",
