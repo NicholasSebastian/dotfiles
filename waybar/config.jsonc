@@ -279,7 +279,7 @@
     "custom/steam": {
       "format": "{} ",
       "tooltip-format": "Steam",
-      "on-click": "steam"
+      "on-click": "prime-run steam"
     },
     "custom/lutris": {
       "format": "{} ",
