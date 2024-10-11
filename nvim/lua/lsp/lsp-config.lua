@@ -17,9 +17,17 @@ config.cssmodules_ls.setup({ capabilities = autocomplete })
 config.somesass_ls.setup({ capabilities = autocomplete })
 config.tailwindcss.setup({ capabilities = autocomplete })
 
--- Javascript and Typescript.
-config.eslint.setup({ capabilities = autocomplete })
-config.ts_ls.setup({ capabilities = autocomplete })
+-- Javascript.
+config.eslint.setup({
+	capabilities = autocomplete,
+	filetypes = { "javascript", "javascriptreact", "javascript.jsx", "vue", "svelte", "astro" },
+})
+
+-- Typescript.
+config.ts_ls.setup({
+	capabilities = autocomplete,
+	filetypes = { "typescript", "typescriptreact", "typescript.tsx" },
+})
 
 -- Python.
 config.pyright.setup({ capabilities = autocomplete })

@@ -23,8 +23,8 @@ return {
 
 	-- JavaScript
 	null_ls.builtins.formatting.prettierd.with({ extra_args = { "--trailing-comma", "none" } }),
-	require("none-ls.diagnostics.eslint").with(eslint_config),
 	require("none-ls.code_actions.eslint").with(eslint_config),
+	-- require("none-ls.diagnostics.eslint").with(eslint_config), -- Overlapping functionality with the eslint LSP.
 
 	-- GoLang
 	null_ls.builtins.formatting.gofumpt,
