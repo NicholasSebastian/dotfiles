@@ -4,12 +4,15 @@ local autocomplete = require("cmp_nvim_lsp").default_capabilities()
 local keybinds = require("keybinds/lsp-override")
 local schemastore = require("schemastore")
 
--- HTML, HTMX, Svelte, and Templ.
+-- HTML, HTMX, Svelte, and Templ, etc.
 config.html.setup({ capabilities = autocomplete })
 config.htmx.setup({ capabilities = autocomplete })
 config.svelte.setup({ capabilities = autocomplete })
 config.templ.setup({ capabilities = autocomplete })
-config.emmet_language_server.setup({ capabilities = autocomplete })
+config.emmet_language_server.setup({
+	capabilities = autocomplete,
+	filetypes = { "css", "eruby", "html", "htmldjango", "pug", "htmlangular" },
+})
 
 -- CSS Variables, CSS Modules, SCSS, Sass, and Tailwind.
 config.css_variables.setup({ capabilities = autocomplete })
