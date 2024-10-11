@@ -5,6 +5,7 @@ x-scheme-handler/tonsite=org.telegram.desktop.desktop
 x-scheme-handler/figma=figma-linux.desktop
 x-scheme-handler/postman=Postman.desktop
 x-scheme-handler/eclipse+command=_usr_lib_dbeaver_.desktop
+x-scheme-handler/gologin=GoLogin.desktop
 
 [Added Associations]
 x-scheme-handler/tonsite=org.telegram.desktop.desktop;
