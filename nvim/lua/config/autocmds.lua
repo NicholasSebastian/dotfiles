@@ -8,7 +8,9 @@ vim.api.nvim_create_autocmd("VimEnter", {
   once = true,
   callback = function()
     if vim.fn.argc() == 0 then
-      vim.cmd("Neotree filesystem reveal")
+      vim.schedule(function()
+        vim.cmd("Neotree filesystem reveal")
+      end)
     end
   end,
 })
