@@ -28,8 +28,6 @@ require("lazy").setup({
     { import = "lazyvim.plugins.extras.editor.refactoring" },
     { import = "lazyvim.plugins.extras.ui.alpha" }, -- Use Alpha.nvim instead of Dashboard.nvim
 
-    { import = "plugins" }, -- import/override with your plugins
-
     { import = "lazyvim.plugins.extras.lang.docker" },
     { import = "lazyvim.plugins.extras.lang.git" },
     { import = "lazyvim.plugins.extras.lang.go" },
@@ -45,6 +43,8 @@ require("lazy").setup({
     { import = "lazyvim.plugins.extras.lang.toml" },
     { import = "lazyvim.plugins.extras.lang.typescript" },
     { import = "lazyvim.plugins.extras.lang.yaml" },
+
+    { import = "plugins" }, -- import/override with your plugins
 
     { import = "lazyvim.plugins.extras.linting.eslint" }, -- Use eslint to fix TS/JS on save
     { import = "lazyvim.plugins.extras.formatting.prettier" }, -- Use prettier for formatting TS/JS
