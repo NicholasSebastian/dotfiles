@@ -29,7 +29,6 @@ vim.keymap.del("n", "<Leader>l")
 vim.keymap.del("n", "<Leader>L")
 vim.keymap.del("n", "<Leader>K")
 vim.keymap.del("n", "<Leader>`")
-vim.keymap.del("n", "<Leader>,")
 
 -- Jump to buffers with number keys. Feels just like Harpoon.
 vim.keymap.set("n", "1", "<cmd>BufferLineGoToBuffer 1<cr>", { desc = "Go to Buffer 1" })
