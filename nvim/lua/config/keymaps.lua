@@ -24,4 +24,20 @@ vim.keymap.set("n", "<C-Right>", "<cmd>wincmd l<cr>", { desc = "Go to Right Wind
 -- Shortcut to go to Neotree. Old habits die hard.
 vim.keymap.set("n", "<C-b>", "<cmd>Neotree filesystem reveal<cr>", { desc = "Reveal NeoTree Explorer" })
 
--- TODO: Add keymaps to number keys for jumping into bufferline buffers.
+-- Delete some more unused keymaps.
+vim.keymap.del("n", "<Leader>l")
+vim.keymap.del("n", "<Leader>L")
+vim.keymap.del("n", "<Leader>K")
+vim.keymap.del("n", "<Leader>`")
+vim.keymap.del("n", "<Leader>,")
+
+-- Jump to buffers with number keys. Feels just like Harpoon.
+vim.keymap.set("n", "1", "<cmd>BufferLineGoToBuffer 1<cr>", { desc = "Go to Buffer 1" })
+vim.keymap.set("n", "2", "<cmd>BufferLineGoToBuffer 2<cr>", { desc = "Go to Buffer 2" })
+vim.keymap.set("n", "3", "<cmd>BufferLineGoToBuffer 3<cr>", { desc = "Go to Buffer 3" })
+vim.keymap.set("n", "4", "<cmd>BufferLineGoToBuffer 4<cr>", { desc = "Go to Buffer 4" })
+vim.keymap.set("n", "5", "<cmd>BufferLineGoToBuffer 5<cr>", { desc = "Go to Buffer 5" })
+vim.keymap.set("n", "6", "<cmd>BufferLineGoToBuffer 6<cr>", { desc = "Go to Buffer 6" })
+vim.keymap.set("n", "7", "<cmd>BufferLineGoToBuffer 7<cr>", { desc = "Go to Buffer 7" })
+vim.keymap.set("n", "8", "<cmd>BufferLineGoToBuffer 8<cr>", { desc = "Go to Buffer 8" })
+vim.keymap.set("n", "9", "<cmd>BufferLineGoToBuffer 9<cr>", { desc = "Go to Buffer 9" })
