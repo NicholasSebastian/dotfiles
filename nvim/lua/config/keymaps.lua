@@ -23,3 +23,5 @@ vim.keymap.set("n", "<C-Right>", "<cmd>wincmd l<cr>", { desc = "Go to Right Wind
 
 -- Shortcut to go to Neotree. Old habits die hard.
 vim.keymap.set("n", "<C-b>", "<cmd>Neotree filesystem reveal<cr>", { desc = "Reveal NeoTree Explorer" })
+
+-- TODO: Add keymaps to number keys for jumping into bufferline buffers.
