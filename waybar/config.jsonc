@@ -8,15 +8,8 @@
     "margin-bottom": 0,
     "margin-left": 4,
     "margin-right": 4,
-    "modules-left": [
-      "custom/rofi",
-      "hyprland/workspaces",
-      "mpris",
-      "hyprland/window"
-    ],
-    "modules-center": [
-      "clock"
-    ],
+    "modules-left": ["custom/rofi", "hyprland/workspaces", "mpris", "hyprland/window"],
+    "modules-center": ["clock"],
     "modules-right": [
       "memory",
       "tray",
@@ -102,11 +95,7 @@
     },
     "backlight": {
       "format": "{icon} <b>{percent}%</b>",
-      "format-icons": [
-        "󰃞",
-        "󰃟",
-        "󰃠"
-      ],
+      "format-icons": ["󰃞", "󰃟", "󰃠"],
       "tooltip": false
     },
     "pulseaudio": {
@@ -116,29 +105,16 @@
       "format-bluetooth-muted": "󰝟 ",
       "format-icons": {
         "headset": "",
-        "default": [
-          "󰕿",
-          "󰖀",
-          "󰕾"
-        ]
+        "default": ["󰕿", "󰖀", "󰕾"]
       },
       "tooltip": true,
       "on-click": "pavucontrol",
-      "ignored-sinks": [
-        "JamesDSP Sink",
-        "HDA NVidia Digital Stereo (HDMI)"
-      ]
+      "ignored-sinks": ["JamesDSP Sink", "HDA NVidia Digital Stereo (HDMI)"]
     },
     "battery": {
       "format": "{icon} {capacity}%",
       "format-plugged": " {capacity}%",
-      "format-icons": [
-        "",
-        "",
-        "",
-        "",
-        ""
-      ],
+      "format-icons": ["", "", "", "", ""],
       "max-length": 25,
       "tooltip": true,
       "interval": 5,
@@ -193,6 +169,7 @@
       "custom/ryujinx",
       "custom/steam",
       "custom/heroic",
+      "custom/unity",
       "custom/neovim",
       "custom/vs-code",
       "custom/zed",
@@ -295,6 +272,11 @@
       "format": "{} ",
       "tooltip-format": "Ryujinx",
       "on-click": "flatpak run --socket=wayland org.ryujinx.Ryujinx"
+    },
+    "custom/unity": {
+      "format": "{} ",
+      "tooltip-format": "Unity",
+      "on-click": "unityhub"
     },
     "custom/neovim": {
       "format": "{} ",
