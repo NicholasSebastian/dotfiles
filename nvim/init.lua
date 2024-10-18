@@ -1,4 +1,15 @@
 require("config.lazy")
+local conform = require("conform")
+
+-- stylua: ignore
+conform.formatters.prettier = {
+  prepend_args = {
+    "--print-width", "120",
+    "--trailing-comma", "none",
+    "--bracket-same-line",
+    "--arrow-parens", "avoid",
+  },
+}
 
 -- Tile the window when first entering Neovim.
 vim.api.nvim_create_autocmd("UIEnter", {
