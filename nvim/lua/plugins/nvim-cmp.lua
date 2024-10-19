@@ -26,5 +26,8 @@ return {
         cmp.config.compare.order,
       },
     }
+    opts.experimental = {
+      ghost_text = false, -- Because the ghost text is kinda annoying.
+    }
   end,
 }
