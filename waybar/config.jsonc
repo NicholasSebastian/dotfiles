@@ -172,7 +172,6 @@
       "custom/unity",
       "custom/neovim",
       "custom/vs-code",
-      "custom/zed",
       "custom/docker",
       "custom/wireshark",
       "custom/beekeeper-studio",
@@ -287,11 +286,6 @@
       "format": "{} ",
       "tooltip-format": "Visual Studio Code",
       "on-click": "vscodium"
-    },
-    "custom/zed": {
-      "format": "{} ",
-      "tooltip-format": "Zed",
-      "on-click": "zed ~/Projects"
     },
     "custom/docker": {
       "format": "{} ",
