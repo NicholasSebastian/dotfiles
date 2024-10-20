@@ -11,6 +11,18 @@ conform.formatters.prettier = {
   },
 }
 
+-- Set Golang specific indent options.
+vim.api.nvim_create_autocmd("FileType", {
+  pattern = "go",
+  group = vim.api.nvim_create_augroup("Golang_indent", { clear = true }),
+  callback = function()
+    vim.opt.expandtab = false
+    vim.opt.tabstop = 4
+    vim.opt.softtabstop = 4
+    vim.opt.shiftwidth = 4
+  end,
+})
+
 -- Tile the window when first entering Neovim.
 vim.api.nvim_create_autocmd("UIEnter", {
   group = vim.api.nvim_create_augroup("Hyprland_tile_on_open", { clear = true }),
