@@ -4,9 +4,11 @@
 
 vim.opt.relativenumber = false -- Disable relative line numbers.
 vim.opt.scrolloff = 8 -- Lines of vertical spacing from the edges of the window.
-vim.opt.softtabstop = 2
 vim.opt.backspace = "indent,eol,start" -- Allow the backspace to behave the way its supposed to.
 vim.opt.updatetime = 50 -- Faster updates.
+
+vim.opt.tabstop = 4 -- The number of spaces tabs count for. The default value fucks up Golang.
+vim.opt.softtabstop = 4
 
 -- Highlight searches per character.
 vim.opt.hlsearch = false
