@@ -16,6 +16,21 @@ return {
           },
         },
       },
+      gopls = {
+        settings = {
+          gopls = {
+            hints = { -- Disable inlay hints cause they're kinda annoying.
+              assignVariableTypes = false,
+              compositeLiteralFields = false,
+              compositeLiteralTypes = false,
+              constantValues = false,
+              functionTypeParameters = false,
+              parameterNames = false,
+              rangeVariableTypes = false,
+            },
+          },
+        },
+      },
     },
   },
 }
