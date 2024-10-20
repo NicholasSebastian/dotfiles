@@ -5,5 +5,7 @@
     "window.titleBarStyle": "custom",
     "security.workspace.trust.untrustedFiles": "open",
     "editor.fontFamily": "'JetBrainsMono Nerd Font', monospace",
-    "editor.fontLigatures": true
+    "editor.fontLigatures": true,
+    "window.restoreWindows": "none",
+    "workbench.startupEditor": "none"
 }
