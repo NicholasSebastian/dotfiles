@@ -3,6 +3,7 @@
 -- Add any additional options here
 
 vim.opt.relativenumber = false -- Disable relative line numbers.
+vim.opt.list = false
 vim.opt.scrolloff = 8 -- Lines of vertical spacing from the edges of the window.
 vim.opt.softtabstop = 2
 vim.opt.backspace = "indent,eol,start" -- Allow the backspace to behave the way its supposed to.
