@@ -228,17 +228,6 @@
   margin: 0 2pt;
 }
 
-#custom-darktable {
-  background: transparent;
-  background-image: url("/home/nicholas/.config/waybar/icons/darktable.svg");
-  background-position: center;
-  background-repeat: no-repeat;
-  background-size: 28pt;
-  font-size: 28pt;
-  padding: 0 6pt;
-  margin: 0 2pt;
-}
-
 #custom-adobe-photoshop {
   background: transparent;
   background-image: url("/home/nicholas/.config/waybar/icons/adobe-photoshop.svg");
@@ -250,31 +239,9 @@
   margin: 0 2pt;
 }
 
-#custom-affinity-designer {
+#custom-inkscape {
   background: transparent;
-  background-image: url("/home/nicholas/.config/waybar/icons/affinity-designer.svg");
-  background-position: center;
-  background-repeat: no-repeat;
-  background-size: 28pt;
-  font-size: 28pt;
-  padding: 0 6pt;
-  margin: 0 2pt;
-}
-
-#custom-affinity-photo {
-  background: transparent;
-  background-image: url("/home/nicholas/.config/waybar/icons/affinity-photo.svg");
-  background-position: center;
-  background-repeat: no-repeat;
-  background-size: 28pt;
-  font-size: 28pt;
-  padding: 0 6pt;
-  margin: 0 2pt;
-}
-
-#custom-affinity-publisher {
-  background: transparent;
-  background-image: url("/home/nicholas/.config/waybar/icons/affinity-publisher.svg");
+  background-image: url("/home/nicholas/.config/waybar/icons/inkscape.svg");
   background-position: center;
   background-repeat: no-repeat;
   background-size: 28pt;
@@ -360,6 +327,50 @@
   margin: 0 2pt;
 }
 
+#custom-jetbrains-rider {
+  background: transparent;
+  background-image: url("/home/nicholas/.config/waybar/icons/jetbrains-rider.svg");
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: 28pt;
+  font-size: 28pt;
+  padding: 0 6pt;
+  margin: 0 2pt;
+}
+
+#custom-jetbrains-idea {
+  background: transparent;
+  background-image: url("/home/nicholas/.config/waybar/icons/jetbrains-idea.svg");
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: 28pt;
+  font-size: 28pt;
+  padding: 0 6pt;
+  margin: 0 2pt;
+}
+
+#custom-jetbrains-pycharm {
+  background: transparent;
+  background-image: url("/home/nicholas/.config/waybar/icons/jetbrains-pycharm.svg");
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: 28pt;
+  font-size: 28pt;
+  padding: 0 6pt;
+  margin: 0 2pt;
+}
+
+#custom-jetbrains-webstorm {
+  background: transparent;
+  background-image: url("/home/nicholas/.config/waybar/icons/jetbrains-webstorm.svg");
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: 28pt;
+  font-size: 28pt;
+  padding: 0 6pt;
+  margin: 0 2pt;
+}
+
 #custom-neovim {
   background: transparent;
   background-image: url("/home/nicholas/.config/waybar/icons/neovim.svg");
@@ -385,17 +396,6 @@
 #custom-docker {
   background: transparent;
   background-image: url("/home/nicholas/.config/waybar/icons/docker.svg");
-  background-position: center;
-  background-repeat: no-repeat;
-  background-size: 28pt;
-  font-size: 28pt;
-  padding: 0 6pt;
-  margin: 0 2pt;
-}
-
-#custom-wireshark {
-  background: transparent;
-  background-image: url("/home/nicholas/.config/waybar/icons/wireshark.svg");
   background-position: center;
   background-repeat: no-repeat;
   background-size: 28pt;
