@@ -239,9 +239,31 @@
   margin: 0 2pt;
 }
 
-#custom-inkscape {
+#custom-affinity-designer {
   background: transparent;
-  background-image: url("/home/nicholas/.config/waybar/icons/inkscape.svg");
+  background-image: url("/home/nicholas/.config/waybar/icons/affinity-designer.svg");
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: 28pt;
+  font-size: 28pt;
+  padding: 0 6pt;
+  margin: 0 2pt;
+}
+
+#custom-affinity-photo {
+  background: transparent;
+  background-image: url("/home/nicholas/.config/waybar/icons/affinity-photo.svg");
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: 28pt;
+  font-size: 28pt;
+  padding: 0 6pt;
+  margin: 0 2pt;
+}
+
+#custom-affinity-publisher {
+  background: transparent;
+  background-image: url("/home/nicholas/.config/waybar/icons/affinity-publisher.svg");
   background-position: center;
   background-repeat: no-repeat;
   background-size: 28pt;
