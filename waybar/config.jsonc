@@ -162,10 +162,12 @@
       "custom/whatsapp",
       // "custom/darktable",
       "custom/adobe-photoshop",
-      // "custom/inkscape",
-      "custom/affinity-photo",
-      "custom/affinity-designer",
-      "custom/affinity-publisher",
+      "custom/gimp",
+      "custom/pinta",
+      "custom/inkscape",
+      // "custom/affinity-photo",
+      // "custom/affinity-designer",
+      // "custom/affinity-publisher",
       "custom/davinci-resolve",
       "custom/ryujinx",
       "custom/steam",
@@ -250,6 +252,16 @@
       "format": "{} ",
       "tooltip-format": "Affinity Publisher",
       "on-click": "~/.config/waybar/scripts/affinity_publisher.sh"
+    },
+    "custom/gimp": {
+      "format": "{} ",
+      "tooltip-format": "PhotoGIMP",
+      "on-click": "gimp"
+    },
+    "custom/pinta": {
+      "format": "{} ",
+      "tooltip-format": "Pinta",
+      "on-click": "pinta"
     },
     "custom/inkscape": {
       "format": "{} ",

@@ -239,9 +239,9 @@
   margin: 0 2pt;
 }
 
-#custom-affinity-designer {
+#custom-gimp {
   background: transparent;
-  background-image: url("/home/nicholas/.config/waybar/icons/affinity-designer.svg");
+  background-image: url("/home/nicholas/.config/waybar/icons/gimp.svg");
   background-position: center;
   background-repeat: no-repeat;
   background-size: 28pt;
@@ -250,9 +250,9 @@
   margin: 0 2pt;
 }
 
-#custom-affinity-photo {
+#custom-pinta {
   background: transparent;
-  background-image: url("/home/nicholas/.config/waybar/icons/affinity-photo.svg");
+  background-image: url("/home/nicholas/.config/waybar/icons/pinta.svg");
   background-position: center;
   background-repeat: no-repeat;
   background-size: 28pt;
@@ -261,9 +261,9 @@
   margin: 0 2pt;
 }
 
-#custom-affinity-publisher {
+#custom-inkscape {
   background: transparent;
-  background-image: url("/home/nicholas/.config/waybar/icons/affinity-publisher.svg");
+  background-image: url("/home/nicholas/.config/waybar/icons/inkscape.svg");
   background-position: center;
   background-repeat: no-repeat;
   background-size: 28pt;
