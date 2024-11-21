@@ -7,5 +7,6 @@
     "editor.fontFamily": "'JetBrainsMono Nerd Font', monospace",
     "editor.fontLigatures": true,
     "window.restoreWindows": "none",
-    "workbench.startupEditor": "none"
+    "workbench.startupEditor": "none",
+    "editor.wordWrap": "on"
 }
