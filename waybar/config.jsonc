@@ -109,7 +109,7 @@
       },
       "tooltip": true,
       "on-click": "pavucontrol",
-      "ignored-sinks": ["JamesDSP Sink", "HDA NVidia Digital Stereo (HDMI)"]
+      "ignored-sinks": ["JamesDSP Sink", "Easy Effects Sink", "HDA NVidia Digital Stereo (HDMI)"]
     },
     "battery": {
       "format": "{icon} {capacity}%",
