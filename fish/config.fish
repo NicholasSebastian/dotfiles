@@ -1,9 +1,9 @@
 # Format man pages
-set -x MANROFFOPT "-c"
+set -x MANROFFOPT -c
 set -x MANPAGER "sh -c 'col -bx | bat -l man -p'"
 
 # Enable Wayland support for different applications
-if [ "$XDG_SESSION_TYPE" = "wayland" ]
+if [ "$XDG_SESSION_TYPE" = wayland ]
     set -gx WAYLAND 1
     set -gx QT_QPA_PLATFORM 'wayland;xcb'
     set -gx GDK_BACKEND 'wayland,x11'
@@ -22,7 +22,7 @@ set -U __done_notification_urgency_level low
 
 # Apply .profile
 if test -f ~/.fish_profile
-  source ~/.fish_profile
+    source ~/.fish_profile
 end
 
 # Add ~/.local/bin to PATH
@@ -34,7 +34,7 @@ end
 
 ## Run fastfetch at start
 function fish_greeting
-  fastfetch
+    fastfetch
 end
 
 # Aliases
@@ -49,10 +49,13 @@ fish_add_path /home/nicholas/.spicetify
 # Rust
 source "$HOME/.cargo/env.fish"
 
+# Go
+set --export GOPATH "$HOME/go"
+set --export PATH $GOPATH/bin $PATH
+
 # Bun
 set --export BUN_INSTALL "$HOME/.bun"
 set --export PATH $BUN_INSTALL/bin $PATH
 
 # C-sharp
 set --export PATH "$HOME/.dotnet/tools" $PATH
-
