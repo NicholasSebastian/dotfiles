@@ -216,7 +216,7 @@
     "custom/discord": {
       "format": "{} ",
       "tooltip-format": "Discord",
-      "on-click": "flatpak run dev.vencord.Vesktop"
+      "on-click": "flatpak run dev.vencord.Vesktop --enable-gpu-rasterization --ignore-gpu-blocklist --enable-features=VaapiVideoDecoder --use-gl=desktop --enable-zero-copy"
     },
     "custom/telegram": {
       "format": "{} ",
