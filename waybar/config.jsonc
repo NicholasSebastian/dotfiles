@@ -161,10 +161,10 @@
       "custom/telegram",
       "custom/whatsapp",
       // "custom/darktable",
-      "custom/adobe-photoshop",
-      "custom/gimp",
-      "custom/pinta",
-      "custom/inkscape",
+      // "custom/adobe-photoshop",
+      // "custom/gimp",
+      // "custom/pinta",
+      // "custom/inkscape",
       // "custom/affinity-photo",
       // "custom/affinity-designer",
       // "custom/affinity-publisher",
@@ -185,7 +185,8 @@
       "custom/figma",
       "custom/excalidraw",
       "custom/calculator",
-      "custom/obsidian"
+      "custom/obsidian",
+      "custom/anki"
     ],
     "custom/file-manager": {
       "format": "{} ",
@@ -362,6 +363,11 @@
       "format": "{} ",
       "tooltip-format": "Calculator",
       "on-click": "qalculate-gtk"
+    },
+    "custom/anki": {
+      "format": "{} ",
+      "tooltip-format": "Anki",
+      "on-click": "anki"
     }
   }
 ]
