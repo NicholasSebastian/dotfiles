@@ -184,9 +184,9 @@
       "custom/postman",
       "custom/figma",
       "custom/excalidraw",
-      "custom/calculator",
+      "custom/anki",
       "custom/obsidian",
-      "custom/anki"
+      "custom/calculator"
     ],
     "custom/file-manager": {
       "format": "{} ",
