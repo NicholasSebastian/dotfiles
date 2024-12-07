@@ -181,7 +181,8 @@
       "custom/vs-code",
       "custom/docker",
       "custom/beekeeper-studio",
-      "custom/postman",
+      // "custom/postman",
+      "custom/bruno",
       "custom/figma",
       "custom/excalidraw",
       "custom/anki",
@@ -358,6 +359,11 @@
       "format": "{} ",
       "tooltip-format": "Postman",
       "on-click": "postman"
+    },
+    "custom/bruno": {
+      "format": "{} ",
+      "tooltip-format": "Bruno",
+      "on-click": "flatpak run com.usebruno.Bruno"
     },
     "custom/calculator": {
       "format": "{} ",

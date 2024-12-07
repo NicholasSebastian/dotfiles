@@ -459,9 +459,9 @@
   margin: 0 2pt;
 }
 
-#custom-postman {
+#custom-bruno {
   background: transparent;
-  background-image: url("/home/nicholas/.config/waybar/icons/postman.svg");
+  background-image: url("/home/nicholas/.config/waybar/icons/bruno.svg");
   background-position: center;
   background-repeat: no-repeat;
   background-size: 28pt;
