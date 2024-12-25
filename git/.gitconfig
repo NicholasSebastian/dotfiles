@@ -5,6 +5,9 @@
   path = .gitconfig-personal
 
 [includeIf "gitdir:/mnt/work/"]
+  path = .gitconfig-personal
+
+[includeIf "gitdir:/mnt/work2/"]
   path = .gitconfig-work
 
 [core]
