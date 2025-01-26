@@ -1,0 +1,4 @@
+-Xmx2048m
+-Dide.ui.scale=1.75
+-Dsun.java2d.uiScale.enabled=true
+-Dsun.java2d.uiScale=1.75
