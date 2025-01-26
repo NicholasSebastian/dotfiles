@@ -23,19 +23,15 @@
     "$HOME/.local/share/fonts"
   ],
   "files": {
-    "default-apps": [
-      "$HOME/.config/mimeapps.list"
+    "default-apps": ["$HOME/.config/mimeapps.list"],
+    "git": ["$HOME/.gitconfig", "$HOME/.gitconfig-personal"],
+    "jetbrains": [
+      "$HOME/.config/JetBrains/Rider2024.2/rider64.vmoptions",
+      "$HOME/.config/JetBrains/IdeaIC2024.2/idea64.vmoptions",
+      "$HOME/.config/JetBrains/WebStorm2024.2/webstorm64.vmoptions",
+      "$HOME/.config/JetBrains/PyCharmCE2024.2/pycharm64.vmoptions"
     ],
-    "git": [
-      "$HOME/.gitconfig",
-      "$HOME/.gitconfig-personal"
-    ],
-    "spicetify": [
-      "$HOME/.config/spicetify/config-xpui.ini",
-      "$HOME/.config/spicetify/Themes"
-    ],
-    "vscodium": [
-      "$HOME/.config/VSCodium/User/settings.json"
-    ]
+    "spicetify": ["$HOME/.config/spicetify/config-xpui.ini", "$HOME/.config/spicetify/Themes"],
+    "vscodium": ["$HOME/.config/VSCodium/User/settings.json"]
   }
 }
