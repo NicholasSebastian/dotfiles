@@ -2,7 +2,7 @@
 
 My personal dotfiles containing all my configurations for my Linux system, development apps, etc.
 
-![Desktop](https://github.com/NicholasSebastian/dotfiles/blob/master/screenshots/screenshot_desktop.jpg)
+![Desktop](https://github.com/NicholasSebastian/dotfiles/blob/2024/screenshots/screenshot_desktop.jpg)
 
 <table width="100%">
     <tr>
