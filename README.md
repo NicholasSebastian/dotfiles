@@ -6,12 +6,12 @@ My personal dotfiles containing all my configurations for my Linux system, devel
 
 <table width="100%">
     <tr>
-        <td><img src="https://github.com/NicholasSebastian/dotfiles/blob/master/screenshots/screenshot_neovim.jpg"/></td>
-        <td><img src="https://github.com/NicholasSebastian/dotfiles/blob/master/screenshots/screenshot_spotify.jpg"/></td>
+        <td><img src="https://github.com/NicholasSebastian/dotfiles/blob/2024/screenshots/screenshot_neovim.jpg"/></td>
+        <td><img src="https://github.com/NicholasSebastian/dotfiles/blob/2024/screenshots/screenshot_spotify.jpg"/></td>
     </tr>
     <tr>
-        <td><img src="https://github.com/NicholasSebastian/dotfiles/blob/master/screenshots/screenshot_steam.jpg"/></td>
-        <td><img src="https://github.com/NicholasSebastian/dotfiles/blob/master/screenshots/screenshot_photoshop.jpg"/></td>
+        <td><img src="https://github.com/NicholasSebastian/dotfiles/blob/2024/screenshots/screenshot_steam.jpg"/></td>
+        <td><img src="https://github.com/NicholasSebastian/dotfiles/blob/2024/screenshots/screenshot_photoshop.jpg"/></td>
     </tr>
 </table>
 
