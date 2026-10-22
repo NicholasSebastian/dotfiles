@@ -33,7 +33,7 @@ Usage: ${0##*/} [options] [module...]
   --skip a,b        leave these out (modules that need them are skipped too)
   --yes, -y         no menu: run the default modules (or --only/--all ones)
   --force           don't ask before risky modules (secure_boot, clock, kvm,
-                    noctalia, noctalia_greeter); --yes alone still asks
+                    noctalia, noctalia_greeter, drives); --yes alone still asks
                     (cleanup always asks, even with --force)
   --dry-run         show what would happen; no sudo, no network, no changes
   --list            list modules with defaults and dependencies
