@@ -36,10 +36,13 @@ _CLEANUP_GNOME=(
 
 # --- Helpers -----------------------------------------------------------------
 
+# Packages 'apt-get -s ARGS...' would remove (simulation, no root needed).
+_cleanup_apt_removes() { apt-get -s "$@" 2>/dev/null | awk '$1 == "Remv" { print $2 }' || true; }
+
 # Packages apt would remove along with PKG... (simulation, no root needed).
 _cleanup_sim() {
   (( $# )) || return 0
-  apt-get -s remove "$@" 2>/dev/null | awk '$1 == "Remv" { print $2 }' || true
+  _cleanup_apt_removes remove "$@"
 }
 
 # _cleanup_outside LIST OK: lines of LIST that aren't in OK.
@@ -139,8 +142,9 @@ _cleanup_show() {
   if [[ -n "$also" ]]; then printf '       (also removes: %s)\n' "${also//$'\n'/ }"; fi
 }
 
-# _cleanup_ask_one QUESTION PKG...: y/N for the whole set.
+# _cleanup_ask_one QUESTION PKG...: y/N for the whole set. Does nothing without PKGs.
 _cleanup_ask_one() {
+  (( $# > 1 )) || return 0
   local question="$1"; shift
   _cleanup_show "$@"
   if is_dry; then info "(dry run: would ask) $question"; _CLEANUP_REMOVE+=("$@"); return 0; fi
@@ -148,7 +152,9 @@ _cleanup_ask_one() {
 }
 
 # _cleanup_ask_all QUESTION PKG...: keep all, remove all, or pick one by one.
+# Does nothing without PKGs.
 _cleanup_ask_all() {
+  (( $# > 1 )) || return 0
   local question="$1" p; shift
   _cleanup_show "$@"
   if is_dry; then info "(dry run: would ask) $question"; _CLEANUP_REMOVE+=("$@"); return 0; fi
@@ -167,7 +173,6 @@ _cleanup_greeter() {
   local -a c=()
   if [[ "$(dm_unit)" != greetd.service ]] || ! pkg_installed noctalia-greeter; then return 0; fi
   mapfile -t c < <(_cleanup_candidates "" otter-greeter)
-  (( ${#c[@]} )) || return 0
   _cleanup_ask_one "Remove otter-greeter? Noctalia Greeter is your login screen now." "${c[@]}"
 }
 
@@ -175,7 +180,6 @@ _cleanup_terminal() {
   local -a c=()
   pkg_installed ghostty || return 0
   mapfile -t c < <(_cleanup_candidates otter-shell-plugins,otter-bluetooth-plugin otter-term)
-  (( ${#c[@]} )) || return 0
   _cleanup_ask_one "Remove Otter Terminal (otter-term)? Ghostty is your terminal." "${c[@]}"
   if _cleanup_picked otter-term; then _CLEANUP_ALLOW+=(otter-shell-plugins otter-bluetooth-plugin); fi
 }
@@ -236,7 +240,6 @@ _cleanup_otter_shell() {
     | awk '$1 == "installed" && $2 !~ /^otter-(files|term|greeter)$/ { print $2 }' || true)
   (( ${#all[@]} )) || return 0
   mapfile -t c < <(_cleanup_filter "" "${all[@]}")
-  (( ${#c[@]} )) || return 0
   _cleanup_ask_all "Noctalia replaces the Otter shell (bar, dock, launcher, notifications, lock, OSD...). Remove these Otter packages?" "${c[@]}"
 }
 
@@ -250,7 +253,6 @@ _cleanup_browser() {
   _CLEANUP_BROWSER_NAME="${browsers[0]:-}"
   (( ${#browsers[@]} )) || return 0
   mapfile -t c < <(_cleanup_candidates "" chromium)
-  (( ${#c[@]} )) || return 0
   local names="${browsers[0]}"
   if (( ${#browsers[@]} > 1 )); then names+=" and ${browsers[1]}"; fi
   _cleanup_ask_one "Remove Chromium? You use $names." "${c[@]}"
@@ -263,7 +265,6 @@ _cleanup_gnome() {
   mapfile -t mutter < <(dpkg-query -W -f='${db:Status-Status} ${Package}\n' 'libmutter-*' 'gir1.2-mutter-*' 2>/dev/null \
     | awk '$1 == "installed" && $2 ~ /^(libmutter-[0-9]+-0|gir1\.2-mutter-[0-9]+)$/ { print $2 }' || true)
   mapfile -t c < <(_cleanup_candidates "" "${_CLEANUP_GNOME[@]}" "${mutter[@]}")
-  (( ${#c[@]} )) || return 0
   _cleanup_ask_all "These GNOME desktop pieces are left over from an earlier GNOME install and aren't used by Hyprland. Remove them?" "${c[@]}"
 }
 
@@ -299,10 +300,14 @@ _cleanup_fix_configs() {
   local -A desktop=([nemo]=nemo.desktop [otter-files]=org.otter_shell.OtterFiles.desktop [nautilus]=org.gnome.Nautilus.desktop)
   local -a sed_args=()
 
-  if _cleanup_gone otter-greeter && grep -qs otter-greeter "$HOME/restore-login-screen.sh"; then
-    followup manual "$HOME/restore-login-screen.sh switches back to otter-greeter, which was removed: run 'sudo apt install otter-greeter' before using it."
+  if _cleanup_gone otter-greeter && pkg_installed noctalia-greeter; then
+    # Removing a display manager can relink the login screen; pin greetd again
+    _noctalia_greeter_make_default
+    if grep -qs otter-greeter "$HOME/restore-login-screen.sh"; then
+      followup manual "$HOME/restore-login-screen.sh switches back to otter-greeter, which was removed: run 'sudo apt install otter-greeter' before using it."
+    fi
   fi
-  if _cleanup_gone otter-term && { is_dry || have ghostty; }; then _hyprland_use_ghostty; fi
+  if _cleanup_gone otter-term && { is_dry || have ghostty; }; then _personal_use_ghostty; fi
 
   # File manager: default app and the SUPER+SHIFT+F bind (package name = command)
   if [[ -z "$fm" ]]; then
@@ -345,10 +350,10 @@ _cleanup_autoremove() {
   local -a list=()
   if is_dry && (( ${#_CLEANUP_REMOVE[@]} )); then
     # Nothing was really removed, so simulate removal + autoremove together
-    orphans="$(_cleanup_outside "$(apt-get -s remove --autoremove "${_CLEANUP_REMOVE[@]}" 2>/dev/null \
-      | awk '$1 == "Remv" { print $2 }' || true)" "$(_cleanup_sim "${_CLEANUP_REMOVE[@]}")")"
+    orphans="$(_cleanup_outside "$(_cleanup_apt_removes remove --autoremove "${_CLEANUP_REMOVE[@]}")" \
+      "$(_cleanup_sim "${_CLEANUP_REMOVE[@]}")")"
   else
-    orphans="$(apt-get -s autoremove 2>/dev/null | awk '$1 == "Remv" { print $2 }' || true)"
+    orphans="$(_cleanup_apt_removes autoremove)"
   fi
   if [[ -z "$orphans" ]]; then info "Nothing left over for autoremove"; return 0; fi
 

@@ -12,7 +12,7 @@ input_method_run() {
   local pkgs=(
     fcitx5 fcitx5-config-qt
     fcitx5-frontend-gtk3 fcitx5-frontend-gtk4 fcitx5-frontend-qt5 fcitx5-frontend-qt6
-    fcitx5-chinese-addons                  # Pinyin and other Chinese input
+    # fcitx5-chinese-addons                # Pinyin and other Chinese input
     # fcitx5-mozc                          # Japanese
     # fcitx5-hangul                        # Korean
   )

@@ -8,7 +8,7 @@
 # function; the menu, --list and dependency order are built from those headers.
 
 set -Eeuo pipefail
-shopt -s inherit_errexit extglob
+shopt -s inherit_errexit
 
 SETUP_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"
 
@@ -310,12 +310,14 @@ check_display_manager() {
 
 LOGGER_PID="" KEEPALIVE_PID="" OUT_FD="" ERR_FD=""
 
+# Output goes to the terminal unchanged and as it comes (progress bars too),
+# and to the log file with timestamps, without colours, and with only the
+# final state of lines redrawn with \r. awk does the cleanup: a bash pattern
+# substitution is so slow on long redrawn lines that the run looked hung.
 log_writer() {
-  local file="$1" line esc=$'\e'
-  while IFS= read -r line || [[ -n "$line" ]]; do
-    printf '%s\n' "$line"
-    printf '%(%F %T)T %s\n' -1 "${line//"$esc"\[*([0-9;])[a-zA-Z]/}" >>"$file"   # strip colours
-  done
+  tee >(awk '{ sub(/.*\r/, ""); gsub(/\033\[[0-9;?]*[A-Za-z]/, "")
+               print strftime("%F %T"), $0; fflush() }' >>"$1")
+  wait "$!"                              # until the log file is written
 }
 
 start_logging() {
@@ -450,9 +452,9 @@ main() {
   run_modules
 
   if [[ "${STATUS[shell]:-}" == ok || "${STATUS[runtimes]:-}" == ok ]]; then
-    log "zshrc - managed block in ~/.zshrc"
-    run_step zshrc write_zshrc
-    (( STEP_RC == 0 )) || err "Updating ~/.zshrc failed"
+    log "shell rc - tool paths in ~/.bashrc and ~/.zshrc"
+    run_step shellrc write_shell_env
+    (( STEP_RC == 0 )) || err "Updating ~/.bashrc / ~/.zshrc failed"
   fi
 
   check_display_manager "$dm_before"

@@ -94,10 +94,10 @@ followup() { printf '%s\t%s\n' "$1" "${*:2}" >>"$RUN_DIR/followups"; }
 has_tty() { { : </dev/tty; } 2>/dev/null; }
 
 # The question goes through stdout like all other output, not straight to
-# /dev/tty: stdout is piped through the logger, which lags behind, so a
-# direct write would land in the middle of earlier output (e.g. a long diff)
-# and the run would look stuck. A full line is needed because the logger
-# passes output on line by line. Only the answer is read from the terminal.
+# /dev/tty: stdout is piped through the logger, which can lag behind, so a
+# direct write could land in the middle of earlier output (e.g. a long diff)
+# and the run would look stuck. It ends in a newline so the log file gets it
+# as its own line. Only the answer is read from the terminal.
 ask_yes_no() {
   local reply
   has_tty || return 1
@@ -187,17 +187,40 @@ write_file() {
   as_owner "$dest" install -D -m "$mode" "$tmp" "$dest"
 }
 
-# strip_block FILE START END [GAP]
+# strip_block FILE START END
 # Print FILE without its managed START...END block and trailing blank lines.
-# With GAP=1, a blank line follows whatever is left (none if nothing is).
 strip_block() {
-  awk -v s="$2" -v e="$3" -v gap="${4:-0}" '
+  awk -v s="$2" -v e="$3" '
     $0 == s { skip = 1 }
     !skip   { line[++n] = $0 }
     $0 == e { skip = 0 }
     END {
       while (n > 0 && line[n] ~ /^[[:space:]]*$/) n--
       for (i = 1; i <= n; i++) print line[i]
-      if (gap && n) print ""
     }' "$1"
+}
+
+# rc_block FILE START END BODY
+# Put BODY between the START and END lines of FILE: replaces that block where
+# it is (dropping any duplicates), or appends it after a blank line. The rest
+# of FILE is kept. Written with write_file (backup, dry-run diff).
+rc_block() {
+  local file="$1" start="$2" end="$3" body="$4"
+  {
+    if [[ -f "$file" ]]; then
+      # BODY via the environment: awk -v would interpret backslashes
+      BODY="$body" awk -v s="$start" -v e="$end" '
+        $0 == s { if (!done) { print s; print ENVIRON["BODY"]; print e; done = 1 }; skip = 1; next }
+        skip    { if ($0 == e) skip = 0; next }
+                { print; last = $0 }
+        END {
+          if (!done) {
+            if (NR && last !~ /^[[:space:]]*$/) print ""
+            print s; print ENVIRON["BODY"]; print e
+          }
+        }' "$file"
+    else
+      printf '%s\n%s\n%s\n' "$start" "$body" "$end"
+    fi
+  } | write_file "$file" 0644
 }

@@ -25,7 +25,7 @@ fonts_run() {
   # files, not just the folder, so an interrupted install is retried.
   local nerd_fonts=(
     JetBrainsMono                          # code
-    Iosevka                                # narrow alternative, from your old setup
+    Iosevka                                # narrow alternative
   )
   local font dir changed=0
   for font in "${nerd_fonts[@]}"; do
@@ -43,6 +43,4 @@ fonts_run() {
     fi
   done
   if (( changed )); then run fc-cache -f; fi
-
-  followup manual "Set 'JetBrainsMono Nerd Font' in your terminal and Zed."
 }

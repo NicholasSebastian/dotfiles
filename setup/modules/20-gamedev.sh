@@ -3,13 +3,31 @@
 
 # shellcheck disable=SC2034  # header variables are read by setup.sh after sourcing
 {
-MODULE_ID=aseprite
-MODULE_DESC="Build Aseprite from source (latest release, via its own build script)"
+MODULE_ID=gamedev
+MODULE_DESC="Godot (C#/.NET), Blender, Tiled, Audacity, Aseprite (built from source)"
 MODULE_DEFAULT=1
+# No deps: the GodotSharp Flatpak bundles its own .NET 8 SDK
 }
 
+_gamedev_apps() {
+  apt_install blender                      # PikaOS build with GPU compute support
+
+  local apps=(
+    org.godotengine.GodotSharp             # Godot with C#/.NET
+    # org.godotengine.Godot                # standard Godot (GDScript only)
+    # com.unity.UnityHub                   # Unity
+    org.mapeditor.Tiled                    # tilemap editor
+    org.audacityteam.Audacity              # sound editing
+    # com.orama_interactive.Pixelorama     # pixel art
+  )
+  flatpak_install "${apps[@]}"
+}
+
+# --- Aseprite ----------------------------------------------------------------
+
+# Latest release, built with its own build script.
 # Upstream: https://github.com/aseprite/aseprite/blob/main/INSTALL.md
-aseprite_run() {
+_gamedev_aseprite() {
   local dir="$SRC_DIR/aseprite" bin="$SRC_DIR/aseprite/build/bin/aseprite"
 
   # Build dependencies from INSTALL.md (apt skips what runtimes already installed)
@@ -66,5 +84,10 @@ Categories=Graphics;2DGraphics;RasterGraphics;
 MimeType=image/x-aseprite;
 EOF
 
-  followup manual "Aseprite's EULA allows building for personal use, not redistributing. Re-run './setup.sh --only aseprite' to update."
+  followup manual "Aseprite's EULA allows building for personal use, not redistributing. Re-run './setup.sh --only gamedev' to update."
+}
+
+gamedev_run() {
+  _gamedev_apps
+  _gamedev_aseprite
 }

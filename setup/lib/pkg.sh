@@ -29,6 +29,21 @@ pkgs_available() {
 
 apt_available() { [[ -n "$(pkgs_available "$1")" ]]; }
 
+# install_batch LABEL ITEMS_VAR CMD...
+# Run CMD with every item of the array named ITEMS_VAR. If that fails, retry
+# item by item (without echoing) so one bad item doesn't block the rest;
+# misses are soft failures.
+install_batch() {
+  local label="$1" item
+  local -n _batch_items="$2"
+  shift 2
+  if run "$@" "${_batch_items[@]}"; then return 0; fi
+  warn "Batch $label install failed, retrying one by one"
+  for item in "${_batch_items[@]}"; do
+    "$@" "$item" || soft_fail "$label: $item failed to install"
+  done
+}
+
 # apt_install PKG|./file.deb ...
 # Skips what's installed, reports packages apt doesn't know, installs the
 # rest in one batch and retries one by one if the batch fails, so one bad
@@ -58,11 +73,7 @@ apt_install() {
   todo+=("${debs[@]}")
   (( ${#todo[@]} )) || return 0
 
-  if run "${APT_GET[@]}" install "${opts[@]}" "${todo[@]}"; then return 0; fi
-  warn "Batch install failed, retrying one by one"
-  for p in "${todo[@]}"; do
-    "${APT_GET[@]}" install "${opts[@]}" "$p" || soft_fail "apt: $p failed to install"
-  done
+  install_batch apt todo "${APT_GET[@]}" install "${opts[@]}"
 }
 
 # Answer a debconf question before the package is installed.
@@ -101,11 +112,7 @@ flatpak_install() {
   for id in "$@"; do in_lines "$id" "$installed" || todo+=("$id"); done
   if (( ${#todo[@]} == 0 )); then info "Flatpaks already installed: $*"; return 0; fi
 
-  if run sudo flatpak install -y --noninteractive --system flathub "${todo[@]}"; then return 0; fi
-  warn "Batch Flatpak install failed, retrying one by one"
-  for id in "${todo[@]}"; do
-    sudo flatpak install -y --noninteractive --system flathub "$id" || soft_fail "flatpak: $id failed to install"
-  done
+  install_batch flatpak todo sudo flatpak install -y --noninteractive --system flathub
 }
 
 # --- mise --------------------------------------------------------------------
@@ -136,11 +143,7 @@ mise_use() {
   done
   (( ${#todo[@]} )) || return 0
 
-  if run mise use -g "${todo[@]}"; then hash -r; return 0; fi
-  warn "Batch mise install failed, retrying one by one"
-  for spec in "${todo[@]}"; do
-    mise use -g "$spec" || soft_fail "mise: $spec failed to install"
-  done
+  install_batch mise todo mise use -g
   hash -r
 }
 

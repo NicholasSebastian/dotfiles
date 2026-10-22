@@ -33,9 +33,9 @@ _noctalia_comment_out() {
   local start="$1" target="$2" file="$3"
   awk -v start="$start" -v target="$target" '
     function depth(s,    t, o) { t = s; o = gsub(/[(]/, "", t); return o - gsub(/[)]/, "", t) }
-    function flush(    k, i, parts) {
+    function flush(comment,    k, i, parts) {
       k = split(buf, parts, "\n")
-      for (i = 1; i <= k; i++) print ((buf ~ target) ? "-- " parts[i] : parts[i])
+      for (i = 1; i <= k; i++) print ((comment && buf ~ target) ? "-- " parts[i] : parts[i])
       buf = ""
     }
     {
@@ -45,9 +45,9 @@ _noctalia_comment_out() {
       } else {
         buf = buf "\n" $0; d += depth($0)
       }
-      if (d <= 0) flush()
+      if (d <= 0) flush(1)
     }
-    END { if (buf != "") { k = split(buf, parts, "\n"); for (i = 1; i <= k; i++) print parts[i] } }
+    END { if (buf != "") flush(0) }
   ' "$file"
 }
 

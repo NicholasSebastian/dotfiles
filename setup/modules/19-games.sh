@@ -14,12 +14,9 @@ games_run() {
     com.mojang.Minecraft                   # official launcher (community-packaged Flatpak)
     com.modrinth.ModrinthApp               # Modrinth App
 
-    # Multi-system: older consoles via cores (NES, SNES, GB/GBA via mGBA,
-    # DS via melonDS DS, PSP via PPSSPP, Genesis, PS1...), so no separate
-    # apps for those. Standalone emulators below are for newer consoles only.
+    # Multi-system: NES, SNES, GB/GBA via mGBA, DS via melonDS, PSP via PPSSPP, Genesis, PS1...)
+    # Standalone emulators below are for newer consoles only.
     org.libretro.RetroArch
-    # ES-DE (one frontend for every emulator) left Flathub; it's an AppImage
-    # from es-de.org now, which Gear Lever can install
 
     # Sony
     net.pcsx2.PCSX2                        # PS2

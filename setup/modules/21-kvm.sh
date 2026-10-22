@@ -48,7 +48,9 @@ kvm_run() {
   if [[ ! -e /etc/libvirt/qemu/networks/autostart/default.xml ]]; then plan+=("autostart libvirt's 'default' NAT network"); fi
 
   if (( ${#plan[@]} )); then
-    if is_dry || have ufw || [[ -x /usr/sbin/ufw ]]; then
+    local has_ufw=0
+    if is_dry || have ufw || [[ -x /usr/sbin/ufw ]]; then has_ufw=1; fi
+    if (( has_ufw )); then
       plan+=("allow DHCP/DNS and routing for VMs on virbr0 in ufw")
     fi
     confirm_risky "${plan[@]}"
@@ -71,7 +73,7 @@ kvm_run() {
     # ufw's "deny incoming" also blocks VMs asking the host for an IP address
     # (DHCP) and DNS on libvirt's bridge, so they'd boot with no network.
     # Adding an existing ufw rule is a no-op.
-    if is_dry || have ufw || [[ -x /usr/sbin/ufw ]]; then
+    if (( has_ufw )); then
       run sudo ufw allow in on virbr0 comment 'libvirt VMs: DHCP/DNS'
       run sudo ufw route allow in on virbr0 comment 'libvirt VMs: internet'
       run sudo ufw route allow out on virbr0 comment 'libvirt VMs: internet'

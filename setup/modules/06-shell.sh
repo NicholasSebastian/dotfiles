@@ -8,8 +8,9 @@ MODULE_DESC="zsh + plugins, Starship, modern CLI tools, fastfetch, lazygit, lazy
 MODULE_DEFAULT=1
 }
 
-# The ~/.zshrc block itself is written once by setup.sh at the end of the run
-# (after shell and/or runtimes), see lib/env.sh.
+# The tool-path block in ~/.bashrc and ~/.zshrc is written by setup.sh at the
+# end of the run (lib/env.sh); zsh as login shell and the zsh config are in
+# the personal module.
 shell_run() {
   local tools=(
     "zsh"
@@ -48,18 +49,5 @@ shell_run() {
   # tldr pages: download once; tealdeer keeps them fresh itself after that
   if have tldr && [[ ! -d "${XDG_CACHE_HOME:-$HOME/.cache}/tealdeer/tldr-pages" ]]; then
     run tldr --update || soft_fail "tldr --update failed"
-  fi
-
-  # Login shell, read from the user database ($SHELL only changes after re-login)
-  if (( SET_ZSH_DEFAULT )); then
-    local zsh_bin login_shell
-    zsh_bin="$(command -v zsh || echo /usr/bin/zsh)"
-    login_shell="$(getent passwd "$USER_NAME" | cut -d: -f7)"
-    if [[ "${login_shell##*/}" != zsh ]]; then
-      run sudo chsh -s "$zsh_bin" "$USER_NAME"
-      followup relogin "Log out and back in to start using zsh."
-    else
-      info "zsh is already your login shell"
-    fi
   fi
 }

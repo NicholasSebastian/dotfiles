@@ -60,13 +60,25 @@ _noctalia_greeter_add_repo() {
   followup manual "Noctalia's repo key ($_NG_KEY_FPR) expires 2027-06-01. If 'apt update' then complains, re-run './setup.sh --only noctalia_greeter' after updating _NG_KEY_FPR in modules/09-noctalia_greeter.sh."
 }
 
+# Make greetd the login screen in both places Debian keeps it: the
+# display-manager.service link and /etc/X11/default-display-manager. Display
+# manager packages' maintainer scripts rebuild the link from that file when
+# they're upgraded or removed, so a stale entry (PikaOS ships otter-greeterd)
+# would switch the login screen back, or to nothing once otter-greeter is
+# gone. The cleanup module calls this too, after removing otter-greeter.
+_noctalia_greeter_make_default() {
+  printf '/usr/sbin/greetd\n' | write_file /etc/X11/default-display-manager 0644
+  if [[ "$(dm_unit)" != greetd.service ]]; then run sudo systemctl enable --force greetd.service; fi
+  printf '%s\n' greetd.service >"$RUN_DIR/dm_expected"
+}
+
 noctalia_greeter_run() {
   local restore="$HOME/restore-login-screen.sh" old_unit
   old_unit="$(dm_unit)"
 
   if [[ "$old_unit" == greetd.service ]] && pkg_installed noctalia-greeter; then
     info "Noctalia Greeter is already your login screen"
-    printf '%s\n' greetd.service >"$RUN_DIR/dm_expected"
+    _noctalia_greeter_make_default
     return 0
   fi
 
@@ -112,6 +124,9 @@ noctalia_greeter_run() {
   fi
 
   # Undo script (first run only, so it always points back to the original setup)
+  local old_x11 x11_line=""
+  old_x11="$(cat /etc/X11/default-display-manager 2>/dev/null || true)"
+  if [[ -n "$old_x11" ]]; then x11_line="echo '$old_x11' | sudo tee /etc/X11/default-display-manager >/dev/null"; fi
   if [[ ! -f "$restore" && -n "$old_unit" && "$old_unit" != greetd.service ]]; then
     write_file "$restore" 0755 <<EOF
 #!/usr/bin/env bash
@@ -120,17 +135,15 @@ noctalia_greeter_run() {
 set -euo pipefail
 sudo systemctl disable greetd.service
 sudo systemctl enable --force '$old_unit'
+$x11_line
 echo "Login screen restored to $old_unit. Optional: sudo apt remove noctalia-greeter. Reboot with: sudo reboot"
 EOF
   fi
 
   # Switch login screens for the next boot. No --now: stopping the current
   # one would end this session on the spot.
-  if [[ "$old_unit" != greetd.service ]]; then
-    if [[ -n "$old_unit" ]]; then run sudo systemctl disable "$old_unit"; fi
-    run sudo systemctl enable --force greetd.service
-  fi
-  printf '%s\n' greetd.service >"$RUN_DIR/dm_expected"
+  if [[ -n "$old_unit" && "$old_unit" != greetd.service ]]; then run sudo systemctl disable "$old_unit"; fi
+  _noctalia_greeter_make_default
 
   followup reboot "Noctalia Greeter takes over at the next reboot. Black screen? Press Ctrl+Alt+F3, log in, run 'bash ~/restore-login-screen.sh', then 'sudo reboot'."
   followup manual "To match the login screen to your desktop: Noctalia Settings -> Security -> Noctalia Greeter -> Sync Now (or Auto-Sync). Fonts must be installed system-wide to show there; install accountsservice for user avatars."

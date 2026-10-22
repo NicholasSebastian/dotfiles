@@ -13,14 +13,16 @@ snapshots_run() {
 
   # ufw.conf is world-readable, so this works without sudo (and in dry-run).
   # An already-enabled firewall keeps your own defaults; the rule is idempotent.
-  if grep -qs '^ENABLED=yes' /etc/ufw/ufw.conf; then
+  local ufw_on=0
+  if grep -qs '^ENABLED=yes' /etc/ufw/ufw.conf; then ufw_on=1; fi
+  if (( ufw_on )); then
     info "ufw is already enabled"
   else
     run sudo ufw default deny incoming
     run sudo ufw default allow outgoing
   fi
   run sudo ufw allow 53317 comment 'LocalSend'
-  if ! grep -qs '^ENABLED=yes' /etc/ufw/ufw.conf; then run sudo ufw --force enable; fi
+  if (( ! ufw_on )); then run sudo ufw --force enable; fi
 
   if [[ ! -f /etc/timeshift/timeshift.json ]]; then
     followup manual "Open Timeshift once and choose BTRFS (if root is btrfs) or RSYNC, plus a schedule."
