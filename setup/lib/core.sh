@@ -107,6 +107,22 @@ ask_yes_no() {
   [[ "$reply" == [yY]* ]]
 }
 
+# ask_choice QUESTION OPTION...: numbered menu; sets CHOICE to the picked
+# number. Enter or anything invalid picks 1, so put the safe option first.
+# Returns 1 without a terminal.
+CHOICE=1
+ask_choice() {
+  local question="$1" reply i; shift
+  has_tty || return 1
+  printf '%s  ?? %s%s\n' "$C_YELLOW" "$question" "$C_RESET"
+  for (( i = 1; i <= $#; i++ )); do printf '       %d) %s\n' "$i" "${!i}"; done
+  printf '%s  ?? choice [1-%d, Enter = 1]%s\n' "$C_YELLOW" "$#" "$C_RESET"
+  IFS= read -r reply </dev/tty || return 1
+  CHOICE=1
+  if [[ "$reply" =~ ^[1-9][0-9]*$ ]] && (( reply <= $# )); then CHOICE=$reply; fi
+  printf '  -> answer: %s\n' "${!CHOICE}"
+}
+
 # Risky modules call this before changing boot/login/system state. It asks
 # even with --yes; only --force skips the question. Declining skips the module.
 confirm_risky() {

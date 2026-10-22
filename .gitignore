@@ -1,4 +1,6 @@
 *
 !*/
 !.gitignore
+
+# Whitelist
 !setup/**
