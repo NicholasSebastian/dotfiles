@@ -4,7 +4,7 @@
 # shellcheck disable=SC2034  # header variables are read by setup.sh after sourcing
 {
 MODULE_ID=dev
-MODULE_DESC="Docker, GitHub CLI, delta, Postman, Beekeeper, Wireshark, pnpm + Oxc, Zed, Neovim + LazyVim, IntelliJ IDEA"
+MODULE_DESC="Docker, GitHub CLI, delta, Postman, Beekeeper, Wireshark, pnpm + Oxc, Zed, Neovim + LazyVim, JetBrains IDEs"
 MODULE_DEFAULT=1
 MODULE_DEPS=(runtimes)                   # bun and mise for the JS tools
 }
