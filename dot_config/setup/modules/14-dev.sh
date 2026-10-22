@@ -4,7 +4,7 @@
 # shellcheck disable=SC2034  # header variables are read by setup.sh after sourcing
 {
 MODULE_ID=dev
-MODULE_DESC="Docker, GitHub CLI, delta, Postman, Beekeeper, Wireshark, pnpm + Oxc, Zed, Neovim + LazyVim"
+MODULE_DESC="Docker, GitHub CLI, delta, Postman, Beekeeper, Wireshark, pnpm + Oxc, Zed, Neovim + LazyVim, IntelliJ IDEA"
 MODULE_DEFAULT=1
 MODULE_DEPS=(runtimes)                   # bun and mise for the JS tools
 }
@@ -90,6 +90,21 @@ _dev_editors() {
     run git clone --depth 1 https://github.com/LazyVim/starter "$nvim_dir"
     run rm -rf "$nvim_dir/.git"
   fi
+
+  # JetBrains IDEs from Flathub. IntelliJ IDEA is one product since 2025.3:
+  # the core is free, Ultimate features need a subscription (30-day trial).
+  local jetbrains=(
+    com.jetbrains.IntelliJ-IDEA-Ultimate    # IntelliJ IDEA (free core)
+    # com.jetbrains.IntelliJ-IDEA-Community # IntelliJ IDEA Open: open-source build, no Ultimate trial
+    # com.jetbrains.PyCharm-Professional    # PyCharm (free core; Community edition is EOL)
+    # com.jetbrains.WebStorm                # free for non-commercial use
+    # com.jetbrains.RustRover               # free for non-commercial use
+    # com.jetbrains.CLion                   # free for non-commercial use
+    # com.jetbrains.Rider                   # free for non-commercial use
+    # com.jetbrains.DataGrip                # free for non-commercial use
+    # com.google.AndroidStudio              # Google's IntelliJ-based Android IDE
+  )
+  flatpak_install "${jetbrains[@]}"
 
   # Optional editors from Flathub
   # flatpak_install com.vscodium.codium    # VS Code without Microsoft telemetry
