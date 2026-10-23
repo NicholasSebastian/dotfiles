@@ -55,6 +55,22 @@ _apps_spicetify() {
   followup manual "Spicetify: restart Spotify to see it. After a Spotify update, run 'spicetify backup apply' (or re-run './setup.sh --only apps')."
 }
 
+# Run Vesktop natively on Wayland: as a Flatpak it falls back to X11
+# (XWayland) whenever it's allowed to, so take its X11 access away, as
+# https://vesktop.dev/wiki/linux/tips/#wayland-support says (Flatseal's
+# "X11 windowing system" switch does the same). Per-user override, so it
+# survives Flatpak updates.
+_apps_vesktop_wayland() {
+  if ! is_dry && ! flatpak info dev.vencord.Vesktop >/dev/null 2>&1; then return 0; fi
+  local sockets
+  sockets="$(flatpak override --user --show dev.vencord.Vesktop 2>/dev/null | sed -n 's/^sockets=//p')"
+  if [[ ";$sockets" == *";!x11;"* && ";$sockets" == *";!fallback-x11;"* ]]; then
+    info "Vesktop already runs on Wayland only"
+  else
+    run flatpak override --user --nosocket=x11 --nosocket=fallback-x11 dev.vencord.Vesktop
+  fi
+}
+
 # Show Vesktop as "Discord" (name + Discord's icon) when the real Discord
 # isn't installed. The override goes in ~/.local/share/applications, which
 # shadows the Flatpak's own entry and survives Flatpak updates; it's rebuilt
@@ -129,6 +145,7 @@ _apps_desktop() {
   fi
   _apps_spicetify
   _apps_vesktop_as_discord
+  _apps_vesktop_wayland
 }
 
 # --- Creative ----------------------------------------------------------------
