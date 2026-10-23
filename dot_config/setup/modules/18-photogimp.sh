@@ -6,7 +6,7 @@
 MODULE_ID=photogimp
 MODULE_DESC="PhotoGIMP patch for GIMP (open and close GIMP once first)"
 MODULE_DEFAULT=1
-MODULE_DEPS=(creative)
+MODULE_DEPS=(apps)                       # GIMP comes from the apps module
 }
 
 # PhotoGIMP's zip ships its settings for GIMP 3.0 (.config/GIMP/3.0), but
