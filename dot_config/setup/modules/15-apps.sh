@@ -55,6 +55,47 @@ _apps_spicetify() {
   followup manual "Spicetify: restart Spotify to see it. After a Spotify update, run 'spicetify backup apply' (or re-run './setup.sh --only apps')."
 }
 
+# Show Vesktop as "Discord" (name + Discord's icon) when the real Discord
+# isn't installed. The override goes in ~/.local/share/applications, which
+# shadows the Flatpak's own entry and survives Flatpak updates; it's rebuilt
+# from the Flatpak's entry each run so Exec= stays current, and removed again
+# once Discord itself is installed.
+_apps_vesktop_as_discord() {
+  local src=/var/lib/flatpak/exports/share/applications/dev.vencord.Vesktop.desktop
+  local dest="$HOME/.local/share/applications/dev.vencord.Vesktop.desktop"
+  local marker="# pikaos-setup: Vesktop shown as Discord"
+  local changed=0 icon=discord tmp="$MODULE_TMP/vesktop.desktop"
+
+  if flatpak info --system com.discordapp.Discord >/dev/null 2>&1 || have discord; then
+    if [[ -f "$dest" && "$(head -n1 "$dest")" == "$marker" ]]; then
+      run rm -f "$dest"
+      changed=1
+    fi
+  elif [[ ! -f "$src" ]]; then
+    if is_dry; then
+      info "Would show Vesktop as Discord in the launcher (once it's installed)"
+    else
+      soft_fail "Vesktop's launcher entry isn't at $src; not renamed to Discord"
+    fi
+    return 0
+  else
+    if [[ -z "$(find /usr/share/icons "$HOME/.local/share/icons" -path '*/apps/discord.*' -print -quit 2>/dev/null)" ]]; then
+      icon=dev.vencord.Vesktop
+      followup manual "Vesktop is shown as Discord but kept its own icon: no 'discord' icon in your icon themes (Papirus has one; the noctalia module installs it)."
+    fi
+    { printf '%s\n' "$marker"
+      sed -e 's/^Name=.*/Name=Discord/' -e "s/^Icon=.*/Icon=$icon/" "$src"
+    } >"$tmp"
+    # Redirected, not piped: write_file must run in this shell for write_changed
+    write_file "$dest" 0644 <"$tmp"
+    if write_changed; then changed=1; fi
+  fi
+
+  if (( changed )) && have update-desktop-database; then
+    run update-desktop-database "$HOME/.local/share/applications"
+  fi
+}
+
 _apps_desktop() {
   # (No calculator or video player: Otter ships otter-calc, PikaOS ships mpv.)
   apt_install qbittorrent
@@ -83,9 +124,23 @@ _apps_desktop() {
   )
   flatpak_install "${apps[@]}"
   _apps_spicetify
+  _apps_vesktop_as_discord
 }
 
 # --- Creative ----------------------------------------------------------------
+
+# Path of an AppImage Gear Lever has integrated, by its X-AppImage-Name.
+# Gear Lever moves the file into its own folder (~/AppImages by default,
+# renamed) and writes a launcher entry whose TryExec points at it.
+_apps_gearlever_appimage() {
+  local name="$1" f exe
+  for f in "$HOME"/.local/share/applications/*.desktop; do
+    if [[ ! -f "$f" ]] || ! grep -qxF "X-AppImage-Name=$name" "$f"; then continue; fi
+    exe="$(sed -n '/^TryExec=/{s///p;q}' "$f")"
+    if [[ -n "$exe" && -f "$exe" ]]; then printf '%s\n' "$exe"; return 0; fi
+  done
+  return 1
+}
 
 _apps_creative() {
   local apps=(
@@ -99,9 +154,11 @@ _apps_creative() {
 
   # Affinity: community AppImage (AffinityOnLinux, not affiliated with Serif)
   # with its own Wine setup. AppImages need FUSE 2.
-  local appimage="$APPS_DIR/Affinity.AppImage"
+  local appimage="$APPS_DIR/Affinity.AppImage" integrated
   apt_install libfuse2t64
-  if [[ -f "$appimage" ]]; then
+  if integrated="$(_apps_gearlever_appimage Affinity)"; then
+    info "Affinity already installed with Gear Lever at $integrated"
+  elif [[ -f "$appimage" ]]; then
     info "Affinity AppImage already at $appimage"
   elif gh_download_latest ryzendew/Linux-Affinity-Installer '\.AppImage$' "$appimage"; then
     run chmod +x "$appimage"
