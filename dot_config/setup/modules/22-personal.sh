@@ -4,7 +4,7 @@
 # shellcheck disable=SC2034  # header variables are read by setup.sh after sourcing
 {
 MODULE_ID=personal
-MODULE_DESC="Personal taste: Brave/imv/Ghostty as defaults, zsh setup, git settings + keyring, reminders"
+MODULE_DESC="Personal taste: Brave/imv/Ghostty as defaults, zsh setup, git settings, keyring settings, reminders"
 MODULE_DEFAULT=0
 }
 
@@ -197,6 +197,79 @@ _personal_git() {
   fi
 }
 
+# --- Keyring -----------------------------------------------------------------
+
+# GNOME Keyring unlocked by your login password (PAM), so apps stop asking for
+# a separate keyring password. PAM only unlocks the keyring named "login".
+_PERSONAL_KEYRING_CHANGED=0
+
+# Each login service gets pam_gnome_keyring in its auth stack (grabs the
+# password) and session stack (starts the daemon and unlocks). Appended lines
+# run after common-auth/common-session, which is the order it needs. They're
+# 'optional', so they can never make a login fail, and '-' skips them quietly
+# if the module is missing. Services whose package already has the lines
+# (greetd, otter-greeter) are left alone.
+_personal_keyring_pam() {
+  apt_install gnome-keyring libpam-gnome-keyring
+
+  # password stack: keeps the keyring password in step when you change yours
+  if ! grep -qE '^[[:space:]]*-?password[[:space:]].*pam_gnome_keyring\.so' /etc/pam.d/common-password; then
+    if [[ -f /usr/share/pam-configs/gnome-keyring ]]; then
+      run sudo pam-auth-update --enable gnome-keyring
+      _PERSONAL_KEYRING_CHANGED=1
+    else
+      soft_fail "pam-auth-update has no gnome-keyring profile; the keyring password won't follow password changes"
+    fi
+  fi
+
+  local svc f rest body
+  for svc in greetd login otter-greeter; do
+    f="/etc/pam.d/$svc"
+    [[ -f "$f" ]] || continue
+    rest="$(strip_block "$f" "$_PERSONAL_START" "$_PERSONAL_END")"
+    body=""
+    if ! grep -qE '^[[:space:]]*-?auth[[:space:]].*pam_gnome_keyring\.so' <<<"$rest"; then
+      body+="-auth     optional  pam_gnome_keyring.so"$'\n'
+    fi
+    if ! grep -qE '^[[:space:]]*-?session[[:space:]].*pam_gnome_keyring\.so' <<<"$rest"; then
+      body+="-session  optional  pam_gnome_keyring.so auto_start"$'\n'
+    fi
+    body="${body%$'\n'}"
+    if [[ -n "$body" ]]; then
+      rc_block "$f" "$_PERSONAL_START" "$_PERSONAL_END" "$body"
+      _PERSONAL_KEYRING_CHANGED=1
+    elif grep -qxF "$_PERSONAL_START" "$f"; then
+      # The package added its own lines; ours are redundant now
+      strip_block "$f" "$_PERSONAL_START" "$_PERSONAL_END" | write_file "$f" 0644
+      _PERSONAL_KEYRING_CHANGED=1
+    else
+      info "$f already unlocks the keyring at login"
+    fi
+  done
+}
+
+# New secrets should go to "login" (the one PAM unlocks), not a second
+# keyring with its own password. The old keyring is left as it is.
+_personal_keyring_default() {
+  local kr="$HOME/.local/share/keyrings"
+  # No file: gnome-keyring uses "login" anyway
+  if [[ -f "$kr/default" && "$(<"$kr/default")" != login ]]; then
+    printf 'login' | write_file "$kr/default" 0600   # no newline, like gnome-keyring
+    _PERSONAL_KEYRING_CHANGED=1
+    if [[ -f "$kr/Default.keyring" ]]; then
+      followup manual "Keyring: new secrets now go to the 'Login' keyring, which your login unlocks. Your old 'Default' keyring still has a separate password: next time it asks, tick 'Automatically unlock this keyring whenever I'm logged in' (it stores that password in Login), or re-save those passwords and delete 'Default' in Passwords and Keys (seahorse)."
+    fi
+  fi
+}
+
+_personal_keyring() {
+  _personal_keyring_pam
+  _personal_keyring_default
+  if (( _PERSONAL_KEYRING_CHANGED )); then
+    followup relogin "Keyring: log out and back in so it unlocks with your login password."
+  fi
+}
+
 # --- Reminders ---------------------------------------------------------------
 
 _personal_reminders() {
@@ -215,5 +288,6 @@ personal_run() {
   _personal_default_apps
   _personal_shell
   _personal_git
+  _personal_keyring
   _personal_reminders
 }
