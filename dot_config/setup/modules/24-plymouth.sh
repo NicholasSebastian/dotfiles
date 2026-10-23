@@ -9,7 +9,9 @@ MODULE_DEFAULT=0
 }
 
 # The theme is adi1090x/plymouth-themes pack_4/splash (GPL-3.0), kept in
-# files/plymouth/splash at upstream commit 158ccfd. Its .plymouth file
+# files/plymouth/splash at upstream commit 158ccfd. splash.script is patched
+# to centre on the whole display canvas instead of display 0, so it's
+# centred on every monitor. Its .plymouth file
 # hard-codes /usr/share/plymouth/themes/splash, so it's installed there.
 # PikaOS's booster initramfs has enable_plymouth: false, so Plymouth starts
 # from the root filesystem and picks up the theme without an initramfs rebuild.
