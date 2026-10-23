@@ -28,6 +28,7 @@ _NG_SUITE="unstable/"
 _NG_KEYRING_DEB="https://pkg.noctalia.dev/deb/nickh-archive-keyring.deb"
 _NG_KEY_FPR="C2A7E07FB3D746BDF2A245CD683B67D7BC99A9B7"    # expires 2027-06-01; renewals keep this fingerprint
 _NG_CFG="/etc/greetd/noctalia-greeter.toml"
+_NG_TOML="/var/lib/noctalia-greeter/greeter.toml"
 
 # Add Noctalia's APT repo, pinned low so it only supplies packages PikaOS
 # doesn't have and never replaces PikaOS's own (like the noctalia shell).
@@ -72,6 +73,108 @@ _noctalia_greeter_make_default() {
   printf '%s\n' greetd.service >"$RUN_DIR/dm_expected"
 }
 
+# _noctalia_greeter_set_output FILE VALUE: print FILE with [output] name set
+# to VALUE, or removed when VALUE is empty (= all monitors). Adds an [output]
+# section at the end if there's none. Other keys and sections are kept.
+_noctalia_greeter_set_output() {
+  local v="${2//\\/\\\\}"
+  v="${v//\"/\\\"}"
+  WANT="$v" awk '
+    function emit() { if (ENVIRON["WANT"] != "") print "name = \"" ENVIRON["WANT"] "\"  # chosen by ~/.config/setup"; done = 1 }
+    /^[[:space:]]*\[/ {
+      if (in_out && !done) emit()
+      in_out = ($0 ~ /^[[:space:]]*\[output\][[:space:]]*(#.*)?$/)
+      if (in_out) seen = 1
+      print; next
+    }
+    in_out && /^[[:space:]]*name[[:space:]]*=/ { if (!done) emit(); next }
+    { print }
+    END {
+      if (in_out && !done) emit()
+      else if (!seen && ENVIRON["WANT"] != "") { if (NR) print ""; print "[output]"; emit() }
+    }' "$1"
+}
+
+# Which monitor shows the login screen. Noctalia Greeter shows it on every
+# monitor, or on one pinned with [output] name in greeter.toml; it can't do a
+# subset (https://docs.noctalia.dev/greeter/displays/). The directory is
+# _greetd's (mode 750), so the file is read and written with sudo.
+_noctalia_greeter_displays() {
+  local conn id key cur="" known=1 exists=0 i c=0
+  local old="$MODULE_TMP/greeter.toml" new="$MODULE_TMP/greeter.toml.new"
+  local -a conns=() ids=() vals=("") labs=("All monitors")
+
+  if ! have noctalia-greeter; then
+    info "Noctalia Greeter isn't installed yet; its monitor is asked about on the next run"
+    return 0
+  fi
+  while IFS=$'\t' read -r conn id; do
+    if [[ -n "$conn" ]]; then conns+=("$conn"); ids+=("$id"); fi
+  done < <(noctalia-greeter outputs --details 2>/dev/null || true)
+  if (( ${#conns[@]} < 2 )); then
+    info "Login screen monitor: ${#conns[@]} monitor(s) found from this session, nothing to choose"
+    return 0
+  fi
+
+  # Current setting (dry run: only if sudo needs no password). The copy in
+  # $MODULE_TMP is meant to be ours, so sudo not covering '>' is intended.
+  : >"$old"
+  # shellcheck disable=SC2024
+  if is_dry; then
+    if sudo -n test -f "$_NG_TOML" 2>/dev/null; then exists=1; sudo -n cat "$_NG_TOML" >"$old"
+    elif ! sudo -n true 2>/dev/null; then known=0; fi
+  elif sudo test -f "$_NG_TOML"; then
+    exists=1; sudo cat "$_NG_TOML" >"$old"
+  fi
+  cur="$(awk '
+    /^[[:space:]]*\[/ { in_out = ($0 ~ /^[[:space:]]*\[output\][[:space:]]*(#.*)?$/); next }
+    in_out && /^[[:space:]]*name[[:space:]]*=/ {
+      v = $0; sub(/^[^=]*=[[:space:]]*"/, "", v); sub(/".*$/, "", v); print v; exit
+    }' "$old")"
+
+  # One entry per monitor. Pin the stable id (connector numbers can change
+  # between boots) unless it's empty or shared by two identical monitors.
+  for i in "${!conns[@]}"; do
+    key="${conns[i]}"
+    if [[ -n "${ids[i]}" ]] && (( $(printf '%s\n' "${ids[@]}" | grep -cxF -- "${ids[i]}") == 1 )); then key="${ids[i]}"; fi
+    vals+=("$key"); labs+=("Only ${conns[i]}${ids[i]:+ (${ids[i]})}")
+    if [[ -n "$cur" && ( "$cur" == "${conns[i]}" || "$cur" == "${ids[i]}" ) ]]; then c=$(( i + 1 )); fi
+  done
+  # The current choice goes first, so Enter keeps it. A pin to a monitor
+  # that isn't connected counts as "All monitors": that's what the greeter does.
+  if (( known )); then
+    labs[c]+=" (current)"
+    if (( c > 0 )); then
+      key="${vals[0]}"; vals[0]="${vals[c]}"; vals[c]="$key"
+      key="${labs[0]}"; labs[0]="${labs[c]}"; labs[c]="$key"
+    fi
+  fi
+
+  ask_choice "Which monitor should show the login screen? (Noctalia Greeter can use all of them or just one)" "${labs[@]}" \
+    || { info "No terminal: login screen monitor left as it is"; return 0; }
+  key="${vals[CHOICE - 1]}"
+  _noctalia_greeter_set_output "$old" "$key" >"$new"
+  if (( known )) && cmp -s "$old" "$new"; then
+    info "Login screen monitor unchanged"
+    return 0
+  fi
+
+  info "Writing $_NG_TOML"
+  if is_dry; then
+    if (( known )); then show_diff "$old" "$new"; fi
+    return 0
+  fi
+  local owner mode=0644
+  owner="$(sudo stat -c '%U:%G' "${_NG_TOML%/*}")"
+  if (( exists )); then
+    owner="$(sudo stat -c '%U:%G' "$_NG_TOML")"; mode="$(sudo stat -c '%a' "$_NG_TOML")"
+    run sudo mkdir -p "/var/backups/setup${_NG_TOML%/*}"
+    run sudo cp -a "$_NG_TOML" "/var/backups/setup$_NG_TOML.$TS"
+  fi
+  run sudo install -m "$mode" -o "${owner%%:*}" -g "${owner#*:}" "$new" "$_NG_TOML"
+  followup reboot "Noctalia Greeter: the login screen shows on ${key:-all monitors} from the next boot."
+}
+
 noctalia_greeter_run() {
   local restore="$HOME/restore-login-screen.sh" old_unit
   old_unit="$(dm_unit)"
@@ -79,12 +182,14 @@ noctalia_greeter_run() {
   if [[ "$old_unit" == greetd.service ]] && pkg_installed noctalia-greeter; then
     info "Noctalia Greeter is already your login screen"
     _noctalia_greeter_make_default
+    _noctalia_greeter_displays
     return 0
   fi
 
   confirm_risky \
     "add Noctalia's Debian sid APT repo if PikaOS doesn't package noctalia-greeter (key pinned by fingerprint, repo pinned low)" \
     "install greetd and noctalia-greeter" \
+    "ask which monitor shows the login screen (all, or one) and set it in $_NG_TOML" \
     "disable ${old_unit:-the current login screen} and enable greetd for the NEXT boot (this session keeps running)" \
     "write an undo script to $restore"
 
@@ -116,6 +221,7 @@ noctalia_greeter_run() {
     }' "$_NG_CFG" 2>/dev/null || true)"
   : "${greeter_user:=_greetd}"
   run sudo env GREETER_USER="$greeter_user" noctalia-greeter-apply-appearance --setup-system
+  _noctalia_greeter_displays
 
   # An [initial_session] means automatic login: the greeter would only
   # appear after you log out, never at boot
