@@ -1,1 +1,3 @@
 README.md
+.config/hypr/monitors.lua
+.config/hypr/*.setup-bak.*
