@@ -20,7 +20,7 @@ MODULE_RISKY=1
 _CLEANUP_NO_TTY="needs your answers but there is no terminal"
 _CLEANUP_REMOVE=()                       # packages picked for removal
 _CLEANUP_ALLOW=(pika-shell-profile-common)  # may go along with them (only holds Otter apps)
-_CLEANUP_FM_KEEP="" _CLEANUP_FM_DROP=()
+_CLEANUP_FM_KEEP=""
 _CLEANUP_BROWSER_BIN="" _CLEANUP_BROWSER_NAME=""   # replaces chromium in keybinds
 
 # GNOME desktop pieces left over from an earlier GNOME install. gnome-keyring,
@@ -222,7 +222,6 @@ _cleanup_file_manager() {
   _CLEANUP_FM_KEEP="$keep"
   for p in "${inst[@]}"; do
     [[ "$p" != "$keep" ]] || continue
-    _CLEANUP_FM_DROP+=("$p")
     _CLEANUP_REMOVE+=("$p")
     IFS=, read -ra more <<<"${extra[$p]}"
     _CLEANUP_ALLOW+=("${more[@]}")

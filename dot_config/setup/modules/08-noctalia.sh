@@ -145,7 +145,7 @@ _noctalia_switch() {
 
   for f in "${changed[@]}"; do
     printf '%s--- %s%s\n' "$C_DIM" "$f" "$C_RESET"
-    diff -u "$hypr/$f" "$new/$f" | sed 's/^/      | /' || true
+    show_diff "$hypr/$f" "$new/$f"
   done
   confirm_risky \
     "install noctalia (and lua5.4, to syntax-check the edits)" \

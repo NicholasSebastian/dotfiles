@@ -70,6 +70,14 @@ can_sudo() { ! is_dry && sudo -n true 2>/dev/null; }
 # Run as root unless the path is inside $HOME.
 as_owner() { if [[ "$1" == "$HOME"/* ]]; then "${@:2}"; else sudo "${@:2}"; fi; }
 
+# The EFI system partition's mount point (bootctl knows it; else /boot/efi).
+esp_dir() {
+  local esp
+  esp="$(bootctl --print-esp-path 2>/dev/null || true)"
+  [[ -n "$esp" ]] || esp="$(findmnt -no TARGET /boot/efi 2>/dev/null || true)"
+  printf '%s' "${esp:-/boot/efi}"
+}
+
 # --- Module results ----------------------------------------------------------
 
 # A step failed but the module can carry on; listed in the summary.
@@ -178,7 +186,7 @@ write_file() {
   info "Writing $dest"
   if is_dry; then
     if [[ -f "$dest" ]]; then
-      diff -u "$dest" "$tmp" | sed 's/^/      | /' || true
+      show_diff "$dest" "$tmp"
     elif LC_ALL=C grep -qI '' "$tmp"; then
       sed 's/^/      | /' "$tmp"
     fi
@@ -186,6 +194,19 @@ write_file() {
   fi
   backup_file "$dest"
   as_owner "$dest" install -D -m "$mode" "$tmp" "$dest"
+}
+
+# show_diff OLD NEW: indented unified diff, for previews.
+show_diff() { diff -u "$1" "$2" | sed 's/^/      | /' || true; }
+
+# same_tree SRC DEST: true if DEST holds exactly the files of SRC.
+same_tree() { diff -rq "$1" "$2" >/dev/null 2>&1; }
+
+# copy_tree SRC DEST: copy SRC's contents into DEST as root, owned by root
+# with default modes (for vendored files installed under /usr or the ESP).
+copy_tree() {
+  run sudo mkdir -p "$2"
+  run sudo cp -rT --no-preserve=mode,ownership "$1" "$2"
 }
 
 # strip_block FILE START END
@@ -203,6 +224,13 @@ strip_block() {
       while (n > 0 && line[n] ~ /^[[:space:]]*$/) n--
       for (i = 1; i <= n; i++) print line[i]
     }' "$1"
+}
+
+# block_body FILE START END: the lines between the START and END markers
+# (nothing if FILE doesn't exist).
+block_body() {
+  [[ -f "$1" ]] || return 0
+  awk -v s="$2" -v e="$3" '$0 == e { f = 0 } f; $0 == s { f = 1 }' "$1"
 }
 
 # rc_block FILE START END BODY

@@ -21,20 +21,13 @@ MODULE_RISKY=1
 
 _REFIND_THEME=rEFInd-lite
 
-# Same lookup as the secure_boot module
-_refind_esp() {
-  local esp
-  esp="$(bootctl --print-esp-path 2>/dev/null || true)"
-  [[ -n "$esp" ]] || esp="$(findmnt -no TARGET /boot/efi 2>/dev/null || true)"
-  printf '%s' "${esp:-/boot/efi}"
-}
-
 refind_run() {
   local src="$SETUP_DIR/files/refind" esp dir uuid
-  esp="$(_refind_esp)"
+  esp="$(esp_dir)"
   dir="$esp/EFI/refind"
+  local theme_src="$src/themes/$_REFIND_THEME" theme_dest="$dir/themes/$_REFIND_THEME"
   [[ -f "$dir/refind.conf" ]] || module_skip "rEFInd isn't installed in $dir"
-  [[ -d "$src/themes/$_REFIND_THEME" ]] || die "Theme files missing: $src/themes/$_REFIND_THEME (run chezmoi apply)"
+  [[ -d "$theme_src" ]] || die "Theme files missing: $theme_src (run chezmoi apply)"
 
   uuid="$(findmnt -no UUID /)"
   [[ -n "$uuid" ]] || die "Couldn't read the root filesystem's UUID"
@@ -44,8 +37,8 @@ refind_run() {
   # What's out of date
   local theme=0 conf=0 f
   local -a linux_targets=() plan=()
-  if ! diff -rq "$src/themes/$_REFIND_THEME" "$dir/themes/$_REFIND_THEME" >/dev/null 2>&1; then
-    theme=1; plan+=("install the $_REFIND_THEME theme to $dir/themes/$_REFIND_THEME")
+  if ! same_tree "$theme_src" "$theme_dest"; then
+    theme=1; plan+=("install the $_REFIND_THEME theme to $theme_dest")
   fi
   if ! cmp -s "$src/refind.conf" "$dir/refind.conf"; then
     conf=1; plan+=("replace $dir/refind.conf (shown below)")
@@ -66,10 +59,7 @@ refind_run() {
     "the old refind-dark theme folder stays on the ESP (unused)" \
     "takes effect at the next boot; if the menu looks wrong, restore $dir/refind.conf from the backup"
 
-  if (( theme )); then
-    run sudo mkdir -p "$dir/themes/$_REFIND_THEME"
-    run sudo cp -rT --no-preserve=mode,ownership "$src/themes/$_REFIND_THEME" "$dir/themes/$_REFIND_THEME"
-  fi
+  if (( theme )); then copy_tree "$theme_src" "$theme_dest"; fi
   if (( conf )); then write_file "$dir/refind.conf" 0644 <"$src/refind.conf"; fi
   for f in "${linux_targets[@]}"; do write_file "$f" 0644 <"$linux_conf"; done
 

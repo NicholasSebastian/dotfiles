@@ -203,11 +203,6 @@ _personal_git() {
 # a separate keyring password. PAM only unlocks the keyring named "login".
 _PERSONAL_KEYRING_CHANGED=0
 
-# Lines currently between the managed markers in FILE
-_personal_block_body() {
-  awk -v s="$_PERSONAL_START" -v e="$_PERSONAL_END" '$0 == e { f = 0 } f; $0 == s { f = 1 }' "$1"
-}
-
 # Each login service gets pam_gnome_keyring in its auth stack (grabs the
 # password) and session stack (starts the daemon and unlocks). Appended lines
 # run after common-auth/common-session, which is the order it needs. They're
@@ -241,7 +236,7 @@ _personal_keyring_pam() {
     fi
     body="${body%$'\n'}"
     if [[ -n "$body" ]]; then
-      if [[ "$(_personal_block_body "$f")" == "$body" ]]; then
+      if [[ "$(block_body "$f" "$_PERSONAL_START" "$_PERSONAL_END")" == "$body" ]]; then
         info "$f already unlocks the keyring at login"
       else
         rc_block "$f" "$_PERSONAL_START" "$_PERSONAL_END" "$body"

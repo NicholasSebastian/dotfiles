@@ -22,11 +22,10 @@ plymouth_run() {
   apt_install plymouth                   # includes the script plugin the theme uses
   [[ -d "$src/$_PLY_THEME" ]] || die "Theme files missing: $src/$_PLY_THEME (run chezmoi apply)"
 
-  if diff -rq "$src/$_PLY_THEME" "$_PLY_DEST" >/dev/null 2>&1; then
+  if same_tree "$src/$_PLY_THEME" "$_PLY_DEST"; then
     info "Plymouth theme '$_PLY_THEME' already installed"
   else
-    run sudo mkdir -p "$_PLY_DEST"
-    run sudo cp -rT --no-preserve=mode,ownership "$src/$_PLY_THEME" "$_PLY_DEST"
+    copy_tree "$src/$_PLY_THEME" "$_PLY_DEST"
   fi
   write_file /etc/plymouth/plymouthd.conf 0644 <"$src/plymouthd.conf"
 

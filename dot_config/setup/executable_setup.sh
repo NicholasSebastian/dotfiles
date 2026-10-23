@@ -266,17 +266,15 @@ run_modules() {
 
     log "[$i/$n] $id - ${MOD_DESC[$id]}"
     run_step "$id" "${id}_run"
-    case "$STEP_RC" in
-      0) STATUS[$id]=ok ;;
-      # 3 is module_skip only if it left its reason file; a command that
-      # failed with exit 3 (unzip, curl, ...) is a real failure
-      3) if [[ -f "$RUN_DIR/skip.$id" ]]; then
-           STATUS[$id]=skipped; REASON[$id]="$(<"$RUN_DIR/skip.$id")"
-         else
-           STATUS[$id]=failed; err "$id failed (exit $STEP_RC); continuing with the next module"
-         fi ;;
-      *) STATUS[$id]=failed; err "$id failed (exit $STEP_RC); continuing with the next module" ;;
-    esac
+    # Exit 3 is module_skip only if it left its reason file; a command that
+    # failed with exit 3 (unzip, curl, ...) is a real failure
+    if (( STEP_RC == 0 )); then
+      STATUS[$id]=ok
+    elif (( STEP_RC == 3 )) && [[ -f "$RUN_DIR/skip.$id" ]]; then
+      STATUS[$id]=skipped; REASON[$id]="$(<"$RUN_DIR/skip.$id")"
+    else
+      STATUS[$id]=failed; err "$id failed (exit $STEP_RC); continuing with the next module"
+    fi
   done
 }
 

@@ -27,14 +27,10 @@ declare -ga _DRIVES_CUR=() _DRIVES_MP=() _DRIVES_ON=() _DRIVES_NOTE=()
 # UUID -> mount point, from the managed block as it is now
 declare -gA _DRIVES_MANAGED=()
 
-# Lines of the managed block, or "UUID<TAB>mountpoint" pairs with 'pairs'
-_drives_block() {
-  [[ -f "$_DRIVES_FSTAB" ]] || return 0
-  awk -v s="$_DRIVES_START" -v e="$_DRIVES_END" -v pairs="${1:-}" '
-    $0 == s { f = 1; next }
-    $0 == e { f = 0; next }
-    f && pairs && /^UUID=/ { sub(/^UUID=/, "", $1); print $1 "\t" $2; next }
-    f && !pairs' "$_DRIVES_FSTAB"
+# "UUID<TAB>mountpoint" for each entry in the managed block
+_drives_managed_pairs() {
+  block_body "$_DRIVES_FSTAB" "$_DRIVES_START" "$_DRIVES_END" \
+    | awk '/^UUID=/ { sub(/^UUID=/, "", $1); print $1 "\t" $2 }'
 }
 
 # _drives_is_windows DEV CUR: 0 if the NTFS volume holds a Windows install,
@@ -53,7 +49,7 @@ _drives_scan() {
   local dev fs label uuid ptype size cur sys_sources rc uuid_mp mp
   while IFS=$'\t' read -r uuid mp; do
     if [[ -n "$uuid" ]]; then _DRIVES_MANAGED[$uuid]="$mp"; fi
-  done < <(_drives_block pairs)
+  done < <(_drives_managed_pairs)
   sys_sources="$(strip_block "$_DRIVES_FSTAB" "$_DRIVES_START" "$_DRIVES_END" | awk '!/^[[:space:]]*(#|$)/ { print $1 }')"
 
   if in_lines ntfs "$(lsblk -nlo FSTYPE)"; then apt_install ntfs-3g; fi   # ntfsls
@@ -197,7 +193,7 @@ drives_run() {
   local -a changes=() removed=()
   local -A present=()
   new="$(_drives_body)"
-  old="$(_drives_block)"
+  old="$(block_body "$_DRIVES_FSTAB" "$_DRIVES_START" "$_DRIVES_END")"
   for i in "${!_DRIVES_DEV[@]}"; do
     uuid="${_DRIVES_UUID[i]}" label="${_DRIVES_LABEL[i]:-$uuid}"
     present[$uuid]=1

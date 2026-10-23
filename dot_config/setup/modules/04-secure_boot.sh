@@ -20,13 +20,6 @@ MODULE_RISKY=1
 # Keys are only enrolled when the firmware is in Setup Mode (which you switch
 # on yourself in the BIOS) *and* you confirm the step.
 
-_secure_boot_esp() {
-  local esp
-  esp="$(bootctl --print-esp-path 2>/dev/null || true)"
-  [[ -n "$esp" ]] || esp="$(findmnt -no TARGET /boot/efi 2>/dev/null || true)"
-  printf '%s' "${esp:-/boot/efi}"
-}
-
 _secure_boot_refind_files() {
   local esp="$1" dir f
   for dir in "$esp/EFI/refind" "$esp/EFI/BOOT"; do
@@ -69,7 +62,7 @@ secure_boot_run() {
 
   local esp kernel_pkg
   local -a files=()
-  esp="$(_secure_boot_esp)"
+  esp="$(esp_dir)"
   kernel_pkg="linux-image-$(uname -r)"
   mapfile -t files < <(_secure_boot_refind_files "$esp")
 

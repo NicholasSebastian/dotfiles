@@ -64,20 +64,16 @@ _apps_vesktop_as_discord() {
   local src=/var/lib/flatpak/exports/share/applications/dev.vencord.Vesktop.desktop
   local dest="$HOME/.local/share/applications/dev.vencord.Vesktop.desktop"
   local marker="# pikaos-setup: Vesktop shown as Discord"
-  local changed=0 icon=discord tmp="$MODULE_TMP/vesktop.desktop"
+  local changed=0 icon=discord tmp="$MODULE_TMP/vesktop.desktop" has_discord=0
+  if flatpak info --system com.discordapp.Discord >/dev/null 2>&1 || have discord; then has_discord=1; fi
 
-  if flatpak info --system com.discordapp.Discord >/dev/null 2>&1 || have discord; then
+  if (( has_discord )) || [[ ! -f "$src" ]]; then
+    # Discord itself is installed, or Vesktop isn't (left out, or its install
+    # failure was already reported): drop an override we made earlier
     if [[ -f "$dest" && "$(head -n1 "$dest")" == "$marker" ]]; then
       run rm -f "$dest"
       changed=1
-    fi
-  elif [[ ! -f "$src" ]]; then
-    # Not installed (left out, or its install failure was already reported):
-    # drop an override we made earlier
-    if [[ -f "$dest" && "$(head -n1 "$dest")" == "$marker" ]]; then
-      run rm -f "$dest"
-      changed=1
-    else
+    elif (( ! has_discord )); then
       info "Vesktop isn't installed; not showing it as Discord"
     fi
   else
