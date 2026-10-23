@@ -149,19 +149,25 @@ want_defaults() {
 }
 
 pick_menu() {
-  local id desc on choice reply
-  local -a args=() picked=()
-  if have whiptail; then
+  local id choice reply mark n=0 load="load:"
+  local -a lines=() picked=()
+  if have fzf; then
+    # One line per module, defaults pre-ticked. Enter with nothing ticked
+    # only shows a hint: fzf would otherwise return the line under the cursor.
     for id in "${MOD_ORDER[@]}"; do
-      desc="${MOD_DESC[$id]}" on=OFF
-      if (( MOD_RISKY[$id] )); then desc="[!] $desc"; fi
-      if (( MOD_DEFAULT[$id] )); then on=ON; fi
-      args+=("$id" "$desc" "$on")
+      n=$(( n + 1 ))
+      mark=""
+      if (( MOD_RISKY[$id] )); then mark="[!] "; fi
+      lines+=("$(printf '%-17s %s%s' "$id" "$mark" "${MOD_DESC[$id]}")")
+      if (( MOD_DEFAULT[$id] )); then load+="pos($n)+toggle+"; fi
     done
-    choice="$(whiptail --title "PikaOS setup" \
-      --checklist "Space toggles, Enter confirms. [!] asks again before changing boot/login state." \
-      25 118 17 "${args[@]}" 3>&1 1>&2 2>&3)" || exit 0
-    read -ra picked <<<"${choice//\"/}"
+    # shellcheck disable=SC2016  # $FZF_SELECT_COUNT is expanded by fzf's shell, not here
+    choice="$(printf '%s\n' "${lines[@]}" | fzf --multi --no-sort --layout=reverse \
+      --prompt='modules> ' --marker='✓ ' \
+      --header='Tab ticks/unticks, type to filter, Enter runs the ticked modules, Esc quits. [!] asks again before changing boot/login state.' \
+      --bind "${load}first" --bind 'tab:toggle' \
+      --bind 'enter:transform:[[ $FZF_SELECT_COUNT -gt 0 ]] && echo accept || echo "change-header(Nothing ticked: Tab ticks a module, Esc quits)"')" || exit 0
+    mapfile -t picked < <(awk '{ print $1 }' <<<"$choice")
   else
     list_modules
     printf '\nModules to run (space/comma separated), Enter for the defaults: '
