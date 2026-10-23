@@ -11,7 +11,7 @@ MODULE_DEFAULT=1
 base_run() {
   local pkgs=(
     # essentials
-    curl git ca-certificates gnupg jq whiptail pciutils xdg-utils
+    curl git ca-certificates gnupg jq fzf pciutils xdg-utils
     desktop-file-utils flatpak
     # archives (PikaOS ships File Roller; these are the formats it hands off to)
     7zip zip unzip unar zstd
