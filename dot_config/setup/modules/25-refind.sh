@@ -15,7 +15,8 @@ MODULE_RISKY=1
 #                         passes to PikaOS's UKIs; @ROOT_UUID@ is filled in
 #                         from this system's / so it can't point at another disk)
 #   themes/rEFInd-lite -> EFI/refind/themes/rEFInd-lite
-#                         (Littlebanbrick/rEFInd-lite, MIT, commit e600b8c)
+#                         (Littlebanbrick/rEFInd-lite, MIT, commit e600b8c;
+#                         bg/background.png pre-scaled to 2560x1440)
 # PikaOS's kernel hook copies /boot/refind_linux.conf to EFI/Linux only when
 # it's missing there, so both copies are written. Nothing signed is touched.
 
