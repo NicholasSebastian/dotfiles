@@ -4,7 +4,7 @@
 # shellcheck disable=SC2034  # header variables are read by setup.sh after sourcing
 {
 MODULE_ID=apps
-MODULE_DESC="Brave + Chrome, Bitwarden, Obsidian, Discord, Telegram, Spotify, Affinity, etc."
+MODULE_DESC="Brave + Chrome, Bitwarden, Obsidian, LocalSend, Discord, Telegram, Spotify, Affinity, etc."
 MODULE_DEFAULT=1
 }
 
@@ -121,6 +121,12 @@ _apps_desktop() {
     it.mijorus.gearlever                   # manage AppImages (Affinity etc.)
   )
   flatpak_install "${apps[@]}"
+  # LocalSend receives on port 53317 (TCP + UDP). With ufw on "deny incoming"
+  # it can send but never receive. ufw stores rules even while disabled, and
+  # adding an existing rule is a no-op.
+  if is_dry || have ufw || [[ -x /usr/sbin/ufw ]]; then
+    run sudo ufw allow 53317 comment 'LocalSend'
+  fi
   _apps_spicetify
   _apps_vesktop_as_discord
 }

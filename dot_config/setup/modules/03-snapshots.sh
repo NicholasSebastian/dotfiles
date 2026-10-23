@@ -12,7 +12,7 @@ snapshots_run() {
   apt_install timeshift ufw
 
   # ufw.conf is world-readable, so this works without sudo (and in dry-run).
-  # An already-enabled firewall keeps your own defaults; the rule is idempotent.
+  # An already-enabled firewall keeps your own defaults.
   local ufw_on=0
   if grep -qs '^ENABLED=yes' /etc/ufw/ufw.conf; then ufw_on=1; fi
   if (( ufw_on )); then
@@ -21,7 +21,6 @@ snapshots_run() {
     run sudo ufw default deny incoming
     run sudo ufw default allow outgoing
   fi
-  run sudo ufw allow 53317 comment 'LocalSend'
   if (( ! ufw_on )); then run sudo ufw --force enable; fi
 
   if [[ ! -f /etc/timeshift/timeshift.json ]]; then
