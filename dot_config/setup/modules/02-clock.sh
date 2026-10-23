@@ -5,7 +5,7 @@
 {
 MODULE_ID=clock
 MODULE_DESC="Hardware clock in local time (dual-boot with Windows)"
-MODULE_DEFAULT=1
+MODULE_DEFAULT=0
 MODULE_RISKY=1
 }
 

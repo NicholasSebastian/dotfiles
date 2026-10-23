@@ -5,7 +5,7 @@
 {
 MODULE_ID=secure_boot
 MODULE_DESC="Sign kernel + rEFInd with your own keys (sbctl), per the PikaOS wiki"
-MODULE_DEFAULT=1
+MODULE_DEFAULT=0
 MODULE_RISKY=1
 }
 
