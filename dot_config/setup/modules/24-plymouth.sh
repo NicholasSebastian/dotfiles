@@ -18,7 +18,7 @@ _PLY_THEME=splash
 _PLY_DEST="/usr/share/plymouth/themes/$_PLY_THEME"
 
 plymouth_run() {
-  local src="$SETUP_DIR/files/plymouth"
+  local src="$SETUP_DIR/files/plymouth" changed=0
   apt_install plymouth                   # includes the script plugin the theme uses
   [[ -d "$src/$_PLY_THEME" ]] || die "Theme files missing: $src/$_PLY_THEME (run chezmoi apply)"
 
@@ -26,8 +26,10 @@ plymouth_run() {
     info "Plymouth theme '$_PLY_THEME' already installed"
   else
     copy_tree "$src/$_PLY_THEME" "$_PLY_DEST"
+    changed=1
   fi
   write_file /etc/plymouth/plymouthd.conf 0644 <"$src/plymouthd.conf"
+  if write_changed; then changed=1; fi
 
   if [[ " $(</proc/cmdline) " != *" splash "* ]]; then
     followup manual "Plymouth: add 'splash' (and 'quiet') to the kernel options in /boot/refind_linux.conf, or the boot splash won't show."
@@ -35,5 +37,5 @@ plymouth_run() {
   if [[ -f /etc/booster.yaml ]] && grep -qE '^enable_plymouth:[[:space:]]*true' /etc/booster.yaml; then
     followup manual "Plymouth: booster includes Plymouth in the initramfs; rebuild it so the new theme is used early in boot."
   fi
-  followup manual "Plymouth: preview the splash with: sudo plymouthd && sudo plymouth --show-splash; sleep 5; sudo plymouth quit"
+  if (( changed )); then followup reboot "Plymouth: reboot to see the '$_PLY_THEME' boot splash."; fi
 }

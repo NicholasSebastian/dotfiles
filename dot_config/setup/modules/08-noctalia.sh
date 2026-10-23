@@ -4,7 +4,7 @@
 # shellcheck disable=SC2034  # header variables are read by setup.sh after sourcing
 {
 MODULE_ID=noctalia
-MODULE_DESC="Switch the desktop shell from Otter to Noctalia (PikaOS wiki guide) + GTK/Qt theming (nwg-look, qt6ct, adw-gtk3, Papirus)"
+MODULE_DESC="Switch the desktop shell to Noctalia + GTK/Qt theming"
 MODULE_DEFAULT=1
 MODULE_RISKY=1
 }

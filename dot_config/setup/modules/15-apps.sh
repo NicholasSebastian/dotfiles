@@ -4,7 +4,7 @@
 # shellcheck disable=SC2034  # header variables are read by setup.sh after sourcing
 {
 MODULE_ID=apps
-MODULE_DESC="Brave + Chrome, Bitwarden, Obsidian, Vesktop, Telegram, Spotify (+ Spicetify)..., GIMP, Krita, Inkscape, Darktable, Kdenlive, Affinity, web apps"
+MODULE_DESC="Brave + Chrome, Bitwarden, Obsidian, Discord, Telegram, Spotify, Affinity, etc."
 MODULE_DEFAULT=1
 }
 
