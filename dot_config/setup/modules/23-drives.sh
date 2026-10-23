@@ -58,7 +58,9 @@ _drives_scan() {
 
   if in_lines ntfs "$(lsblk -nlo FSTYPE)"; then apt_install ntfs-3g; fi   # ntfsls
 
-  while IFS=$'\t' read -r dev fs label uuid ptype size cur; do
+  # Fields are split on \x1f, not tabs: tab is IFS whitespace, so an empty
+  # field (no label, no partition type) would vanish and shift the rest.
+  while IFS=$'\x1f' read -r dev fs label uuid ptype size cur; do
     if [[ "$_DRIVES_FS" != *" $fs "* ]]; then
       info "Not offered: $dev ${label:-(no label)} ($fs) - not a data filesystem"; continue
     fi
@@ -84,7 +86,7 @@ _drives_scan() {
     [.blockdevices[] | recurse(.children[]?)][]
     | select(.uuid != null and .fstype != null)
     | [.path, .fstype, (.label // ""), .uuid, ((.parttype // "") | ascii_downcase), .size,
-       ((.mountpoints // []) | map(select(. != null)) | .[0] // "")] | @tsv')
+       ((.mountpoints // []) | map(select(. != null)) | .[0] // "")] | map(tostring) | join("\u001f")')
 
   # Mount points: keep the managed one (stable if the label changes), else
   # /mnt/<label> with anything unusual turned into '_', made unique.
@@ -168,9 +170,13 @@ _drives_entry() {
   esac
 }
 
+# Sorted by mount point, so the block doesn't change when the kernel names
+# the disks differently (sda/sdb swap between boots)
 _drives_body() {
   local i type opts pass first=1
-  for i in "${!_DRIVES_DEV[@]}"; do
+  local -a order=()
+  mapfile -t order < <(for i in "${!_DRIVES_DEV[@]}"; do printf '%s\t%s\n' "${_DRIVES_MP[i]}" "$i"; done | LC_ALL=C sort | cut -f2)
+  for i in "${order[@]}"; do
     (( _DRIVES_ON[i] )) || continue
     IFS=$'\t' read -r type opts pass < <(_drives_entry "$i")
     (( first )) || printf '\n'
@@ -217,17 +223,21 @@ drives_run() {
     for i in "${!_DRIVES_DEV[@]}"; do
       if (( _DRIVES_ON[i] )); then run sudo mkdir -p "${_DRIVES_MP[i]}"; fi
     done
+    # Check our entries before writing (only ours: an unrelated broken line
+    # elsewhere in fstab shouldn't block this; findmnt can't read /dev/fd)
+    if ! is_dry && [[ -n "$new" ]]; then
+      printf '%s\n' "$new" >"$MODULE_TMP/fstab.check"
+      if ! findmnt --verify --tab-file "$MODULE_TMP/fstab.check" >/dev/null; then
+        findmnt --verify --verbose --tab-file "$MODULE_TMP/fstab.check" || true
+        die "The new /etc/fstab entries don't verify (findmnt --verify); /etc/fstab was left unchanged"
+      fi
+    fi
     if [[ -z "$new" ]]; then
       if grep -qxF "$_DRIVES_START" "$_DRIVES_FSTAB"; then
         strip_block "$_DRIVES_FSTAB" "$_DRIVES_START" "$_DRIVES_END" | write_file "$_DRIVES_FSTAB" 0644
       fi
     else
       rc_block "$_DRIVES_FSTAB" "$_DRIVES_START" "$_DRIVES_END" "$new"
-    fi
-    # The block differs, so the file was written. (write_changed can't be used
-    # here: rc_block runs write_file at the end of a pipe, in a subshell.)
-    if ! is_dry && ! findmnt --verify --tab-file "$_DRIVES_FSTAB" >/dev/null; then
-      die "/etc/fstab doesn't verify (findmnt --verify). Restore it: sudo cp /var/backups/setup/etc/fstab.$TS /etc/fstab"
     fi
     run sudo systemctl daemon-reload
   else

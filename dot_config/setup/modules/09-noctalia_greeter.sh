@@ -133,8 +133,8 @@ noctalia_greeter_run() {
 # Undo the Noctalia Greeter switch (written by ~/.config/setup).
 # From a text console (Ctrl+Alt+F3, then log in): bash ~/restore-login-screen.sh
 set -euo pipefail
-sudo systemctl disable greetd.service
 sudo systemctl enable --force '$old_unit'
+sudo systemctl disable greetd.service
 $x11_line
 echo "Login screen restored to $old_unit. Optional: sudo apt remove noctalia-greeter. Reboot with: sudo reboot"
 EOF

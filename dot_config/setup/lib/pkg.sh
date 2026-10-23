@@ -22,7 +22,7 @@ pkg_installed() { [[ -n "$(pkgs_installed "$1")" ]]; }
 
 # Print the names (of those given) that apt can install.
 pkgs_available() {
-  apt-cache policy "$@" 2>/dev/null | awk '
+  LC_ALL=C apt-cache policy "$@" 2>/dev/null | awk '
     /^[^ ].*:$/          { name = substr($0, 1, length($0) - 1) }
     /^  Candidate: /     { if ($2 != "(none)") print name }' || true
 }

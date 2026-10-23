@@ -151,6 +151,7 @@ backup_file() {
   local file="$1" bak="/var/backups/setup$1.$TS"
   [[ -e "$file" ]] || return 0
   if [[ "$file" == "$HOME"/* ]]; then bak="$file.setup-bak.$TS"; fi
+  if [[ -e "$bak" ]]; then return 0; fi   # keep the first (pre-run) copy
   cmd "cp -a $file $bak"
   if is_dry; then return 0; fi
   as_owner "$file" mkdir -p "${bak%/*}"
@@ -189,12 +190,16 @@ write_file() {
 
 # strip_block FILE START END
 # Print FILE without its managed START...END block and trailing blank lines.
+# A START without its END (hand-edited file) is kept as is, rather than
+# dropping everything after it.
 strip_block() {
   awk -v s="$2" -v e="$3" '
-    $0 == s { skip = 1 }
+    $0 == s { skip = 1; nh = 0 }
+    skip    { held[++nh] = $0 }
     !skip   { line[++n] = $0 }
     $0 == e { skip = 0 }
     END {
+      if (skip) for (i = 1; i <= nh; i++) line[++n] = held[i]
       while (n > 0 && line[n] ~ /^[[:space:]]*$/) n--
       for (i = 1; i <= n; i++) print line[i]
     }' "$1"
@@ -210,10 +215,11 @@ rc_block() {
     if [[ -f "$file" ]]; then
       # BODY via the environment: awk -v would interpret backslashes
       BODY="$body" awk -v s="$start" -v e="$end" '
-        $0 == s { if (!done) { print s; print ENVIRON["BODY"]; print e; done = 1 }; skip = 1; next }
-        skip    { if ($0 == e) skip = 0; next }
+        $0 == s { if (!done) { print s; print ENVIRON["BODY"]; print e; done = 1 }; skip = 1; nh = 0; next }
+        skip    { if ($0 == e) skip = 0; else held[++nh] = $0; next }
                 { print; last = $0 }
         END {
+          if (skip) for (i = 1; i <= nh; i++) print held[i]   # START without END: keep the rest
           if (!done) {
             if (NR && last !~ /^[[:space:]]*$/) print ""
             print s; print ENVIRON["BODY"]; print e

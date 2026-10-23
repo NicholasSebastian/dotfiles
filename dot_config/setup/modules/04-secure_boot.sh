@@ -11,7 +11,9 @@ MODULE_RISKY=1
 
 # Follows https://wiki.pika-os.com/en/guides-wiki/secure-boot (option 2):
 #   pikman install sbctl-booster-extra
-#   sbctl setup --setup && sbctl create-keys
+#   sbctl create-keys   (the wiki's 'sbctl setup --setup' first would, since
+#                        sbctl 0.18, enroll keys without Microsoft's or fail
+#                        outside Setup Mode, so it's left out)
 #   sbctl enroll-keys --microsoft
 #   apt reinstall linux-image-$(uname -r)
 #   sbctl sign rEFInd (EFI/refind or EFI/BOOT) + its ext4 driver; sbctl verify
@@ -72,7 +74,7 @@ secure_boot_run() {
   mapfile -t files < <(_secure_boot_refind_files "$esp")
 
   local -a plan=()
-  if [[ "$installed" != true ]]; then plan+=("create your own Secure Boot signing keys (sbctl setup --setup, sbctl create-keys)"); fi
+  if [[ "$installed" != true ]]; then plan+=("create your own Secure Boot signing keys (sbctl create-keys)"); fi
   if [[ "$setup_mode" == true ]]; then
     plan+=("enroll them into the firmware together with Microsoft's keys (sbctl enroll-keys --microsoft); asked again separately")
   else
@@ -85,7 +87,6 @@ secure_boot_run() {
 
   local keys_changed=0
   if [[ "$installed" != true ]]; then
-    run sudo "$sbctl" setup --setup
     run sudo "$sbctl" create-keys
     keys_changed=1
   fi

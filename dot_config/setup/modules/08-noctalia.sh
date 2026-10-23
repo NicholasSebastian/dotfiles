@@ -91,11 +91,11 @@ do
   hl.bind(mainMod .. "+comma", hl.dsp.exec_cmd(ipc .. "settings-toggle"))
   hl.bind("ALT + Tab", hl.dsp.exec_cmd(ipc .. "window-switcher"))
   hl.bind("PRINT", hl.dsp.exec_cmd(ipc .. "screenshot-region"))
-  hl.bind("XF86AudioRaiseVolume", hl.dsp.exec_cmd(ipc .. "volume-up"))
-  hl.bind("XF86AudioLowerVolume", hl.dsp.exec_cmd(ipc .. "volume-down"))
-  hl.bind("XF86AudioMute", hl.dsp.exec_cmd(ipc .. "volume-mute"))
-  hl.bind("XF86MonBrightnessUp", hl.dsp.exec_cmd(ipc .. "brightness-up"))
-  hl.bind("XF86MonBrightnessDown", hl.dsp.exec_cmd(ipc .. "brightness-down"))
+  hl.bind("XF86AudioRaiseVolume", hl.dsp.exec_cmd(ipc .. "volume-up"), { locked = true, repeating = true })
+  hl.bind("XF86AudioLowerVolume", hl.dsp.exec_cmd(ipc .. "volume-down"), { locked = true, repeating = true })
+  hl.bind("XF86AudioMute", hl.dsp.exec_cmd(ipc .. "volume-mute"), { locked = true })
+  hl.bind("XF86MonBrightnessUp", hl.dsp.exec_cmd(ipc .. "brightness-up"), { locked = true, repeating = true })
+  hl.bind("XF86MonBrightnessDown", hl.dsp.exec_cmd(ipc .. "brightness-down"), { locked = true, repeating = true })
 end'
 
 _NOCTALIA_WINDOWS_BODY='-- Noctalia blur
@@ -155,6 +155,7 @@ _noctalia_switch() {
     "take effect at your next login"
 
   apt_install noctalia lua5.4               # the wiki's 'pikman install noctalia'
+  is_dry || pkg_installed noctalia || die "noctalia didn't install, so your Hyprland config was left unchanged"
   (( ${#changed[@]} )) || return 0
 
   local luac

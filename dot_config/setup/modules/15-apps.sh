@@ -72,12 +72,14 @@ _apps_vesktop_as_discord() {
       changed=1
     fi
   elif [[ ! -f "$src" ]]; then
-    if is_dry; then
-      info "Would show Vesktop as Discord in the launcher (once it's installed)"
+    # Not installed (left out, or its install failure was already reported):
+    # drop an override we made earlier
+    if [[ -f "$dest" && "$(head -n1 "$dest")" == "$marker" ]]; then
+      run rm -f "$dest"
+      changed=1
     else
-      soft_fail "Vesktop's launcher entry isn't at $src; not renamed to Discord"
+      info "Vesktop isn't installed; not showing it as Discord"
     fi
-    return 0
   else
     if [[ -z "$(find /usr/share/icons "$HOME/.local/share/icons" -path '*/apps/discord.*' -print -quit 2>/dev/null)" ]]; then
       icon=dev.vencord.Vesktop

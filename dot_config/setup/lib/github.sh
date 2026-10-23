@@ -17,10 +17,14 @@ gh_api() {
     "https://api.github.com/$path"
 }
 
-# Latest release JSON, cached for the run (several modules ask twice).
+# Latest release JSON, cached for the run (several modules ask twice). A
+# failed request leaves no cache, so the caller sees the error.
 gh_latest_json() {
   local repo="$1" cache="$SETUP_TMP/gh-${1//\//_}.json"
-  [[ -s "$cache" ]] || gh_api "repos/$repo/releases/latest" >"$cache"
+  if [[ ! -s "$cache" ]]; then
+    gh_api "repos/$repo/releases/latest" >"$cache.part" || { rm -f "$cache.part"; return 1; }
+    mv -f "$cache.part" "$cache"
+  fi
   cat "$cache"
 }
 

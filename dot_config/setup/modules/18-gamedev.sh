@@ -66,7 +66,11 @@ _gamedev_aseprite() {
 
   # Build with Aseprite's own helper in unattended mode (--auto: release
   # build of the default configuration, --norun: don't launch it). It
-  # downloads the exact prebuilt Skia this version needs.
+  # downloads the exact prebuilt Skia this version needs. Once a
+  # CMakeCache.txt exists it asks which build to use (even with --auto) and
+  # reuses the first build's Skia dir, so both are reset first; compiled
+  # objects are kept, so updates still build incrementally.
+  run rm -rf "$dir/.build" "$dir/build/CMakeCache.txt"
   run_in "$dir" ./build.sh --auto --norun
 
   # Command and launcher entry

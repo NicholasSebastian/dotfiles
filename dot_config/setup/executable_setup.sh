@@ -102,7 +102,11 @@ DRY_RUN=0 FORCE=0 ASSUME_YES=0 LIST=0 MODE=menu
 declare -a ONLY=() SKIP=()
 
 # add_ids ARRAY LIST: append the ids in a comma/space separated LIST to ARRAY.
-add_ids() { local -n _arr="$1"; local IFS=', ' _ids; read -ra _ids <<<"$2"; _arr+=("${_ids[@]}"); }
+add_ids() {
+  local -n _arr="$1"; local IFS=', ' _id; local -a _ids
+  read -ra _ids <<<"$2"
+  for _id in "${_ids[@]}"; do if [[ -n "$_id" ]]; then _arr+=("$_id"); fi; done
+}
 
 parse_args() {
   while (( $# )); do
@@ -119,7 +123,7 @@ parse_args() {
       --pick)      MODE=menu ;;
       -h|--help)   usage; exit 0 ;;
       -*)          die "Unknown option: $1 (see --help)" ;;
-      *)           ONLY+=("$1"); MODE=only ;;
+      *)           add_ids ONLY "$1"; MODE=only ;;
     esac
     shift
   done
@@ -264,7 +268,13 @@ run_modules() {
     run_step "$id" "${id}_run"
     case "$STEP_RC" in
       0) STATUS[$id]=ok ;;
-      3) STATUS[$id]=skipped; REASON[$id]="$(cat "$RUN_DIR/skip.$id" 2>/dev/null || echo skipped)" ;;
+      # 3 is module_skip only if it left its reason file; a command that
+      # failed with exit 3 (unzip, curl, ...) is a real failure
+      3) if [[ -f "$RUN_DIR/skip.$id" ]]; then
+           STATUS[$id]=skipped; REASON[$id]="$(<"$RUN_DIR/skip.$id")"
+         else
+           STATUS[$id]=failed; err "$id failed (exit $STEP_RC); continuing with the next module"
+         fi ;;
       *) STATUS[$id]=failed; err "$id failed (exit $STEP_RC); continuing with the next module" ;;
     esac
   done

@@ -38,9 +38,13 @@ _ai_local() {
   if (( OPEN_WEBUI )); then
     if ! is_dry && sudo docker container inspect open-webui >/dev/null 2>&1; then
       info "Open WebUI container already exists"
+      followup manual "Open WebUI: if it shows no models, recreate it: sudo docker rm -f open-webui, then re-run './setup.sh --only ai'"
     else
+      # Host network: Ollama only listens on 127.0.0.1:11434, which the
+      # bridge network can't reach. HOST/PORT keep the UI on localhost:3000.
       run sudo docker run -d --name open-webui --restart always \
-        -p 127.0.0.1:3000:8080 --add-host=host.docker.internal:host-gateway \
+        --network=host -e HOST=127.0.0.1 -e PORT=3000 \
+        -e OLLAMA_BASE_URL=http://127.0.0.1:11434 \
         -v open-webui:/app/backend/data \
         ghcr.io/open-webui/open-webui:main
       followup manual "Open WebUI: http://localhost:3000"
