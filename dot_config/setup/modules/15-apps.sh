@@ -4,7 +4,7 @@
 # shellcheck disable=SC2034  # header variables are read by setup.sh after sourcing
 {
 MODULE_ID=apps
-MODULE_DESC="Brave + Chrome, Bitwarden, Obsidian, LocalSend, Discord, Telegram, Spotify, Affinity, etc."
+MODULE_DESC="Brave + Chrome, Bitwarden, Obsidian, LocalSend, Discord, Telegram, Spotify, Affinity, ArtCraft, etc."
 MODULE_DEFAULT=1
 }
 
@@ -206,6 +206,22 @@ _apps_creative() {
     org.kde.kdenlive
   )
   flatpak_install "${apps[@]}"
+
+  # ArtCraft's Crafting Apps (open source, pure Rust, early alpha): the
+  # ArtCraft Launcher installs them and keeps them updated. It isn't on
+  # Flathub or in apt, so its .deb comes from the latest GitHub release.
+  # https://getartcraft.com/apps
+  if pkg_installed artcraft-launcher; then
+    info "ArtCraft Launcher already installed"
+  else
+    local acl="$MODULE_TMP/artcraft-launcher.deb"
+    if gh_download_latest storytold/craft-launcher '-linux-x86_64\.deb$' "$acl"; then
+      apt_install "$acl"
+      followup manual "ArtCraft Launcher: open it and install PhotoCraft, VectorCraft, FilmCraft and LightCraft (it keeps them updated)."
+    else
+      soft_fail "ArtCraft Launcher: couldn't download the .deb from the latest storytold/craft-launcher release"
+    fi
+  fi
 
   # Affinity: community AppImage (AffinityOnLinux, not affiliated with Serif)
   # with its own Wine setup. AppImages need FUSE 2.
