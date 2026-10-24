@@ -17,6 +17,7 @@ base_run() {
     7zip zip unzip unar zstd
     # system
     rsync plocate lm-sensors smartmontools gnome-disk-utility fwupd
+    systemd-coredump                       # keeps crash dumps: coredumpctl info <program>
     # cloud sync (Google Drive etc.); fuse3 is needed for 'rclone mount'
     rclone fuse3
     # media
