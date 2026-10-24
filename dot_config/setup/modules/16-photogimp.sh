@@ -11,15 +11,26 @@ MODULE_DEPS=(apps)                       # GIMP comes from the apps module
 
 # PhotoGIMP's zip ships its settings for GIMP 3.0 (.config/GIMP/3.0), but
 # GIMP reads a folder per minor version (3.2 reads GIMP/3.2). So the files
-# go into the newest version folder the Flatpak GIMP has created.
+# go into the newest version folder GIMP has created. Flathub's GIMP has
+# the xdg-config/GIMP permission, so it keeps them in the normal
+# ~/.config/GIMP, not inside ~/.var/app/org.gimp.GIMP (whose config/GIMP
+# stays an empty mount point); older builds without that permission used
+# the sandbox folder, so both are checked.
 photogimp_run() {
-  local cfg="$HOME/.var/app/org.gimp.GIMP/config/GIMP" ver
-  ver="$(find "$cfg" -mindepth 1 -maxdepth 1 -type d -name '[0-9]*.[0-9]*' -printf '%f\n' 2>/dev/null \
+  local cfg="" ver="" d v
+  for d in "${XDG_CONFIG_HOME:-$HOME/.config}/GIMP" "$HOME/.var/app/org.gimp.GIMP/config/GIMP"; do
+    v="$(find "$d" -mindepth 1 -maxdepth 1 -type d -name '[0-9]*.[0-9]*' -printf '%f\n' 2>/dev/null \
          | grep -E '^[0-9]+\.[0-9]+$' | sort -V | tail -n1 || true)"
+    # Newest version wins; on a tie the first folder (the one GIMP uses now)
+    if [[ -n "$v" && ( -z "$ver" || "$(printf '%s\n%s\n' "$ver" "$v" | sort -V | tail -n1)" != "$ver" ) ]]; then
+      cfg="$d" ver="$v"
+    fi
+  done
   if [[ -z "$ver" ]]; then
     followup manual "PhotoGIMP: open GIMP once, close it, then run './setup.sh --only photogimp'."
     module_skip "GIMP hasn't created its settings folder yet"
   fi
+  info "GIMP $ver settings: $cfg/$ver"
   local target="$cfg/$ver" marker="$cfg/$ver/.photogimp-applied"
   if [[ -f "$marker" ]]; then
     info "PhotoGIMP already applied to GIMP $ver (delete $marker to re-apply)"
