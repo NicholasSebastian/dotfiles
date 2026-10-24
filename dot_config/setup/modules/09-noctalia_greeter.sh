@@ -29,6 +29,8 @@ _NG_KEYRING_DEB="https://pkg.noctalia.dev/deb/nickh-archive-keyring.deb"
 _NG_KEY_FPR="C2A7E07FB3D746BDF2A245CD683B67D7BC99A9B7"    # expires 2027-06-01; renewals keep this fingerprint
 _NG_CFG="/etc/greetd/noctalia-greeter.toml"
 _NG_TOML="/var/lib/noctalia-greeter/greeter.toml"
+_NG_COMPOSITOR=/usr/bin/noctalia-greeter-compositor
+_NG_PATCH="$SETUP_DIR/files/noctalia-greeter/keep-unused-outputs-black.patch"
 
 # Add Noctalia's APT repo, pinned low so it only supplies packages PikaOS
 # doesn't have and never replaces PikaOS's own (like the noctalia shell).
@@ -73,26 +75,102 @@ _noctalia_greeter_make_default() {
   printf '%s\n' greetd.service >"$RUN_DIR/dm_expected"
 }
 
-# _noctalia_greeter_set_output FILE VALUE: print FILE with [output] name set
-# to VALUE, or removed when VALUE is empty (= all monitors). Adds an [output]
-# section at the end if there's none. Other keys and sections are kept.
+# _noctalia_greeter_set_output FILE NAME RATES: print FILE with [output] name
+# and refresh_rate set to NAME and RATES, right under the [output] header.
+# An empty NAME removes name (= all monitors); RATES "-" leaves refresh_rate
+# as it is, empty removes it. Adds an [output] section at the end if needed.
+# Other keys and sections are kept.
 _noctalia_greeter_set_output() {
-  local v="${2//\\/\\\\}"
-  v="${v//\"/\\\"}"
-  WANT="$v" awk '
-    function emit() { if (ENVIRON["WANT"] != "") print "name = \"" ENVIRON["WANT"] "\"  # chosen by ~/.config/setup"; done = 1 }
-    /^[[:space:]]*\[/ {
-      if (in_out && !done) emit()
-      in_out = ($0 ~ /^[[:space:]]*\[output\][[:space:]]*(#.*)?$/)
-      if (in_out) seen = 1
-      print; next
+  local n="${2//\\/\\\\}" r="${3//\\/\\\\}"
+  n="${n//\"/\\\"}"; r="${r//\"/\\\"}"
+  NAME="$n" RATES="$r" awk '
+    function emit() {
+      if (ENVIRON["NAME"] != "") print "name = \"" ENVIRON["NAME"] "\"  # chosen by ~/.config/setup"
+      if (ENVIRON["RATES"] != "" && ENVIRON["RATES"] != "-") print "refresh_rate = \"" ENVIRON["RATES"] "\"  # max per monitor, by ~/.config/setup"
+      done = 1
     }
-    in_out && /^[[:space:]]*name[[:space:]]*=/ { if (!done) emit(); next }
+    /^[[:space:]]*\[/ {
+      in_out = ($0 ~ /^[[:space:]]*\[output\][[:space:]]*(#.*)?$/)
+      print
+      if (in_out && !done) emit()
+      next
+    }
+    in_out && /^[[:space:]]*name[[:space:]]*=/ { next }
+    in_out && ENVIRON["RATES"] != "-" && /^[[:space:]]*refresh_rate[[:space:]]*=/ { next }
     { print }
     END {
-      if (in_out && !done) emit()
-      else if (!seen && ENVIRON["WANT"] != "") { if (NR) print ""; print "[output]"; emit() }
+      if (!done && (ENVIRON["NAME"] != "" || (ENVIRON["RATES"] != "" && ENVIRON["RATES"] != "-"))) {
+        if (NR) print ""
+        print "[output]"; emit()
+      }
     }' "$1"
+}
+
+# CONNECTOR<TAB>HZ per monitor: the highest refresh rate at the monitor's
+# preferred resolution (the greeter uses that resolution, and applies
+# refresh_rate at it). Hyprland lists the preferred mode first, like DRM.
+# Without a running Hyprland (e.g. a Niri session) this prints nothing.
+_noctalia_greeter_max_rates() {
+  have hyprctl || return 0
+  hyprctl monitors all -j 2>/dev/null | jq -r '
+    .[] | select(.availableModes | length > 0)
+    | (.availableModes[0] | split("@")[0]) as $res
+    | ([.availableModes[] | select(startswith($res + "@")) | sub(".*@"; "") | sub("Hz$"; "") | tonumber] | max) as $hz
+    | "\(.name)\t\($hz | round)"' 2>/dev/null || true
+}
+
+# Upstream turns every monitor except the pinned one off while the greeter
+# runs (choose_outputs() in src/compositor/noctalia_compositor.c), so they
+# lose signal. This builds the compositor from the installed version's
+# source with files/noctalia-greeter/keep-unused-outputs-black.patch, which
+# keeps them on and black instead, and installs it over the packaged binary.
+# A noctalia-greeter upgrade puts the stock binary back (monitors switch off
+# again, nothing breaks); the next run notices via the stamp and rebuilds.
+# Back to stock: sudo apt install --reinstall noctalia-greeter
+_noctalia_greeter_patch_compositor() {
+  local ver stamp="$LOG_DIR/noctalia-greeter-compositor.stamp" want=""
+  local src="$MODULE_TMP/noctalia-greeter-src"
+  [[ -f "$_NG_PATCH" ]] || die "Patch missing: $_NG_PATCH (run chezmoi apply)"
+  ver="$(dpkg-query -W -f='${Version}' noctalia-greeter 2>/dev/null || true)"
+  ver="${ver#*:}"; ver="${ver%-*}"           # 1.7.0-2 -> 1.7.0
+  [[ -n "$ver" ]] || { info "noctalia-greeter isn't installed; the compositor patch waits for the next run"; return 0; }
+
+  # "<version> <patch sha256> <installed binary sha256>" of the last install
+  if [[ -f "$stamp" && -f "$_NG_COMPOSITOR" ]]; then
+    want="$ver $(sha256sum "$_NG_PATCH" | cut -d' ' -f1) $(sha256sum "$_NG_COMPOSITOR" | cut -d' ' -f1)"
+    if [[ "$(cat "$stamp")" == "$want" ]]; then
+      info "Patched Noctalia Greeter compositor $ver is installed (other monitors stay on, black)"
+      return 0
+    fi
+  fi
+
+  confirm_step "Build noctalia-greeter-compositor $ver from source with the keep-monitors-on patch and install it over $_NG_COMPOSITOR (installs ~20 -dev build packages; undo: sudo apt install --reinstall noctalia-greeter)" \
+    || { info "Compositor left as packaged: the other monitors switch off at the login screen"; return 0; }
+
+  apt_install meson ninja-build pkgconf g++ git patch libwayland-dev wayland-protocols \
+    libxkbcommon-dev libfreetype-dev libfontconfig-dev libcairo2-dev libpango1.0-dev \
+    librsvg2-dev libxml2-dev libglib2.0-dev libtomlplusplus-dev nlohmann-json3-dev \
+    libwlroots-0.20-dev libinput-dev libegl-dev libgles-dev libwebp-dev libjxl-dev libstb-dev
+
+  run git clone -q --depth 1 --branch "v$ver" https://github.com/noctalia-dev/noctalia-greeter "$src" \
+    || { soft_fail "Noctalia Greeter: couldn't fetch source tag v$ver; compositor left as packaged"; return 0; }
+  run_in "$src" patch -p1 --forward --quiet -i "$_NG_PATCH" \
+    || { soft_fail "Noctalia Greeter: the patch doesn't apply to v$ver (upstream changed); compositor left as packaged. Update files/noctalia-greeter/keep-unused-outputs-black.patch"; return 0; }
+  if ! run_in "$src" meson setup build --prefix=/usr --buildtype=release \
+    || ! run_in "$src" meson compile -C build noctalia-greeter-compositor; then
+    soft_fail "Noctalia Greeter: compositor build failed (see the log); compositor left as packaged"
+    return 0
+  fi
+
+  run sudo mkdir -p "/var/backups/setup${_NG_COMPOSITOR%/*}"
+  run sudo cp -a "$_NG_COMPOSITOR" "/var/backups/setup$_NG_COMPOSITOR.$TS"
+  run sudo install -m 0755 "$src/build/noctalia-greeter-compositor" "$_NG_COMPOSITOR"
+  if ! is_dry; then
+    mkdir -p "$LOG_DIR"
+    printf '%s %s %s\n' "$ver" "$(sha256sum "$_NG_PATCH" | cut -d' ' -f1)" "$(sha256sum "$_NG_COMPOSITOR" | cut -d' ' -f1)" >"$stamp"
+  fi
+  followup reboot "Noctalia Greeter: patched compositor installed; at the next login screen the other monitors stay on and black."
+  followup manual "Noctalia Greeter: after a noctalia-greeter update, re-run './setup.sh --only noctalia_greeter' to rebuild the patched compositor (until then the other monitors switch off again). Back to stock: sudo apt install --reinstall noctalia-greeter"
 }
 
 # Which monitor shows the login screen. Noctalia Greeter shows it on every
@@ -100,7 +178,8 @@ _noctalia_greeter_set_output() {
 # subset (https://docs.noctalia.dev/greeter/displays/). The directory is
 # _greetd's (mode 750), so the file is read and written with sudo.
 _noctalia_greeter_displays() {
-  local conn id key cur="" known=1 exists=0 i c=0
+  local conn id key cur="" known=1 exists=0 i c=0 hz rates="" rate_info=""
+  local -A max_hz=()
   local old="$MODULE_TMP/greeter.toml" new="$MODULE_TMP/greeter.toml.new"
   local -a conns=() ids=() vals=("") labs=("All monitors")
 
@@ -111,10 +190,13 @@ _noctalia_greeter_displays() {
   while IFS=$'\t' read -r conn id; do
     if [[ -n "$conn" ]]; then conns+=("$conn"); ids+=("$id"); fi
   done < <(noctalia-greeter outputs --details 2>/dev/null || true)
-  if (( ${#conns[@]} < 2 )); then
-    info "Login screen monitor: ${#conns[@]} monitor(s) found from this session, nothing to choose"
+  if (( ${#conns[@]} == 0 )); then
+    info "Login screen monitor: no monitors found from this session, nothing to set"
     return 0
   fi
+  while IFS=$'\t' read -r conn hz; do
+    if [[ -n "$conn" && "$hz" =~ ^[0-9]+$ ]]; then max_hz[$conn]=$hz; fi
+  done < <(_noctalia_greeter_max_rates)
 
   # Current setting (dry run: only if sudo needs no password). The copy in
   # $MODULE_TMP is meant to be ours, so sudo not covering '>' is intended.
@@ -138,6 +220,8 @@ _noctalia_greeter_displays() {
     key="${conns[i]}"
     if [[ -n "${ids[i]}" ]] && (( $(printf '%s\n' "${ids[@]}" | grep -cxF -- "${ids[i]}") == 1 )); then key="${ids[i]}"; fi
     vals+=("$key"); labs+=("Only ${conns[i]}${ids[i]:+ (${ids[i]})}")
+    hz="${max_hz[${conns[i]}]:-}"
+    if [[ -n "$hz" ]]; then rates+="${rates:+; }$key:$hz"; rate_info+="${rate_info:+, }${conns[i]} $hz Hz"; fi
     if [[ -n "$cur" && ( "$cur" == "${conns[i]}" || "$cur" == "${ids[i]}" ) ]]; then c=$(( i + 1 )); fi
   done
   # The current choice goes first, so Enter keeps it. A pin to a monitor
@@ -150,12 +234,23 @@ _noctalia_greeter_displays() {
     fi
   fi
 
-  ask_choice "Which monitor should show the login screen? (Noctalia Greeter can use all of them or just one)" "${labs[@]}" \
-    || { info "No terminal: login screen monitor left as it is"; return 0; }
-  key="${vals[CHOICE - 1]}"
-  _noctalia_greeter_set_output "$old" "$key" >"$new"
+  if (( ${#conns[@]} < 2 )); then
+    key="$cur"                              # one monitor: nothing to choose
+  elif ask_choice "Which monitor should show the login screen? (Noctalia Greeter can use all of them or just one)" "${labs[@]}"; then
+    key="${vals[CHOICE - 1]}"
+    if [[ -n "$key" ]]; then _noctalia_greeter_patch_compositor; fi
+  else
+    info "No terminal: login screen monitor left as it is"
+    key="$cur"
+    if [[ -n "$key" ]]; then _noctalia_greeter_patch_compositor; fi
+  fi
+  # Every monitor at its highest refresh rate (the greeter otherwise uses
+  # the EDID-preferred mode, often 60 Hz); "-" keeps any existing setting
+  # when the rates can't be read from this session.
+  if [[ -n "$rates" ]]; then info "Login screen refresh rates: $rate_info"; else rates="-"; info "Couldn't read the monitors' refresh rates (needs a running Hyprland); refresh rate left as it is"; fi
+  _noctalia_greeter_set_output "$old" "$key" "$rates" >"$new"
   if (( known )) && cmp -s "$old" "$new"; then
-    info "Login screen monitor unchanged"
+    info "Login screen monitor and refresh rates unchanged"
     return 0
   fi
 
@@ -172,7 +267,7 @@ _noctalia_greeter_displays() {
     run sudo cp -a "$_NG_TOML" "/var/backups/setup$_NG_TOML.$TS"
   fi
   run sudo install -m "$mode" -o "${owner%%:*}" -g "${owner#*:}" "$new" "$_NG_TOML"
-  followup reboot "Noctalia Greeter: the login screen shows on ${key:-all monitors} from the next boot."
+  followup reboot "Noctalia Greeter: from the next boot the login screen shows on ${key:-all monitors}${rate_info:+, at $rate_info}."
 }
 
 noctalia_greeter_run() {
@@ -189,7 +284,7 @@ noctalia_greeter_run() {
   confirm_risky \
     "add Noctalia's Debian sid APT repo if PikaOS doesn't package noctalia-greeter (key pinned by fingerprint, repo pinned low)" \
     "install greetd and noctalia-greeter" \
-    "ask which monitor shows the login screen (all, or one) and set it in $_NG_TOML" \
+    "ask which monitor shows the login screen (all, or one) and set it in $_NG_TOML; with one, build a patched greeter compositor so the other monitors stay on and black" \
     "disable ${old_unit:-the current login screen} and enable greetd for the NEXT boot (this session keeps running)" \
     "write an undo script to $restore"
 

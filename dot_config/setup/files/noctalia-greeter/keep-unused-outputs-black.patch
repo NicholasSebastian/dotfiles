@@ -1,0 +1,73 @@
+pikaos-setup: keep monitors other than the pinned one on and black (against noctalia-greeter v1.7.0)
+diff --git a/src/compositor/noctalia_compositor.c b/src/compositor/noctalia_compositor.c
+index 5b5d5f7..3d51389 100644
+--- a/src/compositor/noctalia_compositor.c
++++ b/src/compositor/noctalia_compositor.c
+@@ -1591,6 +1591,35 @@ static bool enable_layout_output(struct greeter_output* output, int layout_x, in
+   return true;
+ }
+ 
++// pikaos-setup patch: keep an output that isn't used for the greeter lit
++// with a black frame instead of switching it off, so the monitor keeps its
++// signal. It stays out of the layout, so it gets no greeter view, no cursor
++// and no repaints: the black frame stays on screen.
++static void blank_output(struct greeter_output* output) {
++  struct greeter_server* server = output->server;
++  if (output->layout_output != NULL) {
++    wlr_output_layout_remove(server->output_layout, output->wlr_output);
++    output->layout_output = NULL;
++  }
++  if (output->scene_output != NULL) {
++    wlr_scene_output_destroy(output->scene_output);
++    output->scene_output = NULL;
++  }
++  output->active = false;
++  if (output->view != NULL) {
++    struct greeter_view* view = output->view;
++    output->view = NULL;
++    view->output = NULL;
++    wlr_xdg_toplevel_send_close(view->toplevel);
++  }
++
++  if (output->wlr_output->enabled) {
++    clear_enabled_output(output);
++  } else if (commit_output_enabled(output)) {
++    wlr_log(WLR_INFO, "kept unused output %s on, black", output->wlr_output->name);
++  }
++}
++
+ static void warp_cursor_to_output_center(struct greeter_server* server, struct greeter_output* output) {
+   if (output == NULL || !output->active) {
+     return;
+@@ -1738,23 +1767,19 @@ static void choose_outputs(struct greeter_server* server) {
+     }
+   }
+ 
+-  // Release inherited scanouts before enabling selected outputs so they can
+-  // borrow any freed CRTCs.
++  // pikaos-setup patch: outputs other than the pinned one stay on and black
++  // (blank_output) instead of being disabled. A closed laptop lid still
++  // turns its internal panel off.
+   struct greeter_output* output;
+   wl_list_for_each(output, &server->outputs, link) {
+     const bool want = use_all || pinned == NULL || output == pinned;
+-    if (!want && output->wlr_output->enabled) {
+-      disable_output(output);
++    if (want) {
++      continue;
+     }
+-  }
+-
+-  wl_list_for_each(output, &server->outputs, link) {
+-    const bool want = use_all || pinned == NULL || output == pinned;
+-    // Clear inherited scanouts, but leave already-disabled connectors off.
+-    // Enabling one just to clear it can make a monitor report a fresh hotplug,
+-    // repeatedly cycling the connector between enabled and disabled.
+-    if (!want) {
++    if (greeter_output_name_is_internal(output->wlr_output->name) && any_lid_closed(server)) {
+       disable_output(output);
++    } else {
++      blank_output(output);
+     }
+   }
+ 
