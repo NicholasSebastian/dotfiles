@@ -55,6 +55,39 @@ _apps_spicetify() {
   followup manual "Spicetify: restart Spotify to see it. After a Spotify update, run 'spicetify backup apply' (or re-run './setup.sh --only apps')."
 }
 
+# Vesktop reads its config from ~/.config/vesktop (where dotfiles can manage
+# it) instead of the Flatpak's own ~/.var/app/dev.vencord.Vesktop/config/
+# vesktop: the xdg-config/vesktop permission mounts the host folder over
+# that path inside the sandbox. The first time, the existing Flatpak config
+# (settings, themes, login session) moves to ~/.config/vesktop; if that
+# already exists it wins, and the Flatpak copy is renamed aside.
+_apps_vesktop_config() {
+  local app=dev.vencord.Vesktop host="${XDG_CONFIG_HOME:-$HOME/.config}/vesktop"
+  local old="$HOME/.var/app/dev.vencord.Vesktop/config/vesktop" fs
+  if ! is_dry && ! flatpak info "$app" >/dev/null 2>&1; then return 0; fi
+  fs="$(flatpak override --user --show "$app" 2>/dev/null | sed -n 's/^filesystems=//p')"
+  if [[ ";$fs" == *";xdg-config/vesktop;"* || ";$fs" == *";xdg-config/vesktop:"* ]]; then
+    info "Vesktop already reads its config from $host"
+    return 0
+  fi
+
+  if [[ -d "$old" && -n "$(ls -A "$old" 2>/dev/null)" ]]; then
+    # Moving it under a running Vesktop would break its open session files
+    if ! is_dry && flatpak ps --columns=application 2>/dev/null | grep -qxF "$app"; then
+      soft_fail "Vesktop is running: quit it (also from the tray), then re-run './setup.sh --only apps' to move its config to $host"
+      return 0
+    fi
+    if [[ -e "$host" ]]; then
+      run mv "$old" "$old.setup-bak.$TS"
+    else
+      run mkdir -p "${host%/*}"
+      run mv "$old" "$host"
+    fi
+  fi
+  run mkdir -p "$host"
+  run flatpak override --user --filesystem=xdg-config/vesktop:create "$app"
+}
+
 # Run Vesktop natively on Wayland: as a Flatpak it falls back to X11
 # (XWayland) whenever it's allowed to, so take its X11 access away, as
 # https://vesktop.dev/wiki/linux/tips/#wayland-support says (Flatseal's
@@ -145,6 +178,7 @@ _apps_desktop() {
   fi
   _apps_spicetify
   _apps_vesktop_as_discord
+  _apps_vesktop_config
   _apps_vesktop_wayland
 }
 
