@@ -12,6 +12,7 @@ MODULE_RISKY=1
 # Lists every filesystem on every drive, mounted or not, and asks which ones
 # to mount at boot. The picks go in a managed block in /etc/fstab (by UUID,
 # with nofail so a missing drive never blocks boot) and are mounted right away.
+# Drives that aren't connected keep their entries.
 # The rest of /etc/fstab is left alone; entries there are never offered.
 
 _DRIVES_FSTAB=/etc/fstab
@@ -167,19 +168,32 @@ _drives_entry() {
 }
 
 # Sorted by mount point, so the block doesn't change when the kernel names
-# the disks differently (sda/sdb swap between boots)
+# the disks differently (sda/sdb swap between boots). Entries of managed
+# drives that aren't connected are kept as they are (nofail makes that
+# harmless); untick a drive while it's connected to remove it.
 _drives_body() {
-  local i type opts pass first=1
-  local -a order=()
-  mapfile -t order < <(for i in "${!_DRIVES_DEV[@]}"; do printf '%s\t%s\n' "${_DRIVES_MP[i]}" "$i"; done | LC_ALL=C sort | cut -f2)
-  for i in "${order[@]}"; do
-    (( _DRIVES_ON[i] )) || continue
-    IFS=$'\t' read -r type opts pass < <(_drives_entry "$i")
+  local i type opts pass kept mp comment line first=1
+  local -A here=()
+  {
+    for i in "${!_DRIVES_DEV[@]}"; do
+      here[${_DRIVES_UUID[i]}]=1
+      (( _DRIVES_ON[i] )) || continue
+      IFS=$'\t' read -r type opts pass < <(_drives_entry "$i")
+      # Label only in the comment: device names change when drives are renumbered
+      printf '%s\x1f# %s\x1fUUID=%s\t%s\t%s\t%s\t0\t%s\n' "${_DRIVES_MP[i]}" \
+        "${_DRIVES_LABEL[i]:-${_DRIVES_UUID[i]}}" "${_DRIVES_UUID[i]}" "${_DRIVES_MP[i]}" "$type" "$opts" "$pass"
+    done
+    block_body "$_DRIVES_FSTAB" "$_DRIVES_START" "$_DRIVES_END" | awk '
+      /^#/     { c = $0; next }
+      /^UUID=/ { u = substr($1, 6); print u "\x1f" $2 "\x1f" c "\x1f" $0; c = "" }' \
+      | while IFS=$'\x1f' read -r kept mp comment line; do
+          [[ -n "${here[$kept]:-}" ]] || printf '%s\x1f%s\x1f%s\n' "$mp" "$comment" "$line"
+        done
+  } | LC_ALL=C sort -t $'\x1f' -k1,1 | while IFS=$'\x1f' read -r mp comment line; do
     (( first )) || printf '\n'
     first=0
-    # Label only in the comment: device names change when drives are renumbered
-    printf '# %s\nUUID=%s\t%s\t%s\t%s\t0\t%s' "${_DRIVES_LABEL[i]:-${_DRIVES_UUID[i]}}" \
-      "${_DRIVES_UUID[i]}" "${_DRIVES_MP[i]}" "$type" "$opts" "$pass"
+    if [[ -n "$comment" ]]; then printf '%s\n' "$comment"; fi
+    printf '%s' "$line"
   done
 }
 
@@ -208,7 +222,8 @@ drives_run() {
     fi
   done
   for uuid in "${!_DRIVES_MANAGED[@]}"; do
-    [[ -n "${present[$uuid]:-}" ]] || changes+=("remove UUID=$uuid (drive not present)")
+    [[ -n "${present[$uuid]:-}" ]] \
+      || info "Keeping UUID=$uuid at ${_DRIVES_MANAGED[$uuid]} in /etc/fstab: the drive isn't connected (untick it while it's connected to remove it)"
   done
 
   if [[ "$new" != "$old" ]]; then

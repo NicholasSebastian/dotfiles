@@ -115,6 +115,21 @@ flatpak_install() {
   install_batch flatpak todo sudo flatpak install -y --noninteractive --system flathub
 }
 
+# True if APP is installed system-wide (where flatpak_install puts apps).
+flatpak_installed() { flatpak info --system "$1" >/dev/null 2>&1; }
+
+# True if APP is running.
+flatpak_running() { in_lines "$1" "$(flatpak ps --columns=application 2>/dev/null || true)"; }
+
+# flatpak_overrides KEY [APP]: the per-user override list KEY (filesystems,
+# sockets, ...) for APP, or for all apps, as ";a;b;" so callers can match
+# whole entries with *";entry;"*.
+flatpak_overrides() {
+  local v
+  v="$(flatpak override --user --show ${2:+"$2"} 2>/dev/null | sed -n "s/^$1=//p" || true)"
+  printf ';%s;' "${v%;}"
+}
+
 # --- mise --------------------------------------------------------------------
 
 mise_ensure() {
@@ -217,4 +232,9 @@ xdg_default() {
   done
   (( ${#todo[@]} )) || { info "$desktop is already the default for $*"; return 0; }
   run xdg-mime default "$desktop" "${todo[@]}"
+}
+
+# True if an icon theme (system or ~/.local/share/icons) has the app icon NAME.
+have_icon() {
+  [[ -n "$(find /usr/share/icons "$HOME/.local/share/icons" -path "*/apps/$1.*" -print -quit 2>/dev/null)" ]]
 }

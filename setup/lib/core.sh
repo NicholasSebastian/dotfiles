@@ -168,7 +168,7 @@ backup_file() {
 
 # write_file DEST [MODE] < content
 # Writes only when the content differs, backs up the old file first, follows
-# symlinks (so stow-managed files stay links), and uses sudo outside $HOME.
+# symlinks (so symlinked files stay links), and uses sudo outside $HOME.
 # Afterwards, write_changed is true if the file was (or in dry-run would be) written.
 WRITE_CHANGED=0
 write_changed() { (( WRITE_CHANGED )); }

@@ -42,7 +42,7 @@ refind_run() {
     theme=1; plan+=("install the $_REFIND_THEME theme to $theme_dest")
   fi
   if ! cmp -s "$src/refind.conf" "$dir/refind.conf"; then
-    conf=1; plan+=("replace $dir/refind.conf (shown below)")
+    conf=1; plan+=("replace $dir/refind.conf (diff above)")
   fi
   for f in /boot/refind_linux.conf "$esp/EFI/Linux/refind_linux.conf"; do
     [[ -d "${f%/*}" ]] || continue
@@ -55,6 +55,10 @@ refind_run() {
     return 0
   fi
 
+  if (( conf )); then
+    printf '%s--- %s%s\n' "$C_DIM" "$dir/refind.conf" "$C_RESET"
+    show_diff "$dir/refind.conf" "$src/refind.conf"
+  fi
   confirm_risky "${plan[@]}" \
     "back up the replaced files to /var/backups/setup/... first" \
     "the old refind-dark theme folder stays on the ESP (unused)" \

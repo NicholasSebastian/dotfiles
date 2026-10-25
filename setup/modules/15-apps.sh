@@ -12,7 +12,7 @@ MODULE_DEFAULT=1
 
 _apps_browsers() {
   # Brave's script adds its signed apt repo and installs brave-browser
-  if have brave-browser; then info "Brave already installed"; else install_script https://dl.brave.com/install.sh sh; fi
+  if have brave-browser; then info "Brave already installed"; else install_script https://dl.brave.com/install.sh sh || soft_fail "Brave's install script failed; see https://brave.com/linux"; fi
 
   # Chrome's .deb adds Google's apt repo for updates. Google publishes no
   # checksum for the 'current' .deb; it's fetched over TLS.
@@ -20,8 +20,11 @@ _apps_browsers() {
     info "Google Chrome already installed"
   else
     local deb="$MODULE_TMP/google-chrome-stable_current_amd64.deb"
-    download https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb "$deb"
-    apt_install "$deb"
+    if download https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb "$deb"; then
+      apt_install "$deb"
+    else
+      soft_fail "Google Chrome download failed; get it from https://www.google.com/chrome"
+    fi
   fi
 }
 
@@ -37,7 +40,10 @@ _apps_spicetify_comfy() {
     info "Spicetify Comfy theme already installed"
     return 0
   fi
-  run git clone --depth 1 https://github.com/Comfy-Themes/Spicetify.git "$repo"
+  if ! run git clone --depth 1 https://github.com/Comfy-Themes/Spicetify.git "$repo"; then
+    soft_fail "Spicetify: couldn't clone the Comfy theme (Noctalia's Spotify colours need it); re-run './setup.sh --only apps'"
+    return 0
+  fi
   run mkdir -p "$themes/Comfy"
   run cp -rn "$repo/Comfy/." "$themes/Comfy/"
 }
@@ -80,16 +86,16 @@ _apps_spicetify() {
 _apps_vesktop_config() {
   local app=dev.vencord.Vesktop host="${XDG_CONFIG_HOME:-$HOME/.config}/vesktop"
   local old="$HOME/.var/app/dev.vencord.Vesktop/config/vesktop" fs
-  if ! is_dry && ! flatpak info "$app" >/dev/null 2>&1; then return 0; fi
-  fs="$(flatpak override --user --show "$app" 2>/dev/null | sed -n 's/^filesystems=//p')"
-  if [[ ";$fs" == *";xdg-config/vesktop;"* || ";$fs" == *";xdg-config/vesktop:"* ]]; then
+  if ! is_dry && ! flatpak_installed "$app"; then return 0; fi
+  fs="$(flatpak_overrides filesystems "$app")"
+  if [[ "$fs" == *";xdg-config/vesktop;"* || "$fs" == *";xdg-config/vesktop:"* ]]; then
     info "Vesktop already reads its config from $host"
     return 0
   fi
 
   if [[ -d "$old" && -n "$(ls -A "$old" 2>/dev/null)" ]]; then
     # Moving it under a running Vesktop would break its open session files
-    if ! is_dry && flatpak ps --columns=application 2>/dev/null | grep -qxF "$app"; then
+    if ! is_dry && flatpak_running "$app"; then
       soft_fail "Vesktop is running: quit it (also from the tray), then re-run './setup.sh --only apps' to move its config to $host"
       return 0
     fi
@@ -110,10 +116,10 @@ _apps_vesktop_config() {
 # "X11 windowing system" switch does the same). Per-user override, so it
 # survives Flatpak updates.
 _apps_vesktop_wayland() {
-  if ! is_dry && ! flatpak info dev.vencord.Vesktop >/dev/null 2>&1; then return 0; fi
+  if ! is_dry && ! flatpak_installed dev.vencord.Vesktop; then return 0; fi
   local sockets
-  sockets="$(flatpak override --user --show dev.vencord.Vesktop 2>/dev/null | sed -n 's/^sockets=//p')"
-  if [[ ";$sockets" == *";!x11;"* && ";$sockets" == *";!fallback-x11;"* ]]; then
+  sockets="$(flatpak_overrides sockets dev.vencord.Vesktop)"
+  if [[ "$sockets" == *";!x11;"* && "$sockets" == *";!fallback-x11;"* ]]; then
     info "Vesktop already runs on Wayland only"
   else
     run flatpak override --user --nosocket=x11 --nosocket=fallback-x11 dev.vencord.Vesktop
@@ -130,7 +136,7 @@ _apps_vesktop_as_discord() {
   local dest="$HOME/.local/share/applications/dev.vencord.Vesktop.desktop"
   local marker="# pikaos-setup: Vesktop shown as Discord"
   local changed=0 icon=discord tmp="$MODULE_TMP/vesktop.desktop" has_discord=0
-  if flatpak info --system com.discordapp.Discord >/dev/null 2>&1 || have discord; then has_discord=1; fi
+  if flatpak_installed com.discordapp.Discord || have discord; then has_discord=1; fi
 
   if (( has_discord )) || [[ ! -f "$src" ]]; then
     # Discord itself is installed, or Vesktop isn't (left out, or its install
@@ -142,7 +148,7 @@ _apps_vesktop_as_discord() {
       info "Vesktop isn't installed; not showing it as Discord"
     fi
   else
-    if [[ -z "$(find /usr/share/icons "$HOME/.local/share/icons" -path '*/apps/discord.*' -print -quit 2>/dev/null)" ]]; then
+    if ! have_icon discord; then
       icon=dev.vencord.Vesktop
       followup manual "Vesktop is shown as Discord but kept its own icon: no 'discord' icon in your icon themes (Papirus has one; the noctalia module installs it)."
     fi
@@ -276,13 +282,13 @@ _apps_creative() {
 
 # Icon for a web app: ICON is either a name from the icon themes (Papirus,
 # from the noctalia module, has many brands) or the https URL of a PNG, which
-# is downloaded once to $_APPS_WEBAPP_ICONS/SLUG.png. Prints the Icon= value
+# is downloaded once to $_APPS_WEBAPP_ICONS/SLUG-<url hash>.png (a new URL means a new file). Prints the Icon= value
 # (everything else goes to stderr); the generic browser icon if neither works out.
 _APPS_WEBAPP_ICONS="${XDG_DATA_HOME:-$HOME/.local/share}/webapp-icons"
 _apps_webapp_icon() {
   local slug="$1" icon="$2" dest
   if [[ "$icon" != https://* ]]; then
-    if is_dry || [[ -n "$(find /usr/share/icons "$HOME/.local/share/icons" -path "*/apps/$icon.*" -print -quit 2>/dev/null)" ]]; then
+    if is_dry || have_icon "$icon"; then
       printf '%s\n' "$icon"
     else
       soft_fail "Web app icon '$icon' isn't in your icon themes (Papirus has it; the noctalia module installs it)" >&2
@@ -290,7 +296,7 @@ _apps_webapp_icon() {
     fi
     return 0
   fi
-  dest="$_APPS_WEBAPP_ICONS/$slug.png"
+  dest="$_APPS_WEBAPP_ICONS/$slug-$(printf '%s' "$icon" | sha256sum | cut -c1-12).png"
   if [[ -s "$dest" ]] || download "$icon" "$dest" >&2; then
     printf '%s\n' "$dest"
   else

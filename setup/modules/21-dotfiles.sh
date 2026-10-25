@@ -25,9 +25,6 @@ MODULE_DEPS=(noctalia)                   # the hypr config starts Noctalia inste
 
 _DOTFILES_OPEN_ONCE=()                   # installed apps that need a first start
 
-_dotfiles_flatpak() { flatpak info --system "$1" >/dev/null 2>&1; }
-_dotfiles_flatpak_running() { flatpak ps --columns=application 2>/dev/null | grep -qx "$1"; }
-
 # Write FILE's new content from stdin, keeping its permissions.
 _dotfiles_rewrite() { write_file "$1" "$(stat -c %a "$1")"; }
 
@@ -152,7 +149,7 @@ _dotfiles_omp() {
 # the fallback for when that move hasn't happened.
 _dotfiles_vesktop() {
   local app=dev.vencord.Vesktop f="" c
-  _dotfiles_flatpak "$app" || return 0
+  flatpak_installed "$app" || return 0
   for c in "$HOME/.config/vesktop/settings/settings.json" \
            "$HOME/.var/app/$app/config/vesktop/settings/settings.json"; do
     if [[ -f "$c" ]]; then f="$c"; break; fi
@@ -160,7 +157,7 @@ _dotfiles_vesktop() {
   if [[ -z "$f" ]]; then _DOTFILES_OPEN_ONCE+=(Vesktop); return 0; fi
   if _dotfiles_json_ok "$f" '(.enabledThemes // []) | index("noctalia.theme.css") != null'; then
     info "Vesktop already uses Noctalia's theme"
-  elif _dotfiles_flatpak_running "$app"; then
+  elif flatpak_running "$app"; then
     _dotfiles_running_fail "Vesktop (also from the tray)"
   else
     _dotfiles_json_write Vesktop "$f" '.enabledThemes = ((.enabledThemes // []) + ["noctalia.theme.css"])'
@@ -170,11 +167,11 @@ _dotfiles_vesktop() {
 _dotfiles_darktable() {
   local app=org.darktable.Darktable f
   f="$HOME/.var/app/$app/config/darktable/darktablerc"
-  _dotfiles_flatpak "$app" || return 0
+  flatpak_installed "$app" || return 0
   if [[ ! -f "$f" ]]; then _DOTFILES_OPEN_ONCE+=(darktable); return 0; fi
   if grep -qx 'ui_last/theme=noctalia' "$f"; then
     info "darktable already uses Noctalia's theme"
-  elif _dotfiles_flatpak_running "$app"; then
+  elif flatpak_running "$app"; then
     _dotfiles_running_fail darktable
   else
     awk -v k=ui_last/theme -v v=noctalia '
@@ -188,14 +185,14 @@ _dotfiles_darktable() {
 _dotfiles_obs() {
   local app=com.obsproject.Studio d f theme=com.obsproject.matugen
   d="$HOME/.var/app/$app/config/obs-studio"
-  _dotfiles_flatpak "$app" || return 0
+  flatpak_installed "$app" || return 0
   if [[ -f "$d/user.ini" ]]; then f="$d/user.ini"
   elif [[ -f "$d/global.ini" ]]; then f="$d/global.ini"
   else _DOTFILES_OPEN_ONCE+=(OBS); return 0
   fi
   if _dotfiles_ini_set "$f" Appearance Theme "$theme" | cmp -s - "$f"; then
     info "OBS already uses Noctalia's theme"
-  elif _dotfiles_flatpak_running "$app"; then
+  elif flatpak_running "$app"; then
     _dotfiles_running_fail OBS
   else
     _dotfiles_ini_set "$f" Appearance Theme "$theme" | _dotfiles_rewrite "$f"
@@ -244,17 +241,17 @@ _dotfiles_noctalia_apps() {
 
   # These templates need nothing selected, only the app's config folder
   if have blender && [[ ! -d "$HOME/.config/blender" ]]; then _DOTFILES_OPEN_ONCE+=(Blender); fi
-  if _dotfiles_flatpak org.inkscape.Inkscape && [[ ! -d "$HOME/.var/app/org.inkscape.Inkscape" ]]; then
+  if flatpak_installed org.inkscape.Inkscape && [[ ! -d "$HOME/.var/app/org.inkscape.Inkscape" ]]; then
     _DOTFILES_OPEN_ONCE+=(Inkscape)
   fi
-  if _dotfiles_flatpak org.gimp.GIMP && [[ ! -d "$HOME/.config/GIMP" ]]; then _DOTFILES_OPEN_ONCE+=(GIMP); fi
+  if flatpak_installed org.gimp.GIMP && [[ ! -d "$HOME/.config/GIMP" ]]; then _DOTFILES_OPEN_ONCE+=(GIMP); fi
 
   if (( ${#_DOTFILES_OPEN_ONCE[@]} )); then
     followup manual "Noctalia colours: open ${_DOTFILES_OPEN_ONCE[*]} once and close them, then run './setup.sh --only dotfiles' to theme them."
   fi
 }
 
-_DOTFILES_SCHEME_DOTFILES_SCHEME=(wallpaper m3-tonal-spot)  # palette source and scheme: colours follow the wallpaper
+_DOTFILES_SCHEME=(wallpaper m3-tonal-spot)  # palette source and scheme: colours follow the wallpaper
 
 # Noctalia keeps the palette choice in its state file (color-scheme-set writes
 # it there, not to the dotfiles' settings.toml). With Noctalia running it's set
@@ -263,20 +260,20 @@ _dotfiles_noctalia_scheme() {
   local state="${XDG_STATE_HOME:-$HOME/.local/state}/noctalia/settings.toml" cur
   if (( $1 )); then
     cur="$(noctalia msg color-scheme-get 2>/dev/null || true)"
-    if [[ "$cur" == "${_DOTFILES_SCHEME_DOTFILES_SCHEME[*]}" ]]; then
-      info "Noctalia already derives its colours from the wallpaper (${_DOTFILES_SCHEME_DOTFILES_SCHEME[1]})"
+    if [[ "$cur" == "${_DOTFILES_SCHEME[*]}" ]]; then
+      info "Noctalia already derives its colours from the wallpaper (${_DOTFILES_SCHEME[1]})"
     else
-      run noctalia msg color-scheme-set "${_DOTFILES_SCHEME_DOTFILES_SCHEME[@]}" \
-        || soft_fail "Noctalia: couldn't switch to wallpaper colours; run 'noctalia msg color-scheme-set ${_DOTFILES_SCHEME_DOTFILES_SCHEME[*]}'"
+      run noctalia msg color-scheme-set "${_DOTFILES_SCHEME[@]}" \
+        || soft_fail "Noctalia: couldn't switch to wallpaper colours; run 'noctalia msg color-scheme-set ${_DOTFILES_SCHEME[*]}'"
     fi
     return 0
   fi
   if [[ ! -f "$state" ]]; then
-    printf '[theme]\nsource = "%s"\nwallpaper_scheme = "%s"\n' "${_DOTFILES_SCHEME_DOTFILES_SCHEME[@]}" | write_file "$state" 0644
+    printf '[theme]\nsource = "%s"\nwallpaper_scheme = "%s"\n' "${_DOTFILES_SCHEME[@]}" | write_file "$state" 0644
     return 0
   fi
-  _dotfiles_ini_set "$state" theme source "\"${_DOTFILES_SCHEME_DOTFILES_SCHEME[0]}\"" ' = ' >"$MODULE_TMP/state.toml"
-  _dotfiles_ini_set "$MODULE_TMP/state.toml" theme wallpaper_scheme "\"${_DOTFILES_SCHEME_DOTFILES_SCHEME[1]}\"" ' = ' \
+  _dotfiles_ini_set "$state" theme source "\"${_DOTFILES_SCHEME[0]}\"" ' = ' >"$MODULE_TMP/state.toml"
+  _dotfiles_ini_set "$MODULE_TMP/state.toml" theme wallpaper_scheme "\"${_DOTFILES_SCHEME[1]}\"" ' = ' \
     | _dotfiles_rewrite "$state"
 }
 

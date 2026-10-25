@@ -284,7 +284,7 @@ _personal_reminders() {
   if is_dry || [[ -f "$HOME/.config/nvim/lazyvim.json" || -f "$HOME/.config/nvim/lua/config/lazy.lua" ]]; then
     followup manual "LazyVim extras you used before: run :LazyExtras and enable lang.typescript, go, rust, java, omnisharp, python, sql, tailwind, docker, astro, svelte. Skip the eslint/prettier extras since you use Oxc."
   fi
-  if is_dry || flatpak info --system com.github.wwmm.easyeffects >/dev/null 2>&1; then
+  if is_dry || flatpak_installed com.github.wwmm.easyeffects; then
     followup manual "EasyEffects: add the 'Noise Reduction' (RNNoise/DeepFilterNet) effect on your mic input for the old noise-cancelling setup."
   fi
 }

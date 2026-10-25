@@ -162,16 +162,21 @@ _noctalia_switch() {
     printf '%s--- %s%s\n' "$C_DIM" "$f" "$C_RESET"
     show_diff "$hypr/$f" "$new/$f"
   done
-  confirm_risky \
-    "install noctalia (and lua5.4, to syntax-check the edits)" \
-    "install the GTK/Qt theming Noctalia's templates need: nwg-look, qt6ct, adw-gtk3, Papirus icons" \
-    "edit ${changed[*]:-nothing} in $hypr as shown above (Otter's shell stops starting at login)" \
-    "back up $hypr once to $backup, and each file to *.setup-bak.$TS" \
-    "take effect at your next login"
+  local relogin="Noctalia: log out and back in, then press Super+comma and turn on Security -> Authentication -> Polkit Agent and the idle/lock/suspend settings (Otter's were switched off). Control center is Super+Shift+S."
+  local -a plan=(
+    "install noctalia (and lua5.4, to syntax-check the edits)"
+    "install the GTK/Qt theming Noctalia's templates need: nwg-look, qt6ct, adw-gtk3, Papirus icons"
+  )
+  if (( ${#changed[@]} )); then
+    plan+=("edit ${changed[*]} in $hypr as shown above (Otter's shell stops starting at login)"
+           "back up $hypr once to $backup, and each file to *.setup-bak.$TS")
+  fi
+  plan+=("take effect at your next login")
+  confirm_risky "${plan[@]}"
 
   apt_install noctalia lua5.4               # the wiki's 'pikman install noctalia'
   is_dry || pkg_installed noctalia || die "noctalia didn't install, so your Hyprland config was left unchanged"
-  (( ${#changed[@]} )) || return 0
+  if (( ${#changed[@]} == 0 )); then followup relogin "$relogin"; return 0; fi
 
   local luac
   luac="$(command -v luac5.4 || command -v luac || true)"
@@ -185,7 +190,7 @@ _noctalia_switch() {
   fi
 
   # One-time backup of the untouched Otter config: your undo button.
-  # -L copies the real files even if ~/.config/hypr is a stow symlink.
+  # -L copies the real files even if ~/.config/hypr is a symlink.
   if [[ ! -e "$backup" ]]; then run cp -aL "$hypr" "$backup"; fi
 
   for f in "${changed[@]}"; do write_file "$hypr/$f" 0644 <"$new/$f"; done
@@ -201,7 +206,7 @@ _noctalia_switch() {
     followup manual "Noctalia: exec.lua still starts otter-dock/otter-taskbar (the wiki leaves them on). Comment them out if you see two docks."
   fi
 
-  followup relogin "Noctalia: log out and back in, then press Super+comma and turn on Security -> Authentication -> Polkit Agent and the idle/lock/suspend settings (Otter's were switched off). Control center is Super+Shift+S."
+  followup relogin "$relogin"
   followup manual "Noctalia undo: restore ~/.config/hypr/*.setup-bak.$TS, or: rm -rf ~/.config/hypr && cp -a $backup ~/.config/hypr"
 }
 
@@ -248,7 +253,13 @@ _noctalia_theming() {
   flatpak_install org.gtk.Gtk3theme.adw-gtk3 org.gtk.Gtk3theme.adw-gtk3-dark
   # Noctalia's colours for Flatpak GTK apps: let them read ~/.config/gtk-3.0
   # and gtk-4.0 (gtk.css imports Noctalia's generated noctalia.css).
-  run flatpak override --user --filesystem=xdg-config/gtk-3.0:ro --filesystem=xdg-config/gtk-4.0:ro
+  local fs
+  fs="$(flatpak_overrides filesystems)"
+  if [[ "$fs" == *";xdg-config/gtk-3.0:ro;"* && "$fs" == *";xdg-config/gtk-4.0:ro;"* ]]; then
+    info "Flatpak apps already read ~/.config/gtk-3.0 and gtk-4.0"
+  else
+    run flatpak override --user --filesystem=xdg-config/gtk-3.0:ro --filesystem=xdg-config/gtk-4.0:ro
+  fi
 }
 
 # Theming only runs once the switch went through (it exits the module when

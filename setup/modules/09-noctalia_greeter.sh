@@ -254,9 +254,13 @@ _noctalia_greeter_displays() {
     return 0
   fi
 
+  if is_dry && (( ! known )); then
+    info "Would update $_NG_TOML if it differs (reading it needs sudo; run 'sudo -v' first to see the diff)"
+    return 0
+  fi
   info "Writing $_NG_TOML"
   if is_dry; then
-    if (( known )); then show_diff "$old" "$new"; fi
+    show_diff "$old" "$new"
     return 0
   fi
   local owner mode=0644

@@ -4,7 +4,7 @@
 # shellcheck disable=SC2034  # header variables are read by setup.sh after sourcing
 {
 MODULE_ID=shell
-MODULE_DESC="zsh + plugins, Starship, modern CLI tools, fastfetch, lazygit, lazydocker, stow"
+MODULE_DESC="zsh + plugins, Starship, modern CLI tools, fastfetch, lazygit, lazydocker"
 MODULE_DEFAULT=1
 }
 
@@ -32,7 +32,6 @@ shell_run() {
     "lazygit|lazygit"
     "|lazydocker"
     "|gum"
-    "stow"                                 # symlink your dotfiles into place
   )
   apt_or_mise "${tools[@]}"
 

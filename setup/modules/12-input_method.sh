@@ -19,6 +19,6 @@ input_method_run() {
   apt_install "${pkgs[@]}"
 
   if ! grep -qs 'fcitx5' "$HOME/.config/hypr/exec.lua"; then
-    followup manual "Fcitx5: add 'hl.exec_cmd(\"fcitx5 -d\")' inside the hl.on(\"hyprland.start\", ...) block in ~/.config/hypr/exec.lua, then add your input methods in fcitx5-configtool."
+    followup manual "Fcitx5: add 'hl.exec_cmd(\"fcitx5 -d\")' inside the hl.on(\"hyprland.start\", ...) block of exec.lua in your dotfiles ('chezmoi edit ~/.config/hypr/exec.lua', then 'chezmoi apply'; direct edits are overwritten by the dotfiles module), then add your input methods in fcitx5-configtool."
   fi
 }

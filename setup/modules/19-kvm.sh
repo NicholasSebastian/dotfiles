@@ -88,8 +88,10 @@ kvm_run() {
     info "virtio-win.iso already in $VM_DIR"
   else
     info "virtio-win.iso is ~700 MB, this can take a while"
-    download https://fedorapeople.org/groups/virt/virtio-win/direct-downloads/stable-virtio/virtio-win.iso \
-      "$VM_DIR/virtio-win.iso"
+    if ! download https://fedorapeople.org/groups/virt/virtio-win/direct-downloads/stable-virtio/virtio-win.iso \
+        "$VM_DIR/virtio-win.iso"; then
+      soft_fail "virtio-win.iso couldn't be downloaded; get it from fedorapeople.org/groups/virt/virtio-win"
+    fi
   fi
 
   followup manual "If VMs lose internet after Docker is installed, Docker's firewall rules are the usual cause (it sets the FORWARD policy to DROP)."
