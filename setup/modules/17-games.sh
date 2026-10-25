@@ -13,6 +13,7 @@ games_run() {
     # Minecraft (CurseForge isn't on Flathub, see below)
     com.mojang.Minecraft                   # official launcher (community-packaged Flatpak)
     com.modrinth.ModrinthApp               # Modrinth App
+    # org.prismlauncher.PrismLauncher      # apparently what Linux people typically use to play Minecraft
 
     # Multi-system: NES, SNES, GB/GBA via mGBA, DS via melonDS, PSP via PPSSPP, Genesis, PS1...)
     # Standalone emulators below are for newer consoles only.
@@ -34,7 +35,7 @@ games_run() {
     # org.flycast.Flycast                  # Dreamcast
 
     # PC launchers: Steam and Lutris come with PikaOS (Lutris handles Epic/GOG)
-    # com.heroicgameslauncher.hgl          # nicer Epic/GOG launcher, if Lutris annoys you
+    # com.heroicgameslauncher.hgl          # alternative Epic/GOG launcher to Lutris
   )
   flatpak_install "${apps[@]}"
 
