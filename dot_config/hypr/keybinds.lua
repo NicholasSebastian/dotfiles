@@ -89,8 +89,8 @@ local function focus_edge_column(want_last)
     local target, target_idx
     for _, w in ipairs(hl.get_workspace_windows(active.workspace.id)) do
         local layout = w.layout
-        local col = layout and layout.column
-        if col and layout.index_in_column == 0 then
+        if layout and layout.column and layout.index_in_column == 0 then
+            local col = layout.column
             if not target_idx or (want_last and col.index > target_idx) or (not want_last and col.index < target_idx) then
                 target, target_idx = w, col.index
             end
