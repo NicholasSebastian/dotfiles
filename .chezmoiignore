@@ -1,3 +1,6 @@
 README.md
-.config/hypr/monitors.lua
+.zed
+.claude
 .config/hypr/*.setup-bak.*
+.config/hypr/noctalia.lua
+.config/setup-ts/node_modules
