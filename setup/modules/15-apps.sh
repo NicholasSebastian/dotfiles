@@ -159,8 +159,18 @@ _apps_vesktop_as_discord() {
   fi
 }
 
+# Qalculate replaces Otter's calculator once otter-calc is gone (the cleanup
+# module offers to remove it, and installs Qalculate itself when it does).
+_apps_calculator() {
+  if pkg_installed otter-calc; then
+    info "Otter's calculator (otter-calc) is installed; Qalculate not added"
+    return 0
+  fi
+  flatpak_install io.github.Qalculate
+}
+
 _apps_desktop() {
-  # (No calculator or video player: Otter ships otter-calc, PikaOS ships mpv.)
+  # (No video player: PikaOS ships mpv. Calculator: see _apps_calculator.)
   apt_install qbittorrent
 
   local apps=(
@@ -180,12 +190,16 @@ _apps_desktop() {
     com.spotify.Client
     com.github.wwmm.easyeffects            # mic noise suppression + EQ (replaces rnnoise/JamesDSP)
 
+    # Video
+    fr.handbrake.ghb                       # video transcoding
+
     # System
     com.usebottles.bottles                 # Windows apps, each in its own Wine "bottle"
     com.github.tchx84.Flatseal             # manage Flatpak permissions
     it.mijorus.gearlever                   # manage AppImages (Affinity etc.)
   )
   flatpak_install "${apps[@]}"
+  _apps_calculator
   # LocalSend receives on port 53317 (TCP + UDP). With ufw on "deny incoming"
   # it can send but never receive. ufw stores rules even while disabled, and
   # adding an existing rule is a no-op.

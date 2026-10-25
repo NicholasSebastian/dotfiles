@@ -291,6 +291,15 @@ _cleanup_remove() {
 # Picked now, or already removed (e.g. by an earlier run).
 _cleanup_gone() { _cleanup_picked "$1" || ! pkg_installed "$1"; }
 
+# Fill gaps the removal left, and add what the kept apps are missing.
+# Checks what's gone rather than only this run's picks, like _cleanup_fix_configs.
+_cleanup_fill_gaps() {
+  # Qalculate replaces Otter's calculator (the apps module does the same on later runs)
+  if _cleanup_gone otter-calc; then flatpak_install io.github.Qalculate; fi
+  # Nemo's "Extract here"/"Compress..." context menu entries (File Roller)
+  if ! _cleanup_gone nemo; then apt_install nemo-fileroller; fi
+}
+
 # Point configs that used removed apps at what's left. Checks what's gone
 # rather than only this run's picks, so a re-run also fixes configs left
 # behind by an earlier removal. Every edit is a no-op once it's done.
@@ -379,6 +388,7 @@ cleanup_run() {
   _cleanup_browser
   _cleanup_gnome
   _cleanup_remove
+  _cleanup_fill_gaps
   _cleanup_fix_configs
   _cleanup_autoremove
 }
