@@ -28,7 +28,7 @@ hl.bind(mainMod .. " + " .. "Q", hl.dsp.window.close(), { description = "Close W
 hl.bind(mainMod .. " + " .. "CONTROL + Q", hl.dsp.exec_cmd("hyprctl kill"), { description = "Kill Window/App" })
 hl.bind(mainMod .. " + " .. "F", and_center(hl.dsp.window.fullscreen()), { description = "Toggle Fullscreen" })
 
--- Volume Controls
+-- Audio Controls
 hl.bind("XF86AudioPlay", hl.dsp.exec_cmd("playerctl play-pause"), { locked = true, description = "Play/Pause" })
 hl.bind("XF86AudioStop", hl.dsp.exec_cmd("playerctl stop"), { locked = true, description = "Stop" })
 hl.bind("XF86AudioPrev", hl.dsp.exec_cmd("playerctl previous"), { locked = true, description = "Previous Track" })
