@@ -1,0 +1,67 @@
+[bar.default]
+background_opacity = 0.9
+radius = 17
+concave_edge_corners = false
+margin_ends = 12
+margin_edge = 6
+widget_spacing = 12
+
+start = ["launcher", "workspaces", "gap2", "media", "gap2", "active_window"]
+center = ["clock"]
+end = [
+    "memory",
+    "gap1",
+    "network",
+    "bluetooth",
+    "gap1",
+    "tray",
+    "notifications",
+    "brightness",
+    "volume",
+    "battery",
+    "power_profile",
+    "clipboard",
+    "wallpaper",
+    "control-center",
+    "session",
+]
+
+[widget.gap1]
+type = "spacer"
+length = 16
+
+[widget.gap2]
+type = "spacer"
+length = 24
+
+[widget.launcher]
+glyph = "letter-n"
+
+[widget.workspaces]
+style = "minimal"
+show_all_outputs = true
+
+[widget.media]
+hide_when_no_media = true
+capsule = true
+color = "primary"          # "#1ED760"
+capsule_fill = "secondary" # "#1DB954"
+capsule_opacity = 0.1
+capsule_padding = 12
+
+[widget.active_window]
+max_length = 300
+icon_size = 16
+
+[widget.clock]
+format = "{:%a}  {:%d %b}  {:%H:%M}"
+
+[widget.memory]
+type = "sysmon"
+stat = "ram_used"
+
+[widget.network]
+show_label = false
+
+[widget.control-center]
+glyph = "settings"
