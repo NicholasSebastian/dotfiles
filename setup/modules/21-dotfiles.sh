@@ -10,6 +10,8 @@ MODULE_DEPS=(noctalia)                   # the hypr config starts Noctalia inste
 }
 
 # Applies the dotfiles from chezmoi's source directory (https://www.chezmoi.io/).
+# On a new machine that directory is empty, so the repo ($DOTFILES_REPO in
+# config.sh) is cloned into it first, like 'chezmoi init --apply' would.
 # The repo always wins: every managed file that differs is overwritten, after
 # a copy of it is kept as FILE.setup-bak.TS (like every other file setup changes).
 #
@@ -73,13 +75,20 @@ _dotfiles_running_fail() {
 
 _dotfiles_apply() {
   local src status line path modes=0
-  apt_install chezmoi
+  apt_install chezmoi git
   if ! have chezmoi; then
     is_dry && module_skip "chezmoi isn't installed yet (dry run)"
     die "chezmoi didn't install"
   fi
-  src="$(chezmoi source-path 2>/dev/null)" \
-    || die "chezmoi has no source directory: run 'chezmoi init <your dotfiles repo>' first"
+  src="$(chezmoi source-path)"
+
+  # Clone without --apply: the listing and backups below run first
+  if [[ ! -d "$src" ]] || [[ -z "$(ls -A "$src")" ]]; then
+    info "No dotfiles in $src yet; cloning $DOTFILES_REPO"
+    run env GIT_TERMINAL_PROMPT=0 chezmoi init --no-tty "$DOTFILES_REPO" \
+      || die "Couldn't clone $DOTFILES_REPO (check DOTFILES_REPO in config.sh and your network)"
+    if is_dry; then info "(dry run: nothing to compare until the repo is cloned)"; return 0; fi
+  fi
   info "Dotfiles source: $src"
 
   status="$(chezmoi status -p absolute)"
@@ -278,8 +287,10 @@ _dotfiles_noctalia_render() {
   need noctalia noctalia
   have noctalia || return 0               # dry run before the noctalia module installed it
   if is_dry; then settings="$(chezmoi source-path)/dot_config/noctalia/settings.toml"; fi
-  noctalia config validate "$settings" \
-    || soft_fail "Noctalia: $settings doesn't validate (see above); templates may not render"
+  if [[ -f "$settings" ]]; then             # missing only in a dry run before the clone
+    noctalia config validate "$settings" \
+      || soft_fail "Noctalia: $settings doesn't validate (see above); templates may not render"
+  fi
 
   if noctalia msg theme-mode-get >/dev/null 2>&1; then running=1; fi
   _dotfiles_noctalia_scheme "$running"
