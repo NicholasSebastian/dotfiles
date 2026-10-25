@@ -2,6 +2,5 @@
 
 ## Things to setup and include next
 
-- Noctalia Greeter (greetd) configs.
-- Noctalia configs: application dock, customize the bar, etc.
-- etc...
+- Customize Noctalia Lock Screen.
+- Customize Noctalia Greeter (greetd).
