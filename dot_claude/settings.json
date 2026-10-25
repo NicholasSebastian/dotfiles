@@ -1,0 +1,6 @@
+{
+  "theme": "custom:noctalia",
+  "enabledPlugins": {
+    "superpowers@claude-plugins-official": true
+  }
+}

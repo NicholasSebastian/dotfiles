@@ -3,14 +3,13 @@ enable_builtin_templates = true
 builtin_ids = ["hyprland", "btop", "gtk3", "gtk4", "qt", "ghostty", "starship"]
 community_ids = [
     "claude-code",
-    "pi-agent",
     "spicetify",
     "brave",
     "discord",
-    # "blender",
-    # "darktable",
-    # "gimp",
-    # "inkscape",
+    "blender",
+    "darktable",
+    "gimp",
+    "inkscape",
     "lazyvim",
     # "neovim",
     "obsidian",
@@ -18,15 +17,31 @@ community_ids = [
     "zed",
     "heroiclauncher",
     # "prismlauncher",
-    "steam",
-    "fastfetch",
     "obs",
-    "zathura",
     "papirus-icons",
-    # "bat",
-    # "fzf",
+    "bat",
+    "fzf",
     "lazygit",
-    # "tmux",
+    "tmux",
     "yazi",
     # "zellij",
 ]
+
+# oh-my-pi (omp). Based on the community pi-agent template, plus the extra
+# tokens omp requires. Selected by theme.dark/theme.light in ~/.omp/agent/config.yml.
+[theme.templates.user.omp]
+input_path = "templates/omp-theme.json"
+output_path = "~/.omp/agent/themes/noctalia.json"
+
+# Fastfetch: the whole config is rendered from this template so the section
+# colors follow the palette. Edit templates/fastfetch.jsonc, not config.jsonc.
+[theme.templates.user.fastfetch]
+input_path = "templates/fastfetch.jsonc"
+output_path = "$XDG_CONFIG_HOME/fastfetch/config.jsonc"
+
+# OBS Studio Flatpak: the community obs template only writes the native path.
+# Only written once the Flatpak has created its data folder (first launch);
+# user templates don't support requires_path.
+[theme.templates.user.obs_flatpak]
+input_path = "$XDG_STATE_HOME/noctalia/community-templates/obs/matugen.obt"
+output_path_dynamic = "d=~/.var/app/com.obsproject.Studio; [ -d \"$d\" ] && echo \"$d/config/obs-studio/themes/matugen.obt\" || true"

@@ -41,7 +41,55 @@
   "buffer_font_size": 15,
   "theme": {
     "mode": "system",
-    "light": "Catppuccin Latte",
-    "dark": "Catppuccin Macchiato"
+    "light": "Noctalia Light",
+    "dark": "Noctalia Dark"
+  },
+  "theme_overrides": {
+    "Noctalia Dark": {
+      "text": "#CCCCCC",
+      "text.muted": "#CCCCCC",
+      "text.placeholder": "#FFFFFF56",
+      "text.disabled": "#CCCCCC80",
+      "editor.foreground": "#CCCCCC",
+      "link_text.hover": "#4DAAFC",
+      "hint": "#969696",
+      "syntax": {
+        "attribute": { "color": "#9CDCFE" },
+        "boolean": { "color": "#569CD6" },
+        "comment": { "color": "#6A9955" },
+        "comment.doc": { "color": "#6A9955" },
+        "constant": { "color": "#4FC1FF" },
+        "constructor": { "color": "#569CD6" },
+        "embedded": { "color": "#D4D4D4" },
+        "emphasis.strong": { "color": "#569CD6", "font_weight": 700 },
+        "function": { "color": "#DCDCAA" },
+        "function.macro": { "color": "#569CD6" },
+        "keyword": { "color": "#569CD6" },
+        "keyword.declaration": { "color": "#569CD6" },
+        "keyword.control": { "color": "#C586C0" },
+        "keyword.import": { "color": "#C586C0" },
+        "number": { "color": "#B5CEA8" },
+        "operator": { "color": "#D4D4D4" },
+        "preproc": { "color": "#569CD6" },
+        "property": { "color": "#9CDCFE" },
+        "punctuation": { "color": "#CCCCCC" },
+        "punctuation.bracket": { "color": "#CCCCCC" },
+        "punctuation.delimiter": { "color": "#CCCCCC" },
+        "punctuation.list_marker": { "color": "#CCCCCC" },
+        "punctuation.special": { "color": "#CCCCCC" },
+        "string": { "color": "#CE9178" },
+        "string.escape": { "color": "#D7BA7D" },
+        "string.regex": { "color": "#D16969" },
+        "string.special": { "color": "#D16969" },
+        "string.special.symbol": { "color": "#D16969" },
+        "tag": { "color": "#569CD6" },
+        "tag.component.jsx": { "color": "#4EC9B0" },
+        "text.literal": { "color": "#CE9178" },
+        "type": { "color": "#4EC9B0" },
+        "type.builtin": { "color": "#569CD6" },
+        "variable": { "color": "#9CDCFE" },
+        "variable.special": { "color": "#569CD6" }
+      }
+    }
   }
 }

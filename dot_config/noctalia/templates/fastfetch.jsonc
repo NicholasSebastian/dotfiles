@@ -10,92 +10,92 @@
       "type": "title",
       "key": "   User",
       "format": "{user-name}@{host-name}",
-      "keyColor": "red"
+      "keyColor": "{{colors.terminal_normal_red.default.hex}}"
     },
     "break",
     {
       "type": "os",
       "key": "    OS",
-      "keyColor": "yellow",
+      "keyColor": "{{colors.terminal_normal_yellow.default.hex}}",
       "format": "{2}"
     },
     {
       "type": "kernel",
       "key": "   ├─",
-      "keyColor": "yellow"
+      "keyColor": "{{colors.terminal_normal_yellow.default.hex}}"
     },
     {
       "type": "packages",
       "key": "   ├─󰏖",
-      "keyColor": "yellow"
+      "keyColor": "{{colors.terminal_normal_yellow.default.hex}}"
     },
     {
       "type": "shell",
       "key": "   └─",
-      "keyColor": "yellow"
+      "keyColor": "{{colors.terminal_normal_yellow.default.hex}}"
     },
     "break",
     {
       "type": "wm",
       "key": "    DE/WM",
-      "keyColor": "blue"
+      "keyColor": "{{colors.terminal_normal_blue.default.hex}}"
     },
     {
       "type": "lm",
       "key": "   ├─󰧨",
-      "keyColor": "blue"
+      "keyColor": "{{colors.terminal_normal_blue.default.hex}}"
     },
     {
       "type": "terminal",
       "key": "   └─",
-      "keyColor": "blue"
+      "keyColor": "{{colors.terminal_normal_blue.default.hex}}"
     },
     "break",
     {
       "type": "host",
       "key": "   󰌢 PC",
-      "keyColor": "green"
+      "keyColor": "{{colors.terminal_normal_green.default.hex}}"
     },
     {
       "type": "cpu",
       "key": "   ├─󰻠",
-      "keyColor": "green"
+      "keyColor": "{{colors.terminal_normal_green.default.hex}}"
     },
     {
       "type": "gpu",
       "key": "   ├─󰍛",
-      "keyColor": "green"
+      "keyColor": "{{colors.terminal_normal_green.default.hex}}"
     },
     {
       "type": "memory",
       "key": "   ├─󰑭",
-      "keyColor": "green"
+      "keyColor": "{{colors.terminal_normal_green.default.hex}}"
     },
     {
       "type": "display",
       "key": "   ├─󰍹",
-      "keyColor": "green"
+      "keyColor": "{{colors.terminal_normal_green.default.hex}}"
     },
     {
       "type": "physicaldisk",
       "key": "   └─",
-      "keyColor": "green"
+      "keyColor": "{{colors.terminal_normal_green.default.hex}}"
     },
     "break",
     {
       "type": "sound",
       "key": "   󰝚 SOUND",
-      "keyColor": "cyan"
+      "keyColor": "{{colors.terminal_normal_cyan.default.hex}}"
     },
     {
       "type": "player",
       "key": "   ├─󰥠",
-      "keyColor": "cyan"
+      "keyColor": "{{colors.terminal_normal_cyan.default.hex}}"
     },
     {
       "type": "media",
       "key": "   └─󰎇",
-      "keyColor": "cyan"
+      "keyColor": "{{colors.terminal_normal_cyan.default.hex}}"
     },
     "break"
   ]
