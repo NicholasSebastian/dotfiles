@@ -18,19 +18,12 @@ hl.config({
     },
 
     input = {
-        -- kb_layout = "gb"
         repeat_rate = 50,
         repeat_delay = 300,
         numlock_by_default = true,
         left_handed = false,
         follow_mouse = 1,
         accel_profile = "flat",
-    },
-
-    dwindle = {
-        preserve_split = true,
-        smart_split = false,
-        smart_resizing = true,
     },
 
     scrolling = {
@@ -41,12 +34,7 @@ hl.config({
     },
 
     render = {
-        -- should apply as window rule to window instead of general rule
         direct_scanout = false,
-    },
-
-    opengl = {
-        -- nvidia_anti_flicker = 0,
     },
 
     cursor = {
@@ -60,7 +48,6 @@ hl.config({
         vrr = 2,
         disable_hyprland_guiutils_check = true,
         enable_swallow = false,
-        swallow_regex = "^(Alacritty|kitty|foot|wezterm)$",
         disable_hyprland_logo = true,
         disable_splash_rendering = true,
         focus_on_activate = true,
@@ -84,3 +71,9 @@ require("monitors")
 require("scrolling")
 require("windows")
 require("animations")
+
+-- Noctalia's Hyprland template generates noctalia.lua (machine-local, not in chezmoi);
+-- until it has, the general.col colors above apply.
+-- The template's hook only checks hyprland.lua for this exact require, so it must stay in this file.
+local has_noctalia, noctalia = pcall(function() return require("noctalia") end)
+if has_noctalia then noctalia.apply_theme() end

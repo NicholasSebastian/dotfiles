@@ -27,9 +27,3 @@ hl.config({
         },
     },
 })
-
--- Border and group colors from Noctalia's palette. Noctalia's Hyprland template
--- generates noctalia.lua (machine-local, not in chezmoi); until it has, the
--- colors above apply. The template's hook looks for this exact require.
-local has_noctalia, noctalia = pcall(function() return require("noctalia") end)
-if has_noctalia then noctalia.apply_theme() end

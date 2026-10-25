@@ -50,7 +50,7 @@ hl.window_rule({
 })
 
 hl.window_rule({
-    match = { class = "^([Ss]tream|steamwebhelper)$" },
+    match = { class = "^([Ss]team|steamwebhelper)$" },
     float = true,
     border_size = 0,
     no_shadow = true,

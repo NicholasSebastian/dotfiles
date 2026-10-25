@@ -3,6 +3,7 @@ hl.on("hyprland.start", function()
     -- Session / dbus
     hl.exec_cmd("dbus-update-activation-environment --systemd --all")
 
+    -- Noctalia shell
     hl.exec_cmd("noctalia")
 
     -- Desktop helpers
