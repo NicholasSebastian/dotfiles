@@ -280,6 +280,7 @@ _apps_webapps() {
     "Gmail|https://mail.google.com"
     "Google Calendar|https://calendar.google.com"
     "Claude|https://claude.ai"
+    "ChatGPT|https://chatgpt.com"
     "Excalidraw|https://excalidraw.com"
     "Figma|https://www.figma.com/files"
     "Canva|https://www.canva.com"
