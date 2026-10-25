@@ -1,9 +1,9 @@
 hl.config({
     general = {
-        layout = "dwindle",
+        layout = "scrolling",
         allow_tearing = true,
-        gaps_in = 2,
-        gaps_out = 6,
+        gaps_in = 4,
+        gaps_out = 8,
         border_size = 2,
         col = {
             active_border = { colors = { "rgba(0DB7D4FF)", "rgba(7AA2F7FF)", "rgba(9778D0FF)" }, angle = 45 },
@@ -27,14 +27,17 @@ hl.config({
         accel_profile = "flat",
     },
 
-    animations = {
-        enabled = true,
-    },
-
     dwindle = {
         preserve_split = true,
         smart_split = false,
         smart_resizing = true,
+    },
+
+    scrolling = {
+        column_width = 0.667,
+        fullscreen_on_one_column = true,
+        direction = "right",
+        focus_fit_method = 1, -- fit; scrolling.lua centers non-edge columns
     },
 
     render = {
@@ -51,29 +54,6 @@ hl.config({
         enable_hyprcursor = true,
         use_cpu_buffer = 0,
         sync_gsettings_theme = true,
-    },
-
-    decoration = {
-        rounding = 16,
-        rounding_power = 2,
-        blur = {
-            enabled = true,
-            xray = false,
-            size = 2,
-            passes = 3,
-            new_optimizations = true,
-            noise = 0.01,
-            contrast = 1.5,
-            brightness = 1.0,
-        },
-        shadow = {
-            enabled = true,
-            range = 20,
-            render_power = 3,
-            offset = "0 6",
-            color_inactive = "rgba(1A1A1A99)",
-            color = "rgba(1A1A1ACC)",
-        },
     },
 
     misc = {
@@ -96,30 +76,11 @@ hl.config({
     },
 })
 
-hl.curve("fluent_decel", { type = "bezier", points = { { 0.1, 1 }, { 0, 1 } } })
-
-local anims = {
-    { leaf = "windowsIn",   speed = 4, style = "slide" },
-    { leaf = "windowsOut",  speed = 4, style = "slide" },
-    { leaf = "windowsMove", speed = 4 },
-    { leaf = "fade",        speed = 4 },
-    { leaf = "workspaces",  speed = 8 },
-    { leaf = "layers",      speed = 8, style = "slide" },
-}
-
-for _, a in ipairs(anims) do
-    hl.animation({
-        leaf = a.leaf,
-        enabled = true,
-        speed = a.speed,
-        bezier = "fluent_decel",
-        style = a.style,
-    })
-end
-
 require("env")
 require("exec")
+require("decorations")
 require("keybinds")
 require("monitors")
+require("scrolling")
 require("windows")
-require("theme")
+require("animations")

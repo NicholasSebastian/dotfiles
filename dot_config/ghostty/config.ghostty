@@ -1,0 +1,3 @@
+# The scrolling layout nudges window sizes by a pixel or two when the view
+# scrolls, which would flash the size overlay on every focus change.
+resize-overlay = never

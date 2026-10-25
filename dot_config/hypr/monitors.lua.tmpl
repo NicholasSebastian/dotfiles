@@ -1,0 +1,6 @@
+{{- $host := printf "hypr-monitors/%s.lua" .chezmoi.hostname -}}
+{{- if stat (joinPath .chezmoi.sourceDir ".chezmoitemplates" $host) -}}
+{{- includeTemplate $host . -}}
+{{- else -}}
+{{- includeTemplate "hypr-monitors/default.lua" . -}}
+{{- end -}}
