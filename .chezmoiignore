@@ -4,4 +4,3 @@ README.md
 .config/hypr/*.setup-bak.*
 .config/hypr/.luarc.json
 .config/hypr/noctalia.lua
-.config/setup-ts/node_modules
