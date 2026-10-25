@@ -18,6 +18,7 @@ community_ids = [
     "heroiclauncher",
     # "prismlauncher",
     "obs",
+    "zathura",
     "papirus-icons",
     "bat",
     "fzf",
