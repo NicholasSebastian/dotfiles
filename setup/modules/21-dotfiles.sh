@@ -286,7 +286,10 @@ _dotfiles_noctalia_render() {
   local settings="$HOME/.config/noctalia/settings.toml" running=0
   need noctalia noctalia
   have noctalia || return 0               # dry run before the noctalia module installed it
-  if is_dry; then settings="$(chezmoi source-path)/dot_config/noctalia/settings.toml"; fi
+  if is_dry; then                         # validate the rendered template, not the source
+    settings="$MODULE_TMP/noctalia-settings.toml"
+    chezmoi cat "$HOME/.config/noctalia/settings.toml" >"$settings" 2>/dev/null || rm -f "$settings"
+  fi
   if [[ -f "$settings" ]]; then             # missing only in a dry run before the clone
     noctalia config validate "$settings" \
       || soft_fail "Noctalia: $settings doesn't validate (see above); templates may not render"

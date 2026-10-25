@@ -1,0 +1,8 @@
+# Dock monitors for machines without their own file in
+# .chezmoitemplates/noctalia-dock/ (named <hostname>.toml): the dock shows on
+# every monitor. A machine file can switch it off on given monitors, or change
+# any other [dock] field per monitor, e.g.:
+#
+# [dock.monitor.side]
+# match = "HDMI-A-1"    # connector name, or a word from the output description
+# enabled = false

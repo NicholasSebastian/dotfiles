@@ -1,0 +1,47 @@
+# App dock, always visible at the bottom (the bar is at the top); windows are
+# pushed away from it. Which monitors show it is per machine: see the end of
+# this file and .chezmoitemplates/noctalia-dock/.
+[dock]
+enabled = true
+position = "bottom"
+auto_hide = false
+smart_auto_hide = false
+reserve_space = true
+main_axis_padding = 4
+cross_axis_padding = 2
+item_spacing = 2
+background_opacity  = 0.7
+concave_edge_corners = false
+margin_edge = 6
+active_scale = 1.1
+inactive_scale = 1.0
+show_dots = true
+pinned = [
+    "nemo",
+    "com.mitchellh.ghostty",
+    "brave-browser",
+    "com.spotify.Client",
+    "com.obsproject.Studio",
+    "dev.vencord.Vesktop", # Discord (Vesktop, shown as Discord)
+    "webapp-whatsapp",
+    "affinity",
+    "steam",
+    "net.lutris.Lutris",
+    "heroic",
+    "dev.zed.Zed",
+    "io.beekeeperstudio.Studio",
+    "com.getpostman.Postman",
+    "webapp-figma",
+    "webapp-excalidraw",
+    "io.github.Qalculate",
+]
+
+
+{{- $dock := printf "noctalia-dock/%s.toml" .chezmoi.hostname }}
+{{- if stat (joinPath .chezmoi.sourceDir ".chezmoitemplates" $dock) }}
+
+{{ includeTemplate $dock . }}
+{{- else }}
+
+{{ includeTemplate "noctalia-dock/default.toml" . }}
+{{- end }}

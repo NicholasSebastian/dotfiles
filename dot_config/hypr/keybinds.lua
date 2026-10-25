@@ -19,8 +19,7 @@ hl.bind(mainMod .. " + " .. "mouse:273", hl.dsp.window.resize(), { mouse = true 
 hl.bind(mainMod .. " + " .. "SHIFT + B", hl.dsp.exec_cmd("brave-browser"), { description = "Brave" })
 hl.bind(mainMod .. " + " .. "Return", hl.dsp.exec_cmd("ghostty"), { description = "Terminal" })
 hl.bind(mainMod .. " + " .. "SHIFT + V", hl.dsp.exec_cmd("pwvucontrol"), { description = "Audio Volume Control" })
-hl.bind(mainMod .. " + " .. "SHIFT + Q", hl.dsp.exec_cmd("noctalia msg panel-toggle session"),
-    { description = "Logout Menu" })
+hl.bind(mainMod .. " + " .. "SHIFT + Q", hl.dsp.exec_cmd("noctalia msg panel-toggle session"), { description = "Logout Menu" })
 hl.bind(mainMod .. " + " .. "SHIFT + F", hl.dsp.exec_cmd("nemo"), { description = "File Manager" })
 hl.bind(mainMod .. " + " .. "Escape", hl.dsp.exec_cmd("hyprctl reload"), { description = "Reload Hyprland" })
 
@@ -44,13 +43,10 @@ hl.bind(mainMod .. " + " .. "up", hl.dsp.focus({ direction = "up" }), { descript
 hl.bind(mainMod .. " + " .. "down", hl.dsp.focus({ direction = "down" }), { description = "Focus Down" })
 
 -- Window Movement
-hl.bind(mainMod .. " + " .. "CONTROL + SHIFT + left", hl.dsp.window.move({ workspace = "-1" }),
-    { description = "Move Window to Previous Workspace" })
-hl.bind(mainMod .. " + " .. "CONTROL + SHIFT + right", hl.dsp.window.move({ workspace = "+1" }),
-    { description = "Move Window to Next Workspace" })
+hl.bind(mainMod .. " + " .. "CONTROL + SHIFT + left", hl.dsp.window.move({ workspace = "-1" }), { description = "Move Window to Previous Workspace" })
+hl.bind(mainMod .. " + " .. "CONTROL + SHIFT + right", hl.dsp.window.move({ workspace = "+1" }), { description = "Move Window to Next Workspace" })
 hl.bind(mainMod .. " + " .. "SHIFT + up", hl.dsp.window.move({ direction = "up" }), { description = "Move Window Up" })
-hl.bind(mainMod .. " + " .. "SHIFT + down", hl.dsp.window.move({ direction = "down" }),
-    { description = "Move Window Down" })
+hl.bind(mainMod .. " + " .. "SHIFT + down", hl.dsp.window.move({ direction = "down" }), { description = "Move Window Down" })
 
 -- Workspace Navigation
 hl.bind(mainMod .. " + " .. "CONTROL + left", hl.dsp.focus({ workspace = "-1" }), { description = "Previous Workspace" })
@@ -72,33 +68,22 @@ hl.bind(mainMod .. " + " .. "CONTROL + up", hl.dsp.focus({ monitor = "l" }), { d
 hl.bind(mainMod .. " + " .. "CONTROL + down", hl.dsp.focus({ monitor = "r" }), { description = "Focus Monitor Right" })
 
 -- Window Resize
-hl.bind(mainMod .. " + " .. "ALT + left", and_center(hl.dsp.window.resize({ x = -20, y = 0, relative = true })),
-    { description = "Resize Window Left" })
-hl.bind(mainMod .. " + " .. "ALT + right", and_center(hl.dsp.window.resize({ x = 20, y = 0, relative = true })),
-    { description = "Resize Window Right" })
-hl.bind(mainMod .. " + " .. "ALT + up", and_center(hl.dsp.window.resize({ x = 0, y = -20, relative = true })),
-    { description = "Resize Window Up" })
-hl.bind(mainMod .. " + " .. "ALT + down", and_center(hl.dsp.window.resize({ x = 0, y = 20, relative = true })),
-    { description = "Resize Window Down" })
+hl.bind(mainMod .. " + " .. "ALT + left", and_center(hl.dsp.window.resize({ x = -20, y = 0, relative = true })), { description = "Resize Window Left" })
+hl.bind(mainMod .. " + " .. "ALT + right", and_center(hl.dsp.window.resize({ x = 20, y = 0, relative = true })), { description = "Resize Window Right" })
+hl.bind(mainMod .. " + " .. "ALT + up", and_center(hl.dsp.window.resize({ x = 0, y = -20, relative = true })), { description = "Resize Window Up" })
+hl.bind(mainMod .. " + " .. "ALT + down", and_center(hl.dsp.window.resize({ x = 0, y = 20, relative = true })), { description = "Resize Window Down" })
 
 -- Scrolling layout
 hl.bind(mainMod .. " + " .. "SHIFT + left", and_center(hl.dsp.layout("swapcol l")), { description = "Swap Column Left" })
-hl.bind(mainMod .. " + " .. "SHIFT + right", and_center(hl.dsp.layout("swapcol r")),
-    { description = "Swap Column Right" })
-hl.bind(mainMod .. " + " .. "equal", and_center(hl.dsp.layout("colresize +conf")),
-    { description = "Next Column Width Preset" })
-hl.bind(mainMod .. " + " .. "minus", and_center(hl.dsp.layout("colresize -conf")),
-    { description = "Previous Column Width Preset" })
-hl.bind(mainMod .. " + " .. "bracketleft", and_center(hl.dsp.layout("consume_or_expel prev")),
-    { description = "Stack Window into Previous Column" })
-hl.bind(mainMod .. " + " .. "bracketright", and_center(hl.dsp.layout("promote")),
-    { description = "Move Window to Own Column" })
+hl.bind(mainMod .. " + " .. "SHIFT + right", and_center(hl.dsp.layout("swapcol r")), { description = "Swap Column Right" })
+hl.bind(mainMod .. " + " .. "equal", and_center(hl.dsp.layout("colresize +conf")), { description = "Next Column Width Preset" })
+hl.bind(mainMod .. " + " .. "minus", and_center(hl.dsp.layout("colresize -conf")), { description = "Previous Column Width Preset" })
+hl.bind(mainMod .. " + " .. "bracketleft", and_center(hl.dsp.layout("consume_or_expel prev")), { description = "Stack Window into Previous Column" })
+hl.bind(mainMod .. " + " .. "bracketright", and_center(hl.dsp.layout("promote")), { description = "Move Window to Own Column" })
 hl.bind(mainMod .. " + " .. "mouse_down", hl.dsp.layout("move +col"), { description = "Scroll Columns Forward" })
 hl.bind(mainMod .. " + " .. "mouse_up", hl.dsp.layout("move -col"), { description = "Scroll Columns Back" })
-hl.bind(mainMod .. " + " .. "SHIFT + mouse_down", hl.dsp.focus({ workspace = "e+1" }),
-    { description = "Next Workspace on Monitor" })
-hl.bind(mainMod .. " + " .. "SHIFT + mouse_up", hl.dsp.focus({ workspace = "e-1" }),
-    { description = "Previous Workspace on Monitor" })
+hl.bind(mainMod .. " + " .. "SHIFT + mouse_down", hl.dsp.focus({ workspace = "e+1" }), { description = "Next Workspace on Monitor" })
+hl.bind(mainMod .. " + " .. "SHIFT + mouse_up", hl.dsp.focus({ workspace = "e-1" }), { description = "Previous Workspace on Monitor" })
 
 local function focus_edge_column(want_last)
     local active = hl.get_active_window()
@@ -121,22 +106,16 @@ hl.bind(mainMod .. " + " .. "Home", function() focus_edge_column(false) end, { d
 hl.bind(mainMod .. " + " .. "End", function() focus_edge_column(true) end, { description = "Focus Last Column" })
 
 -- Windows
-hl.bind(mainMod .. " + " .. "M", hl.dsp.window.fullscreen({ mode = "maximized", action = "toggle" }),
-    { description = "Toggle Maximize" })
-hl.bind(mainMod .. " + " .. "CONTROL + SHIFT + up", hl.dsp.window.move({ monitor = "l" }),
-    { description = "Move Window to Left Monitor" })
-hl.bind(mainMod .. " + " .. "CONTROL + SHIFT + down", hl.dsp.window.move({ monitor = "r" }),
-    { description = "Move Window to Right Monitor" })
+hl.bind(mainMod .. " + " .. "M", hl.dsp.window.fullscreen({ mode = "maximized", action = "toggle" }), { description = "Toggle Maximize" })
+hl.bind(mainMod .. " + " .. "CONTROL + SHIFT + up", hl.dsp.window.move({ monitor = "l" }), { description = "Move Window to Left Monitor" })
+hl.bind(mainMod .. " + " .. "CONTROL + SHIFT + down", hl.dsp.window.move({ monitor = "r" }), { description = "Move Window to Right Monitor" })
 hl.bind(mainMod .. " + " .. "grave", hl.dsp.workspace.toggle_special("scratchpad"), { description = "Toggle Scratchpad" })
-hl.bind(mainMod .. " + " .. "SHIFT + grave", hl.dsp.window.move({ workspace = "special:scratchpad", follow = false }),
-    { description = "Send Window to Scratchpad" })
+hl.bind(mainMod .. " + " .. "SHIFT + grave", hl.dsp.window.move({ workspace = "special:scratchpad", follow = false }), { description = "Send Window to Scratchpad" })
 
 -- Utilities
 hl.bind(mainMod .. " + " .. "L", hl.dsp.exec_cmd("noctalia msg session lock"), { description = "Lock Screen" })
-hl.bind(mainMod .. " + " .. "V", hl.dsp.exec_cmd("noctalia msg panel-toggle clipboard"),
-    { description = "Clipboard History" })
-hl.bind(mainMod .. " + " .. "period", hl.dsp.exec_cmd("noctalia msg panel-toggle launcher '/emo '"),
-    { description = "Emoji Picker" })
+hl.bind(mainMod .. " + " .. "V", hl.dsp.exec_cmd("noctalia msg panel-toggle clipboard"), { description = "Clipboard History" })
+hl.bind(mainMod .. " + " .. "period", hl.dsp.exec_cmd("noctalia msg panel-toggle launcher '/emo '"), { description = "Emoji Picker" })
 hl.bind(mainMod .. " + " .. "SHIFT + C", hl.dsp.exec_cmd("hyprpicker -a"), { description = "Color Picker" })
 hl.bind("SHIFT + PRINT", hl.dsp.exec_cmd("noctalia msg screenshot-fullscreen"), { description = "Screenshot Monitor" })
 hl.bind("CONTROL + PRINT", hl.dsp.exec_cmd("noctalia msg screenshot-annotate"), { description = "Annotate Screenshot" })
@@ -144,14 +123,20 @@ hl.bind("CONTROL + PRINT", hl.dsp.exec_cmd("noctalia msg screenshot-annotate"), 
 -- Noctalia keybinds (do...end keeps local variables scoped)
 do
     local ipc = "noctalia msg "
+
+    -- Shell Shortcuts
     hl.bind(mainMod .. "+Space", hl.dsp.exec_cmd(ipc .. "panel-toggle launcher"))
     hl.bind(mainMod .. " + SHIFT + S", hl.dsp.exec_cmd(ipc .. "panel-toggle control-center"))
     hl.bind(mainMod .. "+comma", hl.dsp.exec_cmd(ipc .. "settings-toggle"))
     hl.bind("ALT + Tab", hl.dsp.exec_cmd(ipc .. "window-switcher"))
     hl.bind("PRINT", hl.dsp.exec_cmd(ipc .. "screenshot-region"))
-    hl.bind("XF86AudioRaiseVolume", hl.dsp.exec_cmd(ipc .. "volume-up"))
-    hl.bind("XF86AudioLowerVolume", hl.dsp.exec_cmd(ipc .. "volume-down"))
+
+    -- Volume Controls
+    hl.bind("XF86AudioRaiseVolume", hl.dsp.exec_cmd(ipc .. "volume-up 2"))
+    hl.bind("XF86AudioLowerVolume", hl.dsp.exec_cmd(ipc .. "volume-down 2"))
     hl.bind("XF86AudioMute", hl.dsp.exec_cmd(ipc .. "volume-mute"))
+
+    -- Brightness Controls (laptops only: desktop monitors have no backlight)
     hl.bind("XF86MonBrightnessUp", hl.dsp.exec_cmd(ipc .. "brightness-up"))
     hl.bind("XF86MonBrightnessDown", hl.dsp.exec_cmd(ipc .. "brightness-down"))
 end

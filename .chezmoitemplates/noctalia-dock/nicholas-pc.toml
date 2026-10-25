@@ -1,0 +1,5 @@
+# nicholas-pc: dock on both monitors. The portrait HDMI-A-1 is only 1080 px
+# wide, too narrow for all pinned apps at the default 48 px icons.
+[dock.monitor.portrait]
+match = "HDMI-A-1"
+enabled = false
