@@ -1,0 +1,32 @@
+[theme.templates]
+enable_builtin_templates = true
+builtin_ids = ["hyprland", "btop", "gtk3", "gtk4", "qt", "ghostty", "starship"]
+community_ids = [
+    "claude-code",
+    "pi-agent",
+    "spicetify",
+    "brave",
+    "discord",
+    # "blender",
+    # "darktable",
+    # "gimp",
+    # "inkscape",
+    "lazyvim",
+    # "neovim",
+    "obsidian",
+    # "vscode",
+    "zed",
+    "heroiclauncher",
+    # "prismlauncher",
+    "steam",
+    "fastfetch",
+    "obs",
+    "zathura",
+    "papirus-icons",
+    # "bat",
+    # "fzf",
+    "lazygit",
+    # "tmux",
+    "yazi",
+    # "zellij",
+]
