@@ -27,6 +27,21 @@ _apps_browsers() {
 
 # --- Desktop apps ------------------------------------------------------------
 
+# Comfy, the Spicetify theme Noctalia's spicetify template colours: the
+# template writes Themes/Comfy/color.ini, and config-xpui.ini (dotfiles)
+# selects Comfy. Comfy's own color.ini is skipped so it never replaces
+# Noctalia's.
+_apps_spicetify_comfy() {
+  local themes="${XDG_CONFIG_HOME:-$HOME/.config}/spicetify/Themes" repo="$MODULE_TMP/comfy"
+  if [[ -f "$themes/Comfy/user.css" ]]; then
+    info "Spicetify Comfy theme already installed"
+    return 0
+  fi
+  run git clone --depth 1 https://github.com/Comfy-Themes/Spicetify.git "$repo"
+  run mkdir -p "$themes/Comfy"
+  run cp -rn "$repo/Comfy/." "$themes/Comfy/"
+}
+
 # Spicetify (themes/extensions for Spotify), patched into the Flatpak's files
 # as its docs describe: that folder is root-owned, so it's made writable
 # first. It needs Spotify's prefs file, which appears once you've opened
@@ -40,6 +55,7 @@ _apps_spicetify() {
     return 0
   fi
   mise_use github:spicetify/cli
+  _apps_spicetify_comfy
   if [[ -d "$spotify/Apps/xpui" ]]; then
     info "Spicetify is already applied to Spotify"
     return 0
@@ -199,6 +215,7 @@ _apps_gearlever_appimage() {
 
 _apps_creative() {
   local apps=(
+    com.obsproject.Studio                  # screen recording and streaming
     org.gimp.GIMP
     org.kde.krita
     org.inkscape.Inkscape
@@ -243,15 +260,41 @@ _apps_creative() {
 
 # --- Web apps ----------------------------------------------------------------
 
+# Icon for a web app: ICON is either a name from the icon themes (Papirus,
+# from the noctalia module, has many brands) or the https URL of a PNG, which
+# is downloaded once to $_APPS_WEBAPP_ICONS/SLUG.png. Prints the Icon= value
+# (everything else goes to stderr); the generic browser icon if neither works out.
+_APPS_WEBAPP_ICONS="${XDG_DATA_HOME:-$HOME/.local/share}/webapp-icons"
+_apps_webapp_icon() {
+  local slug="$1" icon="$2" dest
+  if [[ "$icon" != https://* ]]; then
+    if is_dry || [[ -n "$(find /usr/share/icons "$HOME/.local/share/icons" -path "*/apps/$icon.*" -print -quit 2>/dev/null)" ]]; then
+      printf '%s\n' "$icon"
+    else
+      soft_fail "Web app icon '$icon' isn't in your icon themes (Papirus has it; the noctalia module installs it)" >&2
+      printf 'web-browser\n'
+    fi
+    return 0
+  fi
+  dest="$_APPS_WEBAPP_ICONS/$slug.png"
+  if [[ -s "$dest" ]] || download "$icon" "$dest" >&2; then
+    printf '%s\n' "$dest"
+  else
+    soft_fail "Web app icon for $slug couldn't be downloaded from $icon" >&2
+    printf 'web-browser\n'
+  fi
+}
+
 # Launcher entry that opens a site as a Brave (or Chrome) app window.
 _apps_webapp() {
-  local name="$1" url="$2"
+  local name="$1" url="$2" icon="$3"
   local slug file browser="brave-browser" prefix="brave"
   slug="$(tr '[:upper:] ' '[:lower:]-' <<<"$name")"
   file="$HOME/.local/share/applications/webapp-$slug.desktop"
   if ! have brave-browser && have google-chrome-stable; then
     browser="google-chrome-stable"; prefix="chrome"
   fi
+  icon="$(_apps_webapp_icon "$slug" "$icon")"
 
   # Chromium names --app windows "<browser>-<host>__<path>-Default". Matching
   # it lets the dock/taskbar group each web app separately instead of
@@ -268,28 +311,32 @@ Name=$name
 Comment=$name web app
 Exec=$browser --app=$url
 StartupWMClass=$prefix-${host}__${path}-Default
-Icon=web-browser
+Icon=$icon
 Terminal=false
 Categories=Network;WebApp;
 EOF
 }
 
 _apps_webapps() {
+  # Name|URL|icon: a Papirus icon name where Papirus has the brand, else the
+  # site's own app icon (or dashboard-icons' copy of it) as a PNG URL.
+  local dash=https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/png
   local webapps=(
-    "WhatsApp|https://web.whatsapp.com"
-    "Gmail|https://mail.google.com"
-    "Google Calendar|https://calendar.google.com"
-    "Claude|https://claude.ai"
-    "ChatGPT|https://chatgpt.com"
-    "Excalidraw|https://excalidraw.com"
-    "Figma|https://www.figma.com/files"
-    "Canva|https://www.canva.com"
-    "Day One|https://dayone.me"
-    "Sonos|https://play.sonos.com"
+    "WhatsApp|https://web.whatsapp.com|whatsapp"
+    "Gmail|https://mail.google.com|gmail"
+    "Google Calendar|https://calendar.google.com|$dash/google-calendar.png"
+    "Claude|https://claude.ai|$dash/claude-ai.png"
+    "ChatGPT|https://chatgpt.com|$dash/chatgpt.png"
+    "Excalidraw|https://excalidraw.com|excalidraw"
+    "Figma|https://www.figma.com/files|figma"
+    "Canva|https://www.canva.com|https://static.canva.com/static/images/apple-touch-180x180-1.png"
+    "Day One|https://dayone.me|https://dayone.me/favicons/android-icon-192x192.png"
+    "Sonos|https://play.sonos.com|https://play.sonos.com/assets/logo512x512.png"
   )
-  local entry changed=0
+  local entry name url icon changed=0
   for entry in "${webapps[@]}"; do
-    _apps_webapp "${entry%%|*}" "${entry#*|}"
+    IFS='|' read -r name url icon <<<"$entry"
+    _apps_webapp "$name" "$url" "$icon"
     if write_changed; then changed=1; fi
   done
 

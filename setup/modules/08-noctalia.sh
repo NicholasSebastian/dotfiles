@@ -125,14 +125,29 @@ _noctalia_switch() {
     [[ -f "$f" ]] || module_skip "$f not found, so the config wasn't changed. Follow the wiki guide by hand."
   done
 
+  # A config that already starts Noctalia was switched before: by this module
+  # (its marked blocks are kept up to date) or by the dotfiles repo, whose hypr
+  # files carry the binds and layer rules without the markers. Then only Otter
+  # leftovers are still commented out; adding the blocks again would duplicate them.
+  local switched=0
+  if grep -qE '^[[:space:]]*hl[.]exec_cmd[(]"noctalia"[)]' "$exec_lua"; then switched=1; fi
+
   # Build the new versions
   local new="$MODULE_TMP/new"
   mkdir -p "$new"
   _noctalia_comment_out '^[[:space:]]*hl[.]exec_cmd[(]' "^[[:space:]]*hl[.]exec_cmd[(]\"${_NOCTALIA_OTTER_EXEC}[\" ]" "$exec_lua" >"$new/exec.tmp"
   _noctalia_add_exec "$new/exec.tmp" >"$new/exec.lua"
   _noctalia_comment_out '^[[:space:]]*hl[.]bind[(]' "exec_cmd[(]\"${_NOCTALIA_OTTER_KEYS}[\" ]" "$keys_lua" >"$new/keys.tmp"
-  _noctalia_block "$new/keys.tmp" "$_NOCTALIA_KEYS_BODY" >"$new/keybinds.lua"
-  _noctalia_block "$win_lua" "$_NOCTALIA_WINDOWS_BODY" >"$new/windows.lua"
+  if (( switched )) && ! grep -qxF -e "$_NOCTALIA_BLOCK_START" "$keys_lua"; then
+    cp "$new/keys.tmp" "$new/keybinds.lua"
+  else
+    _noctalia_block "$new/keys.tmp" "$_NOCTALIA_KEYS_BODY" >"$new/keybinds.lua"
+  fi
+  if (( switched )) && ! grep -qxF -e "$_NOCTALIA_BLOCK_START" "$win_lua"; then
+    cp "$win_lua" "$new/windows.lua"
+  else
+    _noctalia_block "$win_lua" "$_NOCTALIA_WINDOWS_BODY" >"$new/windows.lua"
+  fi
 
   local -a changed=()
   for f in exec.lua keybinds.lua windows.lua; do
@@ -231,6 +246,9 @@ _noctalia_theming() {
 
   # Same GTK theme for Flatpak apps
   flatpak_install org.gtk.Gtk3theme.adw-gtk3 org.gtk.Gtk3theme.adw-gtk3-dark
+  # Noctalia's colours for Flatpak GTK apps: let them read ~/.config/gtk-3.0
+  # and gtk-4.0 (gtk.css imports Noctalia's generated noctalia.css).
+  run flatpak override --user --filesystem=xdg-config/gtk-3.0:ro --filesystem=xdg-config/gtk-4.0:ro
 }
 
 # Theming only runs once the switch went through (it exits the module when

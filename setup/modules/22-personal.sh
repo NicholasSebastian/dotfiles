@@ -76,6 +76,7 @@ zstyle ':completion:*' menu select
 command -v starship >/dev/null && eval "$(starship init zsh)"
 command -v zoxide   >/dev/null && eval "$(zoxide init zsh --cmd cd)"   # smarter cd
 command -v fzf      >/dev/null && source <(fzf --zsh)                  # Ctrl+R, Ctrl+T, Alt+C
+[[ -r ~/.config/fzf/themes/noctalia.sh ]] && source ~/.config/fzf/themes/noctalia.sh   # Noctalia colors
 
 # --- Aliases ---
 if command -v eza >/dev/null; then
