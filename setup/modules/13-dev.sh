@@ -35,8 +35,8 @@ _dev_tools() {
   add_user_to_group wireshark
 
   local apps=(
-    com.getpostman.Postman
-    # com.usebruno.Bruno
+    # com.getpostman.Postman
+    com.usebruno.Bruno
     io.beekeeperstudio.Studio
     # io.dbeaver.DBeaverCommunity
   )
