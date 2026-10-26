@@ -347,6 +347,7 @@ _apps_webapps() {
     "Google Calendar|https://calendar.google.com|$dash/google-calendar.png"
     "Claude|https://claude.ai|$dash/claude-ai.png"
     "ChatGPT|https://chatgpt.com|$dash/chatgpt.png"
+    "Perplexity|https://www.perplexity.ai|https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/png/perplexity.png"
     "Excalidraw|https://excalidraw.com|excalidraw"
     "Figma|https://www.figma.com/files|figma"
     "Canva|https://www.canva.com|https://static.canva.com/static/images/apple-touch-180x180-1.png"
