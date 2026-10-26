@@ -80,7 +80,8 @@ hl.window_rule({
 
 hl.window_rule({
     match = {
-        class = "^(com\\.github\\.pikaos-linux\\.pikmanupdatemanager|com\\.saivert\\.pwvucontrol)$"
+        class =
+        "^(com\\.github\\.pikaos-linux\\.pikmanupdatemanager|com\\.saivert\\.pwvucontrol|io\\.github\\.Qalculate|qalculate-gtk)$"
     },
     float = true
 })
