@@ -5,7 +5,7 @@ local anims = {
     { leaf = "windowsOut",  speed = 4, style = "slide" },
     { leaf = "windowsMove", speed = 4 },
     { leaf = "fade",        speed = 4 },
-    { leaf = "workspaces",  speed = 8 },
+    { leaf = "workspaces",  speed = 8, style = "slidevert" },
     { leaf = "layers",      speed = 8, style = "slide" },
 }
 
