@@ -12,6 +12,9 @@ hl.on("hyprland.start", function()
     hl.exec_cmd("dconf write /org/gnome/desktop/interface/cursor-size 24")
     hl.exec_cmd("gsettings set org.cinnamon.desktop.default-applications.terminal exec ghostty")
 
+    -- EasyEffects (mic noise suppression + EQ): background service, no window
+    hl.exec_cmd("flatpak run com.github.wwmm.easyeffects --service-mode --hide-window")
+
     -- PikaOS welcome
     hl.exec_cmd("pika-welcome-autostart")
 end)
