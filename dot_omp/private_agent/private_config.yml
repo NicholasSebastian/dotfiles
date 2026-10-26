@@ -2,3 +2,32 @@ setupVersion: 2
 theme:
   dark: noctalia
   light: noctalia
+modelRoles:
+  tiny: local/lfm2.5-230m
+  default: anthropic/claude-opus-5-5
+  slow: anthropic/claude-fable-5-1:high
+  plan: anthropic/claude-opus-5-5:xhigh
+  commit: "@smol"
+  memory: anthropic/claude-haiku-5-5:low
+  task: anthropic/claude-sonnet-5-5:auto
+  advisor: openai-codex/gpt-5.6-terra:medium
+  smol: anthropic/claude-haiku-5-5:low
+  widget: "@smol"
+  vision: google-antigravity/gemini-3.5-flash-lite:low
+  image: openai-codex/gpt-image-2
+  speech: local/kokoro
+  dictation: local/parakeet-tdt-0.6b-v3
+  judge: local/lfm2-1.2b
+  web: web/parallel
+defaultThinkingLevel: auto
+retry:
+  fallbackChains:
+    advisor:
+      - google-antigravity/gemini-3.8-flash:medium
+      - anthropic/claude-sonnet-5-5:low
+    image:
+      - google-antigravity/gemini-3-pro-image
+    web:
+      - web/perplexity
+      - web/exa
+      - web/duckduckgo
