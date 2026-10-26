@@ -350,7 +350,7 @@ _apps_webapps() {
     "Excalidraw|https://excalidraw.com|excalidraw"
     "Figma|https://www.figma.com/files|figma"
     "Canva|https://www.canva.com|https://static.canva.com/static/images/apple-touch-180x180-1.png"
-    "Capcut|https://www.capcut.com/editor"
+    "CapCut|https://www.capcut.com/editor|https://sf16-web-tos-buz.capcutcdn-us.com/obj/capcut-web-buz-tx/pwa/512.png"
     "Day One|https://dayone.me|https://dayone.me/favicons/android-icon-192x192.png"
     "Sonos|https://play.sonos.com|https://play.sonos.com/assets/logo512x512.png"
   )
