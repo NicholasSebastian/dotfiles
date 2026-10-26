@@ -75,6 +75,25 @@ _noctalia_greeter_make_default() {
   printf '%s\n' greetd.service >"$RUN_DIR/dm_expected"
 }
 
+# PikaOS enables eCryptfs's PAM profile (pam_ecryptfs.so in common-auth, as
+# 'required') though nothing uses an encrypted home. It once crashed greetd's
+# auth worker (SIGSEGV in pam_ecryptfs), which leaves the greeter waiting with
+# no error, so the login silently does nothing. Turned off when no eCryptfs
+# home exists; undo: sudo pam-auth-update --enable ecryptfs-utils
+_noctalia_greeter_no_ecryptfs() {
+  grep -qs 'pam_ecryptfs' /etc/pam.d/common-auth || return 0
+  if [[ -d /home/.ecryptfs || -d "$HOME/.ecryptfs" ]]; then
+    info "eCryptfs home found; its PAM module stays on"
+    return 0
+  fi
+  confirm_step "Turn off the unused eCryptfs PAM module (pam-auth-update --disable ecryptfs-utils): it can crash greetd's login check, and nothing here uses an encrypted home" \
+    || { info "eCryptfs PAM module left on"; return 0; }
+  run sudo env DEBIAN_FRONTEND=noninteractive pam-auth-update --disable ecryptfs-utils
+  if ! is_dry && grep -qs 'pam_ecryptfs' /etc/pam.d/common-auth; then
+    soft_fail "pam-auth-update didn't remove pam_ecryptfs from /etc/pam.d/common-auth; run 'sudo pam-auth-update' and untick eCryptfs"
+  fi
+}
+
 # _noctalia_greeter_set_output FILE NAME RATES: print FILE with [output] name
 # and refresh_rate set to NAME and RATES, right under the [output] header.
 # An empty NAME removes name (= all monitors); RATES "-" leaves refresh_rate
@@ -281,6 +300,7 @@ noctalia_greeter_run() {
   if [[ "$old_unit" == greetd.service ]] && pkg_installed noctalia-greeter; then
     info "Noctalia Greeter is already your login screen"
     _noctalia_greeter_make_default
+    _noctalia_greeter_no_ecryptfs
     _noctalia_greeter_displays
     return 0
   fi
@@ -288,6 +308,7 @@ noctalia_greeter_run() {
   confirm_risky \
     "add Noctalia's Debian sid APT repo if PikaOS doesn't package noctalia-greeter (key pinned by fingerprint, repo pinned low)" \
     "install greetd and noctalia-greeter" \
+    "ask to turn off the unused eCryptfs PAM module if it's enabled (it can make greetd logins silently fail)" \
     "ask which monitor shows the login screen (all, or one) and set it in $_NG_TOML; with one, build a patched greeter compositor so the other monitors stay on and black" \
     "disable ${old_unit:-the current login screen} and enable greetd for the NEXT boot (this session keeps running)" \
     "write an undo script to $restore"
@@ -321,6 +342,7 @@ noctalia_greeter_run() {
   : "${greeter_user:=_greetd}"
   run sudo env GREETER_USER="$greeter_user" noctalia-greeter-apply-appearance --setup-system
   _noctalia_greeter_displays
+  _noctalia_greeter_no_ecryptfs
 
   # An [initial_session] means automatic login: the greeter would only
   # appear after you log out, never at boot
