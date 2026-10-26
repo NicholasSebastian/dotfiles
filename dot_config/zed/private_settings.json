@@ -1,6 +1,138 @@
 {
-  "cli_default_open_behavior": "new_window",
+  "preferred_line_length": 120,
+  "tab_size": 4,
   "format_on_save": "on",
+  "vim_mode": true,
+  "base_keymap": "VSCode",
+  "ui_font_size": 16,
+  "buffer_font_size": 15,
+  "buffer_font_family": "JetBrainsMono Nerd Font",
+  "buffer_font_fallbacks": ["monospace"],
+  "cli_default_open_behavior": "new_window",
+  "restore_on_startup": "launchpad",
+  "session": {
+    "trust_all_worktrees": true
+  },
+  "telemetry": {
+    "diagnostics": false,
+    "metrics": false
+  },
+  "languages": {
+    "JavaScript": {
+      "language_servers": ["typescript-ls", "oxlint", "oxfmt", "!vtsls", "!typescript-language-server"],
+      "tab_size": 2,
+      "prettier": { "allowed": false },
+      "formatter": [{ "language_server": { "name": "oxfmt" } }, { "code_action": "source.fixAll.oxc" }]
+    },
+    "JSX": {
+      "language_servers": ["typescript-ls", "oxlint", "oxfmt", "!vtsls", "!typescript-language-server"],
+      "tab_size": 2,
+      "prettier": { "allowed": false },
+      "formatter": [{ "language_server": { "name": "oxfmt" } }, { "code_action": "source.fixAll.oxc" }]
+    },
+    "TypeScript": {
+      "language_servers": ["typescript-ls", "oxlint", "oxfmt", "!vtsls", "!typescript-language-server"],
+      "tab_size": 2,
+      "prettier": { "allowed": false },
+      "formatter": [{ "language_server": { "name": "oxfmt" } }, { "code_action": "source.fixAll.oxc" }]
+    },
+    "TSX": {
+      "language_servers": ["typescript-ls", "oxlint", "oxfmt", "!vtsls", "!typescript-language-server"],
+      "tab_size": 2,
+      "prettier": { "allowed": false },
+      "formatter": [{ "language_server": { "name": "oxfmt" } }, { "code_action": "source.fixAll.oxc" }]
+    },
+    "Vue.js": {
+      "language_servers": ["oxlint", "oxfmt", "..."],
+      "tab_size": 2,
+      "prettier": { "allowed": false },
+      "formatter": [{ "language_server": { "name": "oxfmt" } }, { "code_action": "source.fixAll.oxc" }]
+    },
+    "Svelte": {
+      "language_servers": ["oxlint", "oxfmt", "..."],
+      "tab_size": 2,
+      "prettier": { "allowed": false },
+      "formatter": [{ "language_server": { "name": "oxfmt" } }, { "code_action": "source.fixAll.oxc" }]
+    },
+    "Astro": {
+      "language_servers": ["oxlint", "oxfmt", "..."],
+      "tab_size": 2,
+      "prettier": { "allowed": false },
+      "formatter": [{ "language_server": { "name": "oxfmt" } }, { "code_action": "source.fixAll.oxc" }]
+    },
+    "JSON": {
+      "language_servers": ["oxfmt", "..."],
+      "tab_size": 2,
+      "prettier": { "allowed": false },
+      "formatter": [{ "language_server": { "name": "oxfmt" } }]
+    },
+    "JSONC": {
+      "language_servers": ["oxfmt", "..."],
+      "tab_size": 2,
+      "prettier": { "allowed": false },
+      "formatter": [{ "language_server": { "name": "oxfmt" } }]
+    },
+    "HTML": {
+      "language_servers": ["oxfmt", "..."],
+      "tab_size": 2,
+      "prettier": { "allowed": false },
+      "formatter": [{ "language_server": { "name": "oxfmt" } }]
+    },
+    "CSS": {
+      "language_servers": ["oxfmt", "..."],
+      "tab_size": 2,
+      "prettier": { "allowed": false },
+      "formatter": [{ "language_server": { "name": "oxfmt" } }]
+    },
+    "SCSS": {
+      "language_servers": ["oxfmt", "..."],
+      "tab_size": 2,
+      "prettier": { "allowed": false },
+      "formatter": [{ "language_server": { "name": "oxfmt" } }]
+    },
+    "Less": {
+      "language_servers": ["oxfmt", "..."],
+      "tab_size": 2,
+      "prettier": { "allowed": false },
+      "formatter": [{ "language_server": { "name": "oxfmt" } }]
+    },
+    "YAML": {
+      "language_servers": ["oxfmt", "..."],
+      "tab_size": 2,
+      "prettier": { "allowed": false },
+      "formatter": [{ "language_server": { "name": "oxfmt" } }]
+    },
+    "Markdown": {
+      "language_servers": ["oxfmt", "..."],
+      "tab_size": 2,
+      "prettier": { "allowed": false },
+      "formatter": [{ "language_server": { "name": "oxfmt" } }]
+    },
+    "MDX": {
+      "language_servers": ["oxfmt", "..."],
+      "tab_size": 2,
+      "prettier": { "allowed": false },
+      "formatter": [{ "language_server": { "name": "oxfmt" } }]
+    },
+    "GraphQL": {
+      "language_servers": ["oxfmt", "..."],
+      "tab_size": 2,
+      "prettier": { "allowed": false },
+      "formatter": [{ "language_server": { "name": "oxfmt" } }]
+    },
+    "Handlebars": {
+      "language_servers": ["oxfmt", "..."],
+      "tab_size": 2,
+      "prettier": { "allowed": false },
+      "formatter": [{ "language_server": { "name": "oxfmt" } }]
+    },
+    "Ruby": { "tab_size": 2 },
+    "Elixir": { "tab_size": 2 },
+    "Dart": { "tab_size": 2 },
+    "Nix": { "tab_size": 2 },
+    "Go": { "hard_tabs": true, "tab_size": 4 },
+    "Makefile": { "hard_tabs": true, "tab_size": 4 }
+  },
   "agent_servers": {
     "claude-acp": {
       "default_config_options": {
@@ -32,18 +164,12 @@
   "project_panel": {
     "dock": "left"
   },
-  "session": {
-    "trust_all_worktrees": true
-  },
-  "vim_mode": true,
-  "base_keymap": "VSCode",
-  "ui_font_size": 16,
-  "buffer_font_size": 15,
   "theme": {
     "mode": "system",
     "light": "Noctalia Light",
     "dark": "Noctalia Dark"
   },
+  "icon_theme": "VSCode Icons for Zed (Dark)",
   "theme_overrides": {
     "Noctalia Dark": {
       "text": "#CCCCCC",
