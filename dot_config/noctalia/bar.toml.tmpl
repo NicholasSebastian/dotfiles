@@ -1,3 +1,5 @@
+# Bar at the top. Per-monitor overrides are per machine: see the end of this
+# file and .chezmoitemplates/noctalia-bar/.
 [bar.default]
 background_opacity = 0.9
 radius = 17
@@ -42,7 +44,7 @@ style = "minimal"
 show_all_outputs = true
 
 [widget.media]
-hide_when_no_media = true
+hide_when_no_media = false
 capsule = true
 color = "primary"          # "#1ED760"
 capsule_fill = "secondary" # "#1DB954"
@@ -65,3 +67,12 @@ show_label = false
 
 [widget.control-center]
 glyph = "settings"
+
+{{- $bar := printf "noctalia-bar/%s.toml" .chezmoi.hostname }}
+{{- if stat (joinPath .chezmoi.sourceDir ".chezmoitemplates" $bar) }}
+
+{{ includeTemplate $bar . }}
+{{- else }}
+
+{{ includeTemplate "noctalia-bar/default.toml" . }}
+{{- end }}

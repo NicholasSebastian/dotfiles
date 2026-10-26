@@ -1,0 +1,9 @@
+# Bar monitors for machines without their own file in
+# .chezmoitemplates/noctalia-bar/ (named <hostname>.toml): every monitor gets
+# the bar as configured in [bar.default]. A machine file can change any bar
+# field per monitor (first match wins); start/center/end replace the whole
+# list, e.g.:
+#
+# [bar.default.monitor.side]
+# match = "HDMI-A-1"    # connector name, or a word from the output description
+# start = ["launcher", "workspaces"]

@@ -1,0 +1,18 @@
+# nicholas-pc: the portrait LG (HDMI-A-1) is too narrow for media and the
+# window title, so its bar's start section has neither.
+[bar.default.monitor.lg]
+match = "LG"
+start = ["launcher", "workspaces", "gap2", "active_window"]
+end = [
+    "gap1",
+    "network",
+    "bluetooth",
+    "gap1",
+    "notifications",
+    "brightness",
+    "volume",
+    "battery",
+    "power_profile",
+    "control-center",
+    "session",
+]
