@@ -17,6 +17,13 @@
     "diagnostics": false,
     "metrics": false
   },
+  "lsp": {
+    "typescript-ls": {
+      "settings": {
+        "package_version": "7.0.2"
+      }
+    }
+  },
   "languages": {
     "JavaScript": {
       "language_servers": ["typescript-ls", "oxlint", "oxfmt", "!vtsls", "!typescript-language-server"],
