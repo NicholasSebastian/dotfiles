@@ -3,3 +3,9 @@ directory = "~/wallpapers"
 
 [shell.launcher]
 search_position = "top"
+
+# Re-sync the login screen (Noctalia Greeter) whenever the wallpaper, palette,
+# theme mode or font changes; setup's noctalia_greeter module allows this
+# without a password prompt.
+[shell.greeter_sync]
+auto_sync = true

@@ -4,7 +4,7 @@
 # shellcheck disable=SC2034  # header variables are read by setup.sh after sourcing
 {
 MODULE_ID=noctalia_greeter
-MODULE_DESC="Replace the otter-greeter login screen with Noctalia Greeter (greetd)"
+MODULE_DESC="Replace the otter-greeter login screen with Noctalia Greeter (greetd), synced to Noctalia's look"
 MODULE_DEFAULT=1
 MODULE_DEPS=(noctalia)
 MODULE_RISKY=1
@@ -293,6 +293,33 @@ _noctalia_greeter_displays() {
   followup reboot "Noctalia Greeter: from the next boot the login screen shows on ${key:-all monitors}${rate_info:+, at $rate_info}."
 }
 
+# Copy Noctalia's look (wallpaper, colours, font, monitor layout) to the
+# login screen now; [shell.greeter_sync] auto_sync in the dotfiles keeps it
+# in sync afterwards. Sync runs a root helper through pkexec; the package's
+# passwordless-sync rule lets only this user, in an active local session,
+# run only that helper with --sync, so it never prompts (there's no polkit
+# agent to show a prompt). https://docs.noctalia.dev/greeter/sync/
+# Undo: sudo noctalia-greeter passwordless-sync disable $USER
+_noctalia_greeter_sync() {
+  local out
+  if ! run sudo noctalia-greeter passwordless-sync enable "$USER_NAME"; then
+    soft_fail "Noctalia Greeter: couldn't allow passwordless sync for $USER_NAME; syncs will ask for an admin password"
+  fi
+  if is_dry; then cmd "noctalia msg greeter-sync"; return 0; fi
+  if ! pgrep -x noctalia >/dev/null; then
+    followup manual "Noctalia Greeter: log in to Noctalia and run 'noctalia msg greeter-sync' to copy its look to the login screen."
+    return 0
+  fi
+  cmd "noctalia msg greeter-sync"
+  out="$(noctalia msg greeter-sync 2>&1 || true)"
+  if [[ "$out" == ok ]]; then
+    info "Copying Noctalia's look to the login screen (finishes in the background)"
+  else
+    # Noctalia only offers greeter-sync if the greeter was installed when it started
+    followup manual "Noctalia Greeter: run 'noctalia msg greeter-sync' after you next log in to copy Noctalia's look to the login screen (now: ${out:-no answer})."
+  fi
+}
+
 noctalia_greeter_run() {
   local restore="$HOME/restore-login-screen.sh" old_unit
   old_unit="$(dm_unit)"
@@ -302,6 +329,7 @@ noctalia_greeter_run() {
     _noctalia_greeter_make_default
     _noctalia_greeter_no_ecryptfs
     _noctalia_greeter_displays
+    _noctalia_greeter_sync
     return 0
   fi
 
@@ -311,7 +339,8 @@ noctalia_greeter_run() {
     "ask to turn off the unused eCryptfs PAM module if it's enabled (it can make greetd logins silently fail)" \
     "ask which monitor shows the login screen (all, or one) and set it in $_NG_TOML; with one, build a patched greeter compositor so the other monitors stay on and black" \
     "disable ${old_unit:-the current login screen} and enable greetd for the NEXT boot (this session keeps running)" \
-    "write an undo script to $restore"
+    "write an undo script to $restore" \
+    "allow passwordless login-screen sync for $USER_NAME (only the greeter's sync helper) and copy Noctalia's look to the login screen now"
 
   local repo_added=0
   if ! apt_available noctalia-greeter && [[ ! -f /etc/apt/sources.list.d/noctalia.sources ]]; then
@@ -371,7 +400,8 @@ EOF
   # one would end this session on the spot.
   if [[ -n "$old_unit" && "$old_unit" != greetd.service ]]; then run sudo systemctl disable "$old_unit"; fi
   _noctalia_greeter_make_default
+  _noctalia_greeter_sync
 
   followup reboot "Noctalia Greeter takes over at the next reboot. Black screen? Press Ctrl+Alt+F3, log in, run 'bash ~/restore-login-screen.sh', then 'sudo reboot'."
-  followup manual "To match the login screen to your desktop: Noctalia Settings -> Security -> Noctalia Greeter -> Sync Now (or Auto-Sync). Fonts must be installed system-wide to show there; install accountsservice for user avatars."
+  followup manual "Noctalia Greeter: fonts must be installed system-wide to show on the login screen; install accountsservice for user avatars."
 }
