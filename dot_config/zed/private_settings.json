@@ -238,5 +238,9 @@
         "variable.special": { "color": "#569CD6" }
       }
     }
+  },
+  "auto_install_extensions": {
+    "tsgo": true,
+    "oxc": true
   }
 }
