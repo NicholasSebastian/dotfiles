@@ -299,8 +299,8 @@ _apps_warp() {
     soft_fail "Cloudflare WARP: couldn't download Cloudflare's repo key; see https://pkg.cloudflareclient.com"
     return 0
   fi
-  printf 'deb [signed-by=%s] https://pkg.cloudflareclient.com/ trixie main\n' "$_APPS_WARP_KEYRING" \
-    | write_file /etc/apt/sources.list.d/cloudflare-client.list
+  write_file /etc/apt/sources.list.d/cloudflare-client.list < <(
+    printf 'deb [signed-by=%s] https://pkg.cloudflareclient.com/ trixie main\n' "$_APPS_WARP_KEYRING")
   if write_changed; then changed=1; fi
   if (( changed )); then apt_update; fi
 
