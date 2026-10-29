@@ -75,7 +75,7 @@ plugins:
 model:
   # Default model to use (can be overridden with --model flag)
   # Both "default" and "model" work as the key name here.
-  default: "qwen3.5-9b:latest"
+  default: "claude-opus-5-5"
 
   # Inference provider selection:
   #   "auto"         - Auto-detect from credentials (default)
@@ -108,12 +108,12 @@ model:
   #   It works with both no-auth and auth-enabled server modes.
   #
   # Can also be overridden for a single invocation with the --provider flag.
-  provider: "ollama"
+  provider: "anthropic"
 
   # API configuration (falls back to OPENROUTER_API_KEY env var)
   # api_key: "your-key-here"  # Uncomment to set here instead of .env
-  base_url: http://127.0.0.1:11434/v1
-  api_mode: chat_completions
+  base_url: https://api.anthropic.com
+  api_mode: anthropic_messages
 kanban:
   review_dispatch: true
 
@@ -2182,12 +2182,18 @@ providers:
   ollama:
     name: Ollama
     base_url: http://127.0.0.1:11434/v1
-    model: qwen3.5-9b:latest
+    model: qwen3.5:4b
     discover_models: true
     api_mode: chat_completions
     models:
-      qwen3.8-27b:latest: {}
-      nomic-embed-text:latest: {}
+      qwen3.5:4b:
+        context_length: 65536
       qwen3.5-9b:latest:
-        context_length: 16384
-    context_length: 16384
+        context_length: 65536
+      qwen3.8-27b:latest: {}
+      lfm2.5:1.2b: {}
+      laya:latest: {}
+    context_length: 65536
+fallback_providers:
+  - provider: ollama
+    model: qwen3.5-9b:latest
