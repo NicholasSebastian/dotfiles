@@ -101,13 +101,10 @@ _ai_claude_desktop() {
 _ai_local() {
   if have ollama; then info "Ollama already installed"; else install_script https://ollama.com/install.sh sh; fi
 
-  # Ollama tuning: 16k context, with flash attention and an 8-bit KV cache to
-  # make it fit in VRAM. Drop-in, so Ollama's installer (which rewrites
-  # ollama.service on updates) leaves it alone. Restarts only on a change, so
-  # a loaded model isn't dropped on every run. Redirected, not piped:
-  # write_file must run in this shell for write_changed.
+  # Ollama tuning: 65k context, with flash attention and an 8-bit KV cache to make it fit in VRAM.
+  # Because Hermes Agent will only accept it if its above 64k for some damn fucking reason.
   write_file /etc/systemd/system/ollama.service.d/override.conf < <(printf '%s\n' '[Service]' \
-    'Environment="OLLAMA_CONTEXT_LENGTH=16384"' \
+    'Environment="OLLAMA_CONTEXT_LENGTH=65536"' \
     'Environment="OLLAMA_FLASH_ATTENTION=1"' \
     'Environment="OLLAMA_KV_CACHE_TYPE=q8_0"')
   if write_changed; then
