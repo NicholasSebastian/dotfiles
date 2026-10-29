@@ -399,13 +399,6 @@ _apps_webapps() {
     if write_changed; then changed=1; fi
   done
 
-  # Claude was a web app here; the ai module installs Claude Desktop now
-  local claude="$HOME/.local/share/applications/webapp-claude.desktop"
-  if [[ -f "$claude" ]]; then
-    run rm -f "$claude" "$_APPS_WEBAPP_ICONS"/claude*.png
-    changed=1
-  fi
-
   if (( changed )) && have update-desktop-database; then
     run update-desktop-database "$HOME/.local/share/applications"
   fi
