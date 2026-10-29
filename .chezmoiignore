@@ -1,7 +1,12 @@
 README.md
 .zed
 .claude/*
+!.claude/skills
 !.claude/settings.json
+.hermes/*
+!.hermes/skills
+!.hermes/config.yaml
+!.hermes/SOUL.md
 .config/hypr/*.setup-bak.*
 .config/hypr/.luarc.json
 .config/hypr/noctalia.lua
