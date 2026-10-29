@@ -139,7 +139,7 @@ modules: comment out a line to drop an item.
 | `fonts` | ✅ | JetBrains Mono + Iosevka Nerd Fonts, Noto, emoji, CJK, Microsoft core fonts |
 | `input_method` | | Fcitx5 for typing Chinese/Japanese |
 | `dev` | ✅ | Docker, GitHub CLI, Bruno, Beekeeper, pnpm + Oxc, Zed, Neovim, JetBrains IDEs, etc. · needs `runtimes` |
-| `ai` | ✅ | Claude Code, Oh My Pi, Ollama (+ optional Open WebUI), ComfyUI, Upscayl · needs `runtimes` |
+| `ai` | ✅ | Claude Code, Oh My Pi, Hermes Agent, Ollama (+ optional Open WebUI), LM Studio Bionic, ComfyUI (CLI + Desktop), Upscayl · needs `runtimes` |
 | `apps` | ✅ | Brave + Chrome, Bitwarden, Obsidian, LocalSend, Discord, Telegram, Spotify, Affinity, etc. |
 | `photogimp` | ✅ | PhotoGIMP patch for GIMP (open and close GIMP once first) · needs `apps` |
 | `games` | ✅ | Minecraft (official, CurseForge, Modrinth) + emulators |

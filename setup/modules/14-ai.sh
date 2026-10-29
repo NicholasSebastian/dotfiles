@@ -4,7 +4,7 @@
 # shellcheck disable=SC2034  # header variables are read by setup.sh after sourcing
 {
 MODULE_ID=ai
-MODULE_DESC="Claude Code, Oh My Pi, Ollama (+ optional Open WebUI), ComfyUI, Upscayl"
+MODULE_DESC="Claude Code, Oh My Pi, Hermes Agent, Ollama (+ optional Open WebUI), LM Studio Bionic, ComfyUI (CLI + Desktop), Upscayl"
 MODULE_DEFAULT=1
 MODULE_DEPS=(runtimes)                   # bun, uv
 if (( OPEN_WEBUI )); then MODULE_DEPS+=(dev); fi   # Open WebUI runs in Docker
@@ -17,6 +17,17 @@ _ai_cli() {
 
   # Oh My Pi ('omp'). mise's GitHub backend is one of upstream's documented methods.
   mise_use "github:can1357/oh-my-pi"
+
+  # Hermes Agent (Nous Research): upstream's installer, the only Linux install
+  # (Hermes Desktop has no Linux package). It installs to ~/.hermes and links
+  # ~/.local/bin/hermes. --non-interactive skips its setup wizard, which needs
+  # a terminal; stdin is /dev/null while modules run.
+  if have hermes; then
+    info "Hermes Agent already installed"
+  else
+    install_script https://hermes-agent.nousresearch.com/install.sh bash --non-interactive
+    followup manual "Hermes Agent: run 'hermes setup' to pick a model provider; 'hermes desktop' opens its desktop app."
+  fi
 
   # Extra agents via bun; uncomment to add
   local extra=(
@@ -34,6 +45,21 @@ _ai_cli() {
 
 _ai_local() {
   if have ollama; then info "Ollama already installed"; else install_script https://ollama.com/install.sh sh; fi
+
+  # LM Studio Bionic: LM Studio's agent app, official .deb (separate from the
+  # classic LM Studio app). Its postinst adds an AppArmor profile so Electron's
+  # sandbox works; unlike Comfy Desktop it adds no apt repo. ~1 GB download,
+  # no checksum published; it's fetched over TLS.
+  if pkg_installed lmstudio-bionic; then
+    info "LM Studio Bionic already installed"
+  else
+    local deb="$MODULE_TMP/lmstudio-bionic.deb"
+    if download 'https://lmstudio.ai/download/bionic/latest/linux/x64?format=deb&redirectVersion=2' "$deb"; then
+      apt_install "$deb"
+    else
+      soft_fail "LM Studio Bionic download failed. Get the .deb from https://lmstudio.ai/download"
+    fi
+  fi
 
   if (( OPEN_WEBUI )); then
     if ! is_dry && sudo docker container inspect open-webui >/dev/null 2>&1; then
@@ -97,9 +123,26 @@ _ai_creative() {
       comfy --skip-prompt --workspace "$AI_DIR/ComfyUI" install "--$gpu"
   fi
 
+  # Comfy Desktop: official .deb. It installs and launches its own ComfyUI
+  # instances (in ~/ComfyUI-Installs). Its postinst adds Comfy's apt repo, so
+  # updates come through apt, and an AppArmor profile so Electron's sandbox
+  # works (the AppImage would need --no-sandbox). No checksum is published;
+  # it's fetched over TLS.
+  if pkg_installed comfyui-desktop-2; then
+    info "Comfy Desktop already installed"
+  else
+    local deb="$MODULE_TMP/comfy-desktop.deb"
+    if download https://download.comfy.org/linux/deb/x64 "$deb"; then
+      apt_install "$deb"
+    else
+      soft_fail "Comfy Desktop download failed. Get the .deb from https://docs.comfy.org/installation/desktop/linux"
+    fi
+  fi
+
   flatpak_install org.upscayl.Upscayl     # AI image upscaler
 
   followup manual "Start ComfyUI: source $venv/bin/activate && comfy --workspace $AI_DIR/ComfyUI launch"
+  followup manual "Comfy Desktop: on first launch pick Local for a managed install, or use ☰ > Add Existing Instance on $AI_DIR/ComfyUI and set its Virtual Environment to $venv."
   followup manual "Optional: Krita AI Diffusion plugin (uses your ComfyUI), Stability Matrix, LM Studio."
 }
 
