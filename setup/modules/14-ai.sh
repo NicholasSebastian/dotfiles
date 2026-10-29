@@ -72,8 +72,8 @@ _ai_claude_desktop() {
     soft_fail "Claude Desktop: couldn't download Anthropic's repo key; see https://code.claude.com/docs/en/desktop-linux"
     return 0
   fi
-  printf 'deb [arch=amd64,arm64 signed-by=%s] https://downloads.claude.ai/claude-desktop/apt/stable stable main\n' "$_AI_CLAUDE_KEYRING" \
-    | write_file /etc/apt/sources.list.d/claude-desktop.list
+  write_file /etc/apt/sources.list.d/claude-desktop.list < <(
+    printf 'deb [arch=amd64,arm64 signed-by=%s] https://downloads.claude.ai/claude-desktop/apt/stable stable main\n' "$_AI_CLAUDE_KEYRING")
   if write_changed; then changed=1; fi
   if (( changed )); then apt_update; fi
 
@@ -100,6 +100,20 @@ _ai_claude_desktop() {
 
 _ai_local() {
   if have ollama; then info "Ollama already installed"; else install_script https://ollama.com/install.sh sh; fi
+
+  # Ollama tuning: 16k context, with flash attention and an 8-bit KV cache to
+  # make it fit in VRAM. Drop-in, so Ollama's installer (which rewrites
+  # ollama.service on updates) leaves it alone. Restarts only on a change, so
+  # a loaded model isn't dropped on every run. Redirected, not piped:
+  # write_file must run in this shell for write_changed.
+  write_file /etc/systemd/system/ollama.service.d/override.conf < <(printf '%s\n' '[Service]' \
+    'Environment="OLLAMA_CONTEXT_LENGTH=16384"' \
+    'Environment="OLLAMA_FLASH_ATTENTION=1"' \
+    'Environment="OLLAMA_KV_CACHE_TYPE=q8_0"')
+  if write_changed; then
+    run sudo systemctl daemon-reload
+    run sudo systemctl restart ollama
+  fi
 
   # LM Studio Bionic: LM Studio's agent app, official .deb (separate from the
   # classic LM Studio app). Its postinst adds an AppArmor profile so Electron's
