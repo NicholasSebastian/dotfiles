@@ -2217,6 +2217,8 @@ providers:
     context_length: 65536
     default_model: qwen3.5:4b
 fallback_providers:
+  - provider: gemini
+    model: gemini-3.5-flash
   - provider: ollama
     model: qwen3.5-9b:latest
 custom_providers:
@@ -2273,7 +2275,7 @@ auxiliary:
   review:
     provider: anthropic
     model: claude-opus-5-5
-    reasoning_effort: high
+    reasoning_effort: medium
 moa:
   presets:
     default:

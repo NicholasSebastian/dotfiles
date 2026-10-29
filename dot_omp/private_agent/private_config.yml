@@ -8,14 +8,14 @@ defaultThinkingLevel: auto
 
 modelRoles:
   # Main work
-  default: anthropic/claude-opus-5-5:auto
-  plan: anthropic/claude-opus-5-5:xhigh
-  slow: anthropic/claude-fable-5-1:high
+  default: anthropic/claude-sonnet-5-5:auto
+  plan: anthropic/claude-opus-5-5:high
+  slow: anthropic/claude-opus-5-5:xhigh
   task: anthropic/claude-sonnet-5-5:auto
   advisor: openai-codex/gpt-5.6-terra:medium
 
   # Light work
-  smol: anthropic/claude-haiku-5-5:low
+  smol: google-antigravity/gemini-3.5-flash-lite:low
   commit: "@smol"
   widget: "@smol"
   vision: google-antigravity/gemini-3.5-flash-lite:low
@@ -48,14 +48,14 @@ retry:
   fallbackChains:
     # Inherited by plan, task and vision
     default:
-      - openai-codex/gpt-5.6-terra:high
       - google-antigravity/gemini-3.8-flash:high
+      - openai-codex/gpt-5.6-terra:high
     slow:
       - anthropic/claude-opus-5-5:max
       - openai-codex/gpt-5.6-terra:xhigh
     # Inherited by commit and widget
     smol:
-      - google-antigravity/gemini-3.5-flash-lite:low
+      - anthropic/claude-haiku-5-5:low
     advisor:
       - google-antigravity/gemini-3.8-flash:medium
       - anthropic/claude-sonnet-5-5:low
