@@ -26,7 +26,19 @@ _ai_cli() {
     info "Hermes Agent already installed"
   else
     install_script https://hermes-agent.nousresearch.com/install.sh bash --non-interactive
-    followup manual "Hermes Agent: run 'hermes setup' to pick a model provider; 'hermes desktop' opens its desktop app."
+    followup manual "Hermes Agent: run 'hermes setup' to pick a model provider."
+  fi
+
+  # Hermes Desktop: built from the Hermes checkout. Plain 'hermes desktop'
+  # builds and then runs the app in the foreground, which would block the
+  # run; --build-only builds it and writes its launcher entry, then exits.
+  # 'hermes update' rebuilds it from then on.
+  if [[ -f "$HOME/.local/share/applications/com.nousresearch.hermes.desktop" ]]; then
+    info "Hermes Desktop already installed"
+  elif is_dry || have hermes; then
+    run hermes desktop --build-only || soft_fail "Hermes Desktop build failed; retry with 'hermes desktop --build-only'"
+  else
+    soft_fail "Hermes Desktop not built: the hermes command isn't available"
   fi
 
   # Extra agents via bun; uncomment to add
@@ -50,16 +62,16 @@ _ai_local() {
   # classic LM Studio app). Its postinst adds an AppArmor profile so Electron's
   # sandbox works; unlike Comfy Desktop it adds no apt repo. ~1 GB download,
   # no checksum published; it's fetched over TLS.
-  if pkg_installed lmstudio-bionic; then
-    info "LM Studio Bionic already installed"
-  else
-    local deb="$MODULE_TMP/lmstudio-bionic.deb"
-    if download 'https://lmstudio.ai/download/bionic/latest/linux/x64?format=deb&redirectVersion=2' "$deb"; then
-      apt_install "$deb"
-    else
-      soft_fail "LM Studio Bionic download failed. Get the .deb from https://lmstudio.ai/download"
-    fi
-  fi
+  # if pkg_installed lmstudio-bionic; then
+  #   info "LM Studio Bionic already installed"
+  # else
+  #   local deb="$MODULE_TMP/lmstudio-bionic.deb"
+  #   if download 'https://lmstudio.ai/download/bionic/latest/linux/x64?format=deb&redirectVersion=2' "$deb"; then
+  #     apt_install "$deb"
+  #   else
+  #     soft_fail "LM Studio Bionic download failed. Get the .deb from https://lmstudio.ai/download"
+  #   fi
+  # fi
 
   if (( OPEN_WEBUI )); then
     if ! is_dry && sudo docker container inspect open-webui >/dev/null 2>&1; then
