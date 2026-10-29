@@ -4,7 +4,7 @@
 # shellcheck disable=SC2034  # header variables are read by setup.sh after sourcing
 {
 MODULE_ID=ai
-MODULE_DESC="Claude Code, Oh My Pi, Hermes Agent, Ollama (+ optional Open WebUI), LM Studio Bionic, ComfyUI (CLI + Desktop), Upscayl"
+MODULE_DESC="Claude Code (CLI + Desktop), Oh My Pi, Hermes Agent, Ollama (+ optional Open WebUI), LM Studio Bionic, ComfyUI (CLI + Desktop), Upscayl"
 MODULE_DEFAULT=1
 MODULE_DEPS=(runtimes)                   # bun, uv
 if (( OPEN_WEBUI )); then MODULE_DEPS+=(dev); fi   # Open WebUI runs in Docker
@@ -50,6 +50,49 @@ _ai_cli() {
   if (( ${#extra[@]} )); then
     need bun runtimes
     run bun add -g "${extra[@]}"
+  fi
+}
+
+# Claude Desktop (beta on Linux): Chat, Cowork and Claude Code in one app,
+# from Anthropic's apt repo as https://code.claude.com/docs/en/desktop-linux
+# describes, so it updates with 'apt upgrade'. The key is pinned by
+# fingerprint and kept armored at the path the package writes its identical
+# copy to. The package leaves a sources file without its marker line alone,
+# so the two never rewrite each other's.
+_AI_CLAUDE_KEY_FPR="31DDDE24DDFAB679F42D7BD2BAA929FF1A7ECACE"
+_AI_CLAUDE_KEYRING=/usr/share/keyrings/claude-desktop-archive-keyring.asc
+_ai_claude_desktop() {
+  local key="$MODULE_TMP/claude-desktop.asc" changed=0 fresh=0
+  if is_dry; then
+    cmd "download https://downloads.claude.ai/claude-desktop/key.asc, check key fingerprint $_AI_CLAUDE_KEY_FPR -> $_AI_CLAUDE_KEYRING"
+  elif download https://downloads.claude.ai/claude-desktop/key.asc "$key"; then
+    install_keyring claude-desktop "$key" "$_AI_CLAUDE_KEY_FPR" "$_AI_CLAUDE_KEYRING"
+    if write_changed; then changed=1; fi
+  else
+    soft_fail "Claude Desktop: couldn't download Anthropic's repo key; see https://code.claude.com/docs/en/desktop-linux"
+    return 0
+  fi
+  printf 'deb [arch=amd64,arm64 signed-by=%s] https://downloads.claude.ai/claude-desktop/apt/stable stable main\n' "$_AI_CLAUDE_KEYRING" \
+    | write_file /etc/apt/sources.list.d/claude-desktop.list
+  if write_changed; then changed=1; fi
+  if (( changed )); then apt_update; fi
+
+  # apt_install leaves out recommended packages, so the ones the app uses are
+  # listed: sound, tray icon, bubblewrap/socat/ssh for Claude Code sessions,
+  # QEMU + UEFI firmware + virtiofsd for Cowork's VM, and GNOME Keyring to
+  # keep the sign-in (not on KDE: it conflicts with KDE Wallet there).
+  local pkgs=(libasound2t64 libayatana-appindicator3-1 bubblewrap socat openssh-client qemu-system-x86 ovmf virtiofsd)
+  if ! pkg_installed plasma-workspace; then pkgs+=(gnome-keyring); fi
+  if ! pkg_installed claude-desktop; then fresh=1; fi
+  if is_dry && ! apt_available claude-desktop; then
+    cmd "apt-get install claude-desktop (from Anthropic's repo)"
+    apt_install "${pkgs[@]}"
+  else
+    apt_install claude-desktop "${pkgs[@]}"
+  fi
+  add_user_to_group kvm                  # Cowork's VM: /dev/kvm and /dev/vhost-vsock
+  if (( fresh )) && { is_dry || pkg_installed claude-desktop; }; then
+    followup manual "Claude Desktop: open Claude from your launcher (or run 'claude-desktop') and sign in."
   fi
 }
 
@@ -162,4 +205,5 @@ ai_run() {
   _ai_cli
   _ai_local
   _ai_creative
+  _ai_claude_desktop                     # last: a key fingerprint mismatch stops the module
 }

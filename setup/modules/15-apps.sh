@@ -383,7 +383,6 @@ _apps_webapps() {
     "WhatsApp|https://web.whatsapp.com|whatsapp"
     "Gmail|https://mail.google.com|gmail"
     "Google Calendar|https://calendar.google.com|$dash/google-calendar.png"
-    "Claude|https://claude.ai|$dash/claude-ai.png"
     "ChatGPT|https://chatgpt.com|$dash/chatgpt.png"
     "Perplexity|https://www.perplexity.ai|https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/png/perplexity.png"
     "Excalidraw|https://excalidraw.com|excalidraw"
@@ -399,6 +398,13 @@ _apps_webapps() {
     _apps_webapp "$name" "$url" "$icon"
     if write_changed; then changed=1; fi
   done
+
+  # Claude was a web app here; the ai module installs Claude Desktop now
+  local claude="$HOME/.local/share/applications/webapp-claude.desktop"
+  if [[ -f "$claude" ]]; then
+    run rm -f "$claude" "$_APPS_WEBAPP_ICONS"/claude*.png
+    changed=1
+  fi
 
   if (( changed )) && have update-desktop-database; then
     run update-desktop-database "$HOME/.local/share/applications"
