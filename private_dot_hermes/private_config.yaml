@@ -1662,7 +1662,7 @@ delegation:
         - name: fast
           description: 'Free and quick: web lookups, reading and summarizing pages or files, simple extraction. Prefer for bulk or parallel tasks.'
           provider: gemini
-          model: gemini-2.5-flash
+          model: gemini-3.5-flash
         - name: standard
           description: 'Multi-step work needing judgment: research that compares sources, drafting, organizing findings.'
           provider: anthropic
@@ -2241,7 +2241,7 @@ custom_providers:
 auxiliary:
   compression:
     provider: gemini
-    model: gemini-2.5-flash
+    model: gemini-3.5-flash
   skills_hub:
     provider: ollama
     model: qwen3.5:4b
@@ -2262,17 +2262,18 @@ auxiliary:
     base_url: http://127.0.0.1:11434/v1
   triage_specifier:
     provider: gemini
-    model: gemini-2.5-flash
+    model: gemini-3.5-flash
   profile_describer:
     provider: ollama
     model: qwen3.5:4b
     base_url: http://127.0.0.1:11434/v1
   curator:
     provider: gemini
-    model: gemini-2.5-flash
+    model: gemini-3.5-flash
   review:
     provider: anthropic
     model: claude-opus-5-5
+    reasoning_effort: high
 moa:
   presets:
     default:
