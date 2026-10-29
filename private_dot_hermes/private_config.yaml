@@ -2277,28 +2277,4 @@ auxiliary:
     model: claude-opus-5-5
     reasoning_effort: medium
 moa:
-  presets:
-    default:
-      enabled: false
-      reference_models:
-        - provider: openai-codex
-          model: gpt-5.5
-          enabled: true
-        - provider: openrouter
-          model: deepseek/deepseek-v4-pro
-          enabled: true
-      degraded_reference_policy: loud
-      fanout: user_turn
-  reference_models:
-    - provider: openai-codex
-      model: gpt-5.5
-      enabled: true
-    - provider: openrouter
-      model: deepseek/deepseek-v4-pro
-      enabled: true
-  aggregator:
-    provider: openrouter
-    model: anthropic/claude-opus-4.8
-  degraded_reference_policy: loud
-  fanout: user_turn
   enabled: false
