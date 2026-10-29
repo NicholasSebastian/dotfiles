@@ -70,12 +70,13 @@ plugins:
 # Model Configuration
 # =============================================================================
   enabled:
+    - advanced-delegation
     - agent-importers
   disabled: []
 model:
   # Default model to use (can be overridden with --model flag)
   # Both "default" and "model" work as the key name here.
-  default: "claude-opus-5-5"
+  default: "claude-sonnet-5-5"
 
   # Inference provider selection:
   #   "auto"         - Auto-detect from credentials (default)
@@ -1654,6 +1655,25 @@ delegation:
 # =============================================================================
 # Display
 # =============================================================================
+  backend: model_map
+  backends:
+    model_map:
+      options:
+        - name: fast
+          description: 'Free and quick: web lookups, reading and summarizing pages or files, simple extraction. Prefer for bulk or parallel tasks.'
+          provider: gemini
+          model: gemini-2.5-flash
+        - name: standard
+          description: 'Multi-step work needing judgment: research that compares sources, drafting, organizing findings.'
+          provider: anthropic
+          model: claude-haiku-5-5
+          reasoning_effort: medium
+        - name: deep
+          description: 'Hardest reasoning only: architecture, tricky debugging, critical analysis, final synthesis. Uses the most quota.'
+          provider: anthropic
+          model: claude-opus-5-5
+          reasoning_effort: high
+      default: standard
 display:
   # Use compact banner mode (hides the ASCII-art banner, shows a single line).
   #   true:  Compact single-line banner
@@ -2193,7 +2213,89 @@ providers:
       qwen3.8-27b:latest: {}
       lfm2.5:1.2b: {}
       laya:latest: {}
+      nomic-embed-text:latest: {}
     context_length: 65536
+    default_model: qwen3.5:4b
 fallback_providers:
   - provider: ollama
     model: qwen3.5-9b:latest
+custom_providers:
+  - name: Groq
+    base_url: https://api.groq.com/openai/v1
+    key_env: HERMES_CUSTOM_API_GROQ_COM_API_KEY
+    model: openai/gpt-oss-120b
+    api_mode: chat_completions
+    models:
+      canopylabs/orpheus-v1-english: {}
+      whisper-large-v3: {}
+      canopylabs/orpheus-arabic-saudi: {}
+      openai/gpt-oss-120b: {}
+      qwen/qwen3.8-27b: {}
+      whisper-large-v3-turbo: {}
+      meta-llama/llama-prompt-guard-2-22m: {}
+      meta-llama/llama-prompt-guard-2-86m: {}
+      openai/gpt-oss-20b: {}
+      allam-2-7b: {}
+      openai/gpt-oss-safeguard-20b: {}
+    models_discovered: true
+auxiliary:
+  compression:
+    provider: gemini
+    model: gemini-2.5-flash
+  skills_hub:
+    provider: ollama
+    model: qwen3.5:4b
+    base_url: http://127.0.0.1:11434/v1
+  approval:
+    provider: custom:groq
+    model: openai/gpt-oss-120b
+    base_url: https://api.groq.com/openai/v1
+    reasoning_effort: low
+  mcp:
+    provider: custom:groq
+    model: openai/gpt-oss-20b
+    base_url: https://api.groq.com/openai/v1
+    reasoning_effort: low
+  title_generation:
+    provider: ollama
+    model: qwen3.5:4b
+    base_url: http://127.0.0.1:11434/v1
+  triage_specifier:
+    provider: gemini
+    model: gemini-2.5-flash
+  profile_describer:
+    provider: ollama
+    model: qwen3.5:4b
+    base_url: http://127.0.0.1:11434/v1
+  curator:
+    provider: gemini
+    model: gemini-2.5-flash
+  review:
+    provider: anthropic
+    model: claude-opus-5-5
+moa:
+  presets:
+    default:
+      enabled: false
+      reference_models:
+        - provider: openai-codex
+          model: gpt-5.5
+          enabled: true
+        - provider: openrouter
+          model: deepseek/deepseek-v4-pro
+          enabled: true
+      degraded_reference_policy: loud
+      fanout: user_turn
+  reference_models:
+    - provider: openai-codex
+      model: gpt-5.5
+      enabled: true
+    - provider: openrouter
+      model: deepseek/deepseek-v4-pro
+      enabled: true
+  aggregator:
+    provider: openrouter
+    model: anthropic/claude-opus-4.8
+  degraded_reference_policy: loud
+  fanout: user_turn
+  enabled: false
