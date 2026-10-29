@@ -79,16 +79,16 @@ apt_install() {
 # Answer a debconf question before the package is installed.
 debconf_preseed() { run_with_input "$1" sudo debconf-set-selections; }
 
-# install_keyring NAME KEYFILE FINGERPRINT
-# Checks the key's primary fingerprint, then stores it de-armored as
-# /etc/apt/keyrings/NAME.gpg for use with Signed-By.
+# install_keyring NAME KEYFILE FINGERPRINT [DEST]
+# Checks the key's primary fingerprint, then stores it de-armored as DEST
+# (default /etc/apt/keyrings/NAME.gpg) for use with Signed-By.
 install_keyring() {
-  local name="$1" keyfile="$2" want="${3// /}" got
+  local name="$1" keyfile="$2" want="${3// /}" dest="${4:-/etc/apt/keyrings/$1.gpg}" got
   got="$(gpg --show-keys --with-colons "$keyfile" 2>/dev/null | awk -F: '$1 == "fpr" { print $10; exit }')"
   [[ "$got" == "$want" ]] || die "Key for $name has fingerprint '${got:-none}', expected $want"
   info "Key fingerprint OK: $want"
   gpg --dearmor <"$keyfile" 2>/dev/null >"$keyfile.gpg" || cp "$keyfile" "$keyfile.gpg"
-  write_file "/etc/apt/keyrings/$name.gpg" 0644 <"$keyfile.gpg"
+  write_file "$dest" 0644 <"$keyfile.gpg"
 }
 
 # --- Flatpak -----------------------------------------------------------------

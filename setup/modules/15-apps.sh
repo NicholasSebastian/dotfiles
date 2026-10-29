@@ -4,7 +4,7 @@
 # shellcheck disable=SC2034  # header variables are read by setup.sh after sourcing
 {
 MODULE_ID=apps
-MODULE_DESC="Brave + Chrome, Bitwarden, Obsidian, LocalSend, Discord, Telegram, Spotify, Affinity, ArtCraft, etc."
+MODULE_DESC="Brave + Chrome, Bitwarden, Obsidian, LocalSend, Discord, Telegram, Spotify, Affinity, ArtCraft, Cloudflare WARP, etc."
 MODULE_DEFAULT=1
 }
 
@@ -278,6 +278,44 @@ _apps_creative() {
   followup manual "DaVinci Resolve needs a manual download from blackmagicdesign.com (Linux .run installer)."
 }
 
+# --- Network -----------------------------------------------------------------
+
+# Cloudflare WARP (1.1.1.1 VPN / DNS client) from Cloudflare's apt repo.
+# PikaOS is Debian sid (codename 'nest'), which that repo doesn't publish, so
+# Cloudflare's own instructions ($(lsb_release -cs)) break 'apt update'; this
+# uses Debian 13 'trixie', the newest Debian suite it has. The key and list go
+# where those instructions put them (so a hand-added 'nest' list is replaced):
+# the package's postinst nags about the key if that keyring is missing or old.
+_APPS_WARP_KEY_FPR="C068A2B5771775193CBE1F2F6E2DD2174FA1C3BA"   # RPM's gpg-pubkey(4fa1c3ba-61abda35)
+_APPS_WARP_KEYRING=/usr/share/keyrings/cloudflare-warp-archive-keyring.gpg
+_apps_warp() {
+  local key="$MODULE_TMP/cloudflare-warp.asc" changed=0
+  if is_dry; then
+    cmd "download https://pkg.cloudflareclient.com/pubkey.gpg, check key fingerprint $_APPS_WARP_KEY_FPR -> $_APPS_WARP_KEYRING"
+  elif download https://pkg.cloudflareclient.com/pubkey.gpg "$key"; then
+    install_keyring cloudflare-warp "$key" "$_APPS_WARP_KEY_FPR" "$_APPS_WARP_KEYRING"
+    if write_changed; then changed=1; fi
+  else
+    soft_fail "Cloudflare WARP: couldn't download Cloudflare's repo key; see https://pkg.cloudflareclient.com"
+    return 0
+  fi
+  printf 'deb [signed-by=%s] https://pkg.cloudflareclient.com/ trixie main\n' "$_APPS_WARP_KEYRING" \
+    | write_file /etc/apt/sources.list.d/cloudflare-client.list
+  if write_changed; then changed=1; fi
+  if (( changed )); then apt_update; fi
+
+  if pkg_installed cloudflare-warp; then
+    info "Cloudflare WARP already installed"
+    return 0
+  fi
+  if is_dry && ! apt_available cloudflare-warp; then
+    cmd "apt-get install cloudflare-warp (from Cloudflare's repo)"
+  else
+    apt_install cloudflare-warp
+  fi
+  followup manual "Cloudflare WARP: run 'warp-cli registration new', then 'warp-cli connect'."
+}
+
 # --- Web apps ----------------------------------------------------------------
 
 # Icon for a web app: ICON is either a name from the icon themes (Papirus,
@@ -372,4 +410,5 @@ apps_run() {
   _apps_desktop
   _apps_creative
   _apps_webapps                          # Exec= uses whichever browser is installed
+  _apps_warp                             # last: a key fingerprint mismatch stops the module
 }
