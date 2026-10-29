@@ -64,7 +64,7 @@ retry:
     memory:
       - ollama/lfm2.5:1.2b:low
     judge:
-      - local/lfm2-1.2b
+      - ollama/lfm2.5:1.2b
     image:
       - google-antigravity/gemini-3-pro-image
     web:
