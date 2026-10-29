@@ -1,30 +1,70 @@
 setupVersion: 2
+
 theme:
   dark: noctalia
   light: noctalia
+
+defaultThinkingLevel: auto
+
 modelRoles:
-  tiny: local/lfm2.5-230m
-  default: anthropic/claude-opus-5-5
-  slow: anthropic/claude-fable-5-1:high
+  # Main work
+  default: anthropic/claude-opus-5-5:auto
   plan: anthropic/claude-opus-5-5:xhigh
-  commit: "@smol"
-  memory: anthropic/claude-haiku-5-5:low
+  slow: anthropic/claude-fable-5-1:high
   task: anthropic/claude-sonnet-5-5:auto
   advisor: openai-codex/gpt-5.6-terra:medium
+
+  # Light work
   smol: anthropic/claude-haiku-5-5:low
+  commit: "@smol"
   widget: "@smol"
   vision: google-antigravity/gemini-3.5-flash-lite:low
+
+  # Local (Ollama)
+  tiny: ollama/qwen3.5:4b:off
+  memory: ollama/qwen3.5:4b:low
+  judge: ollama/laya:421m-english-bf16
+
+  # Model-kind roles
   image: openai-codex/gpt-image-2
+  web: web/parallel
   speech: local/kokoro
   dictation: local/parakeet-tdt-0.6b-v3
-  judge: local/lfm2-1.2b
-  web: web/parallel
-defaultThinkingLevel: auto
+
+advisor:
+  enabled: true
+
+memory:
+  backend: local
+
+stt:
+  enabled: true
+
+providers:
+  anthropic:
+    serverSideFallback: true
+
 retry:
   fallbackChains:
+    # Inherited by plan, task and vision
+    default:
+      - openai-codex/gpt-5.6-terra:high
+      - google-antigravity/gemini-3.8-flash:high
+    slow:
+      - anthropic/claude-opus-5-5:max
+      - openai-codex/gpt-5.6-terra:xhigh
+    # Inherited by commit and widget
+    smol:
+      - google-antigravity/gemini-3.5-flash-lite:low
     advisor:
       - google-antigravity/gemini-3.8-flash:medium
       - anthropic/claude-sonnet-5-5:low
+    tiny:
+      - ollama/lfm2.5:1.2b:off
+    memory:
+      - ollama/lfm2.5:1.2b:low
+    judge:
+      - local/lfm2-1.2b
     image:
       - google-antigravity/gemini-3-pro-image
     web:

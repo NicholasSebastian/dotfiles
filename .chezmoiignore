@@ -3,6 +3,8 @@ README.md
 .claude/*
 !.claude/skills
 !.claude/settings.json
+.omp/*
+!.omp/agent
 .hermes/*
 !.hermes/skills
 !.hermes/config.yaml
