@@ -140,6 +140,11 @@
     "Go": { "hard_tabs": true, "tab_size": 4 },
     "Makefile": { "hard_tabs": true, "tab_size": 4 }
   },
+  "language_models": {
+    "opencode": {
+      "show_go_models": true
+    }
+  },
   "agent_servers": {
     "claude-acp": {
       "default_config_options": {
