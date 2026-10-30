@@ -15,7 +15,7 @@ modelRoles:
   advisor: openai-codex/gpt-5.6-terra:medium
 
   # Light work
-  smol: google-antigravity/gemini-3.5-flash-lite:low
+  smol: opencode-zen/deepseek-v4.1-flash-free:low
   commit: "@smol"
   widget: "@smol"
   vision: google-antigravity/gemini-3.5-flash-lite:low
@@ -23,13 +23,17 @@ modelRoles:
   # Local (Ollama)
   tiny: ollama/qwen3.5:4b:off
   memory: ollama/qwen3.5:4b:low
-  judge: ollama/laya:421m-english-bf16
+  judge: opencode-zen/jev-1.13-free
 
   # Model-kind roles
   image: openai-codex/gpt-image-2
   web: web/parallel
   speech: local/kokoro
   dictation: local/parakeet-tdt-0.6b-v3
+
+task:
+  agentModelOverrides:
+    explore: opencode-zen/deepseek-v4.1-flash-free:medium
 
 advisor:
   enabled: true
@@ -50,20 +54,25 @@ retry:
     default:
       - google-antigravity/gemini-3.8-flash:high
       - openai-codex/gpt-5.6-terra:high
+      - opencode-zen/deepseek-v4.1-flash-free:high
     slow:
       - openai-codex/gpt-5.6-terra:xhigh
       - google-antigravity/gemini-3.8-flash:high
-    # Inherited by commit and widget
-    smol:
-      - anthropic/claude-haiku-5-5:low
     advisor:
       - google-antigravity/gemini-3.8-flash:medium
       - anthropic/claude-sonnet-5-5:low
+    # Inherited by commit and widget
+    smol:
+      - anthropic/claude-haiku-5-5:low
+      - google-antigravity/gemini-3.5-flash-lite:low
+    vision:
+      - opencode-zen/nemotron-3.5-super-vl-free
     tiny:
       - ollama/lfm2.5:1.2b:off
     memory:
       - ollama/lfm2.5:1.2b:low
     judge:
+      - ollama/laya:421m-english-bf16
       - ollama/lfm2.5:1.2b
     image:
       - google-antigravity/gemini-3-pro-image
