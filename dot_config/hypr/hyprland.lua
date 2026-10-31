@@ -22,7 +22,7 @@ hl.config({
         repeat_delay = 300,
         numlock_by_default = true,
         left_handed = false,
-        follow_mouse = 1,
+        follow_mouse = 0,
         accel_profile = "flat",
     },
 
