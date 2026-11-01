@@ -8,6 +8,8 @@ README.md
 .hermes/*
 !.hermes/skills
 !.hermes/config.yaml
+!.hermes/profiles
+!.hermes/profiles/**/config.yaml
 !.hermes/SOUL.md
 .config/hypr/*.setup-bak.*
 .config/hypr/.luarc.json
