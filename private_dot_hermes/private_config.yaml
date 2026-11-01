@@ -2243,7 +2243,8 @@ custom_providers:
 auxiliary:
   compression:
     provider: gemini
-    model: gemini-3.8-flash
+    model: gemini-3.5-flash-lite
+    reasoning_effort: low
   skills_hub:
     provider: ollama
     model: qwen3.5:4b
@@ -2262,6 +2263,7 @@ auxiliary:
     provider: ollama
     model: qwen3.5:4b
     base_url: http://127.0.0.1:11434/v1
+    reasoning_effort: low
   triage_specifier:
     provider: gemini
     model: gemini-3.8-flash
@@ -2307,8 +2309,10 @@ moa:
   degraded_reference_policy: loud
   fanout: user_turn
   default_preset: council
+
+# Hermes Desktop launch options. manage_launcher_entry false: setup/modules/14-ai.sh owns the .desktop entry.
 desktop:
-  manage_launcher_entry: false # setup/modules/14-ai.sh owns the .desktop entry.
+  manage_launcher_entry: false
   disable_gpu: false
   electron_flags:
     - --ignore-gpu-blocklist

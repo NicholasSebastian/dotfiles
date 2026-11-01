@@ -898,6 +898,52 @@ skills:
 # =============================================================================
 # Agent Behavior
 # =============================================================================
+  disabled:
+    - airtable
+    - architecture-diagram
+    - arxiv
+    - ascii-video
+    - baoyu-infographic
+    - box
+    - claude-code
+    - claude-design
+    - codebase-inspection
+    - codex
+    - computer-use
+    - design-md
+    - document-to-action-items
+    - docx
+    - dogfood
+    - email-inbox-triage
+    - gif-search
+    - github
+    - google-workspace
+    - hermes-agent-skill-authoring
+    - himalaya
+    - humanizer
+    - inspecting-hermes-desktop-dom
+    - llm-wiki
+    - manim-video
+    - meeting-action-items
+    - node-inspect-debugger
+    - notion
+    - obsidian
+    - opencode
+    - p5js
+    - popular-web-designs
+    - powerpoint
+    - python-debugpy
+    - requesting-code-review
+    - simplify-code
+    - songsee
+    - songwriting-and-ai-music
+    - spike
+    - systematic-debugging
+    - teams-meeting-pipeline
+    - test-driven-development
+    - weekly-review-planning
+    - xlsx
+    - xurl
 agent:
   # Maximum tool-calling iterations per conversation (default: 500)
   # Higher = more room for complex tasks, but costs more tokens
@@ -2156,6 +2202,8 @@ providers:
 fallback_providers:
   - provider: gemini
     model: gemini-3.5-flash-lite
+  - provider: anthropic
+    model: claude-haiku-5-5
 custom_providers:
   - name: Groq
     base_url: https://api.groq.com/openai/v1
