@@ -2307,3 +2307,10 @@ moa:
   degraded_reference_policy: loud
   fanout: user_turn
   default_preset: council
+desktop:
+  manage_launcher_entry: false # setup/modules/14-ai.sh owns the .desktop entry.
+  disable_gpu: false
+  electron_flags:
+    - --ignore-gpu-blocklist
+    - --enable-gpu-rasterization
+    - --enable-zero-copy

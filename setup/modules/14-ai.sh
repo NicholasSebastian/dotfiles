@@ -12,6 +12,29 @@ if (( OPEN_WEBUI )); then MODULE_DEPS+=(dev); fi   # Open WebUI runs in Docker
 
 # --- Coding agents -----------------------------------------------------------
 
+# Hermes rewrites its .desktop entry on every launch unless desktop.manage_launcher_entry
+# is false. The dotfiles' config.yaml declares that too, but this module has no dotfiles
+# dependency, so set it in the live config first. The entry then forces the GPU on: the
+# app's sticky NVIDIA fallback otherwise renders in software (SwiftShader) and the UI lags.
+# Electron flags come from desktop.electron_flags in the dotfiles' config.yaml.
+_ai_hermes_desktop_entry() {
+  if ! is_dry && ! have hermes; then return 0; fi
+  run hermes config set desktop.manage_launcher_entry false || { soft_fail "Couldn't set desktop.manage_launcher_entry; Hermes may rewrite its launcher entry"; return 0; }
+  write_file "$HOME/.local/share/applications/com.nousresearch.hermes.desktop" 0755 <<EOF
+[Desktop Entry]
+Type=Application
+Name=Hermes
+GenericName=Hermes Desktop
+Comment=Launch Hermes Desktop
+Exec=env HERMES_DESKTOP_DISABLE_GPU=0 HERMES_DESKTOP_NVIDIA_SWIFTSHADER=0 $HOME/.local/bin/hermes desktop --skip-build
+Icon=hermes
+Terminal=false
+Categories=Utility;
+StartupNotify=true
+StartupWMClass=com.nousresearch.hermes
+EOF
+}
+
 _ai_cli() {
   if have claude; then info "Claude Code already installed"; else install_script https://claude.ai/install.sh bash; fi
 
@@ -40,6 +63,7 @@ _ai_cli() {
   else
     soft_fail "Hermes Desktop not built: the hermes command isn't available"
   fi
+  _ai_hermes_desktop_entry
 
   # Extra agents via bun; uncomment to add
   local extra=(
