@@ -23,6 +23,14 @@ hl.window_rule({
     center = true,
 })
 
+-- Bitwarden floats instead of becoming a column: the desktop app, and the
+-- browser extension's windows in Brave (class "brave-<extension ID>…", where
+-- nngc… is Bitwarden's ID; a page path and the profile name may follow it).
+hl.window_rule({
+    match = { class = "^(bitwarden|brave-nngceckbapebfimnlniiiahkandclblb.*)$" },
+    float = true,
+})
+
 hl.window_rule({
     match = {
         title =
