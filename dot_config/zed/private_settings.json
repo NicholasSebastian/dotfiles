@@ -17,6 +17,25 @@
     "diagnostics": false,
     "metrics": false
   },
+  "auto_install_extensions": {
+    "html": true,
+    "tsgo": true,
+    "oxc": true,
+    "astro": true,
+    "basedpyright": true,
+    "ruff": true,
+    "golang": true,
+    "csharp": true,
+    "java": true,
+    "lua": true,
+    "dockerfile": true,
+    "docker-compose": true,
+    "env": true,
+    "git-firefly": true,
+    "make": true,
+    "sql": true,
+    "toml": true
+  },
   "lsp": {
     "typescript-ls": {
       "settings": {
@@ -243,9 +262,5 @@
         "variable.special": { "color": "#569CD6" }
       }
     }
-  },
-  "auto_install_extensions": {
-    "tsgo": true,
-    "oxc": true
   }
 }
