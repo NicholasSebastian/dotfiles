@@ -1,0 +1,406 @@
+_config_version: 51
+
+database:
+  journal_mode: "wal"
+
+runtime:
+  nofile_soft_limit: 4096
+
+attachments:
+  storage: "hermes-home"
+
+plugins:
+  clone_timeout_seconds: 300
+  enabled:
+    - advanced-delegation
+    - agent-importers
+  disabled: []
+
+model:
+  default: "claude-sonnet-5-5"
+  provider: "anthropic"
+  base_url: https://api.anthropic.com
+  api_mode: anthropic_messages
+
+kanban:
+  review_dispatch: true
+
+cron:
+  catch_up_missed: true
+
+terminal:
+  backend: "docker"
+  cwd: "/workspace"
+  timeout: 180
+  home_mode: "auto"
+  docker_mount_cwd_to_workspace: false  # SECURITY: off by default. Opt in to mount the launch cwd into Docker /workspace.
+  docker_run_as_host_user: true  # files the agent writes in the vault stay owned by you, so Obsidian can edit them
+  docker_forward_env:
+    - OBSIDIAN_VAULT_PATH
+    - WIKI_PATH
+  docker_volumes:
+    - "{{ .chezmoi.homeDir }}/hermes-workspace:/workspace"
+    - "{{ .chezmoi.homeDir }}/hermes-workspace/vault/read-only:/workspace/vault/read-only:ro"
+    - "{{ .chezmoi.homeDir }}/.local/share/hermes/vault-private-mask:/workspace/vault/private:ro"  # empty: hides vault/private
+  lifetime_seconds: 300
+  process_wait_auto_notify: true
+  client_env_passthrough: []
+  container_cpu: 1
+  container_memory: 5120
+  container_disk: 51200
+  container_persistent: true
+
+browser:
+  inactivity_timeout: 120
+  extension_control:
+    enabled: false
+
+tool_loop_guardrails:
+  warnings_enabled: true
+  hard_stop_enabled: false
+  non_interactive_hard_stop_enabled: true
+  warn_after:
+    exact_failure: 2
+    same_tool_failure: 3
+    idempotent_no_progress: 2
+  hard_stop_after:
+    exact_failure: 5
+    same_tool_failure: 8
+    idempotent_no_progress: 5
+
+compression:
+  enabled: true
+  checkpoint_required: false
+  progress_notices: false
+  threshold: 0.50
+  codex_gpt55_autoraise: true
+  target_ratio: 0.20
+  protect_last_n: 20
+  min_tail_user_messages: 1
+  max_attempts: 3
+  codex_app_server_auto: native
+  codex_responses_native: false
+  codex_responses_compact_threshold:
+  protect_first_n: 3
+  idle_compact_after_seconds: 0
+  hygiene_max_turn_hold_seconds: 10
+  proactive_prune_tokens: 0
+  proactive_prune_min_result_chars: 8000
+  proactive_prune_min_reclaim_tokens: 4096
+
+prompt_caching:
+  cache_ttl: "5m"
+
+memory:
+  memory_enabled: true
+  user_profile_enabled: true
+  prefetch_spill_enabled: false
+  memory_char_limit: 1100
+  user_char_limit: 700
+  nudge_interval: 10
+
+max_concurrent_sessions:
+
+group_sessions_per_user: true
+
+streaming:
+  enabled: false
+
+skills:
+  creation_nudge_interval: 15
+
+agent:
+  max_turns: 150
+  verbose: false
+  reasoning_effort: "medium"
+  service_tier: ""
+  fast_auto_seconds: 60
+  personalities: {}
+
+gateway:
+  unmanaged_idle_exit_seconds: 600
+  signal_interrupt_grace_timeout: 1
+  service_install_choice: install
+  delivery_ledger: true
+  platform_connect_timeout: 30
+  loop_watchdog: true
+  loop_watchdog_probe_interval_s: 30.0
+  loop_watchdog_probe_timeout_s: 10.0
+  loop_watchdog_max_strikes: 3
+  allow_all_users: false
+  bot_loop_guard:
+    enabled: true
+    max_events: 20
+    window_seconds: 300
+    cooldown_seconds: 600
+  startup_watchdog: true
+  startup_watchdog_timeout_seconds: 300
+  write_sessions_json: true
+  multiplex_profiles: true
+  auto_multiplex_migration: true
+  profile_routes: []
+  scale_to_zero:
+    idle_timeout_minutes: 2
+  restart_loop_guard:
+    max_restarts: 3
+    window_seconds: 60
+    max_gap_seconds: 300
+  respawn_storm:
+    max_starts: 5
+    window_seconds: 120
+  message_timestamps:
+    enabled: false
+  max_inbound_media_bytes: 134217728
+  trust_env: true
+  strict: false
+  media_delivery_allow_dirs: []
+  trust_recent_files: true
+  trust_recent_files_seconds: 600
+  api_server:
+    max_concurrent_runs: 10
+    history_tool_output_max_chars: 0
+
+platform_toolsets:
+  cli: [browser, clarify, code_execution, computer_use, connections, cronjob, delegation, file, image_gen, memory, session_search, skills, terminal, todo, tts, vision, web]
+  telegram: [hermes-telegram]
+  discord: [hermes-discord]
+  whatsapp: [hermes-whatsapp]
+  slack: [hermes-slack]
+  signal: [hermes-signal]
+  qqbot: [hermes-qqbot]
+  yuanbao: [hermes-yuanbao]
+  teams: [hermes-teams]
+  google_chat: [hermes-google_chat]
+
+stt:
+  enabled: true
+  local:
+    model: "base"
+  language: "en"
+  openai:
+    model: "whisper-1"
+    language: ""
+    timeout: 60
+    max_retries: 1
+
+code_execution:
+  timeout: 300
+  max_tool_calls: 50
+
+delegation:
+  max_iterations: 250
+  backend: model_map
+  backends:
+    model_map:
+      options:
+        - name: fast
+          description: 'Free and quick: web lookups, reading and summarizing pages or files, simple extraction. Prefer for bulk or parallel tasks.'
+          provider: gemini
+          model: gemini-3.5-flash
+        - name: standard
+          description: 'Multi-step work needing judgment: research that compares sources, drafting, organizing findings.'
+          provider: anthropic
+          model: claude-haiku-5-5
+          reasoning_effort: medium
+        - name: deep
+          description: 'Hardest reasoning only: architecture, tricky debugging, critical analysis, final synthesis. Uses the most quota.'
+          provider: anthropic
+          model: claude-opus-5-5
+          reasoning_effort: high
+      default: standard
+
+display:
+  compact: false
+  cleanup_progress: false
+  suppress_warning_notifications: false
+  busy_input_mode: interrupt
+  background_process_notifications: concise
+  bell_on_complete: false
+  bell_on_prompt: false
+  streaming: true
+  skin: default
+
+telemetry:
+  shared_metrics:
+    enabled: false
+    send: false
+    offer_version: 2
+
+auth:
+  adopt_external_logins: true
+  codex_login_flow: device_code
+
+updates:
+  check: true
+  pre_update_backup: false
+  backup_keep: 5
+  non_interactive_local_changes: "stash"
+
+web:
+  backend: parallel
+  provider_tier:
+    parallel: free
+
+computer_use:
+  backend: cua
+
+known_plugin_toolsets:
+  cli:
+    - a2a
+
+known_builtin_toolsets:
+  cli:
+    - browser
+    - clarify
+    - code_execution
+    - computer_use
+    - connections
+    - context_engine
+    - cronjob
+    - delegation
+    - discord
+    - discord_admin
+    - file
+    - image_gen
+    - kanban
+    - memory
+    - session_search
+    - skills
+    - stt
+    - terminal
+    - todo
+    - tts
+    - video
+    - video_gen
+    - vision
+    - web
+    - x_search
+    - yuanbao
+
+providers:
+  ollama:
+    name: Ollama
+    base_url: http://localhost:11434/v1
+    model: qwen3.5:4b-64k
+    discover_models: true
+    api_mode: chat_completions
+    models:
+      qwen3.5:4b-64k:
+        context_length: 65536
+      qwen3.5:4b:
+        context_length: 65536
+      qwen3.5-9b:latest:
+        context_length: 65536
+      qwen3.8-27b:latest: {}
+      lfm2.5:1.2b: {}
+      laya:latest: {}
+      nomic-embed-text:latest: {}
+    context_length: 65536
+    default_model: qwen3.5:4b-64k
+
+fallback_providers:
+  - provider: gemini
+    model: gemini-3.8-flash
+  - provider: ollama
+    model: qwen3.5-9b:latest
+
+custom_providers:
+  - name: Groq
+    base_url: https://api.groq.com/openai/v1
+    key_env: HERMES_CUSTOM_API_GROQ_COM_API_KEY
+    model: openai/gpt-oss-120b
+    api_mode: chat_completions
+    models:
+      canopylabs/orpheus-v1-english: {}
+      whisper-large-v3: {}
+      canopylabs/orpheus-arabic-saudi: {}
+      openai/gpt-oss-120b: {}
+      qwen/qwen3.8-27b: {}
+      whisper-large-v3-turbo: {}
+      meta-llama/llama-prompt-guard-2-22m: {}
+      meta-llama/llama-prompt-guard-2-86m: {}
+      openai/gpt-oss-20b: {}
+      allam-2-7b: {}
+      openai/gpt-oss-safeguard-20b: {}
+    models_discovered: true
+
+auxiliary:
+  compression:
+    provider: ollama
+    model: qwen3.5:4b-64k
+    base_url: http://localhost:11434/v1
+    reasoning_effort: low
+  skills_hub:
+    provider: ollama
+    model: qwen3.5:4b-64k
+    base_url: http://localhost:11434/v1
+  approval:
+    provider: custom:groq
+    model: openai/gpt-oss-120b
+    base_url: https://api.groq.com/openai/v1
+    reasoning_effort: low
+  mcp:
+    provider: ollama
+    model: qwen3.5:4b-64k
+    base_url: http://localhost:11434/v1
+    reasoning_effort: low
+  title_generation:
+    provider: ollama
+    model: qwen3.5:4b-64k
+    base_url: http://localhost:11434/v1
+    reasoning_effort: low
+  triage_specifier:
+    provider: ollama
+    model: qwen3.5:4b-64k
+    base_url: http://localhost:11434/v1
+  profile_describer:
+    provider: ollama
+    model: qwen3.5:4b
+    base_url: http://127.0.0.1:11434/v1
+  curator:
+    provider: gemini
+    model: gemini-3.8-flash
+  review:
+    provider: anthropic
+    model: claude-opus-5-5
+    reasoning_effort: medium
+
+moa:
+  enabled: true
+  presets:
+    council:
+      enabled: true
+      reference_models:
+        - provider: gemini
+          model: gemini-3.8-flash
+          enabled: true
+        - provider: custom:groq
+          model: openai/gpt-oss-120b
+          enabled: true
+      aggregator:
+        provider: anthropic
+        model: claude-opus-5-5
+      degraded_reference_policy: loud
+      fanout: user_turn
+      reference_max_tokens: 600
+  reference_models:
+    - provider: gemini
+      model: gemini-3.8-flash
+      enabled: true
+    - provider: custom:groq
+      model: openai/gpt-oss-120b
+      enabled: true
+  aggregator:
+    provider: anthropic
+    model: claude-opus-5-5
+  degraded_reference_policy: loud
+  fanout: user_turn
+  default_preset: council
+
+desktop:
+  manage_launcher_entry: false
+  disable_gpu: false
+  electron_flags:
+    - --ignore-gpu-blocklist
+    - --enable-gpu-rasterization
+    - --enable-zero-copy
