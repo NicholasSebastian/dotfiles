@@ -18,7 +18,7 @@
 
 > [!IMPORTANT]
 > **About the setup script:** `setup/` is vibe coded, written with AI coding agents. It is
-> *not* a one-shot dump, though: it has been built up incrementally, painstakingly
+> _not_ a one-shot dump, though: it has been built up incrementally, painstakingly
 > reviewed and maintained over many iterations, and mixed with plenty of manual touch-ups.
 
 ## Contents
@@ -32,21 +32,22 @@
 - [Per-machine templates](#per-machine-templates)
 - [Theming](#theming)
 - [Repository layout](#repository-layout)
+- [Hermes Agent](#hermes-agent)
 - [Roadmap](#roadmap)
 
 ## What's inside
 
-| Area | What |
-| --- | --- |
-| Desktop | [Hyprland](https://hyprland.org/) (Lua config) with the [Noctalia](https://docs.noctalia.dev/) shell, bar, dock and greeter |
-| Terminal | Ghostty, tmux, zsh / bash, Starship |
-| Editors | Neovim, Zed |
-| CLI tools | bat, btop, yazi, fastfetch |
-| Apps | Zathura, Vesktop, Spicetify (Spotify) |
-| Theming | GTK 3/4, Qt6 (qt6ct), all coloured from Noctalia's palette |
-| AI agents | Claude Code and Oh My Pi settings, shared agent skills in `~/.agents/skills` |
-| Wallpapers | `~/wallpapers` (Noctalia's wallpaper folder) |
-| Setup | `setup/`: modular post-install script for PikaOS |
+| Area       | What                                                                                                                        |
+| ---------- | --------------------------------------------------------------------------------------------------------------------------- |
+| Desktop    | [Hyprland](https://hyprland.org/) (Lua config) with the [Noctalia](https://docs.noctalia.dev/) shell, bar, dock and greeter |
+| Terminal   | Ghostty, tmux, zsh / bash, Starship                                                                                         |
+| Editors    | Neovim, Zed                                                                                                                 |
+| CLI tools  | bat, btop, yazi, fastfetch                                                                                                  |
+| Apps       | Zathura, Vesktop, Spicetify (Spotify)                                                                                       |
+| Theming    | GTK 3/4, Qt6 (qt6ct), all coloured from Noctalia's palette                                                                  |
+| AI agents  | Claude Code and Oh My Pi settings, shared agent skills in `~/.agents/skills`                                                |
+| Wallpapers | `~/wallpapers` (Noctalia's wallpaper folder)                                                                                |
+| Setup      | `setup/`: modular post-install script for PikaOS                                                                            |
 
 ## Quick start (fresh install)
 
@@ -124,34 +125,34 @@ Examples:
 Each module is a file in `setup/modules/NN-<id>.sh`. Package lists live inside the
 modules: comment out a line to drop an item.
 
-| Module | Default | Description |
-| --- | :---: | --- |
-| `base` | ✅ | Core packages, Flatpak + Flathub, archive formats, firmware updates, rclone |
-| `clock` ⚠️ | | Hardware clock in local time (dual-boot with Windows) |
-| `snapshots` | ✅ | Timeshift snapshots + ufw firewall |
-| `secure_boot` ⚠️ | | Sign kernel + rEFInd with your own keys (sbctl), per the PikaOS wiki |
-| `runtimes` | ✅ | C/C++, mise (Node, Go, Bun, Python, uv), Java (Temurin), Rust, .NET |
-| `shell` | ✅ | zsh + plugins, Starship, modern CLI tools, fastfetch, lazygit, lazydocker |
-| `hyprland` | ✅ | What Otter/PikaOS don't ship: image viewer, audio mixer, media keys, clipboard CLI |
-| `noctalia` ⚠️ | ✅ | Switch the desktop shell to Noctalia + GTK/Qt theming |
-| `noctalia_greeter` ⚠️ | ✅ | Noctalia Greeter (greetd) login screen, synced to Noctalia's look · needs `noctalia` |
-| `laptop` | | ASUS ROG tools (asusctl, ROG Control Center, supergfxctl), OpenLogi |
-| `fonts` | ✅ | JetBrains Mono + Iosevka Nerd Fonts, Noto, emoji, CJK, Microsoft core fonts |
-| `input_method` | | Fcitx5 for typing Chinese/Japanese |
-| `dev` | ✅ | Docker, GitHub CLI, Bruno, Beekeeper, pnpm + Oxc, Zed, Neovim, JetBrains IDEs, etc. · needs `runtimes` |
-| `ai` | ✅ | Claude Code (CLI + Desktop), Oh My Pi, Hermes Agent, Ollama (+ optional Open WebUI), LM Studio Bionic, ComfyUI (CLI + Desktop), Upscayl · needs `runtimes` |
-| `apps` | ✅ | Brave + Chrome, Bitwarden, Obsidian, LocalSend, Discord, Telegram, Spotify, Affinity, etc. |
-| `photogimp` | ✅ | PhotoGIMP patch for GIMP (open and close GIMP once first) · needs `apps` |
-| `games` | ✅ | Minecraft (official, CurseForge, Modrinth) + emulators |
-| `gamedev` | ✅ | Godot (C#/.NET), Blender, Tiled, Audacity, Aseprite (built from source) |
-| `kvm` ⚠️ | ✅ | KVM/QEMU + libvirt + virt-manager, UEFI + TPM for Windows 11, virtio drivers |
-| `looking_glass` | | Build the Looking Glass client (needs a second GPU + passthrough) · needs `kvm` |
-| `dotfiles` | ✅ | Apply these dotfiles with chezmoi, then hook Noctalia's colours into apps · needs `noctalia` |
-| `personal` | | My taste: default apps, zsh as login shell, git and keyring settings, reminders |
-| `drives` ⚠️ | ✅ | Choose drives to mount at boot (`/etc/fstab`, `/mnt/<label>`) |
-| `plymouth` | | Boot splash: adi1090x "splash" Plymouth theme |
-| `refind` ⚠️ | | rEFInd boot menu: config, kernel options and rEFInd-lite theme |
-| `cleanup` ⚠️ | ✅ | Offer to remove duplicates: Otter leftovers, extra file managers, Chromium, GNOME leftovers |
+| Module                | Default | Description                                                                                                                                                                                             |
+| --------------------- | :-----: | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `base`                |   ✅    | Core packages, Flatpak + Flathub, archive formats, firmware updates, rclone                                                                                                                             |
+| `clock` ⚠️            |         | Hardware clock in local time (dual-boot with Windows)                                                                                                                                                   |
+| `snapshots`           |   ✅    | Timeshift snapshots + ufw firewall                                                                                                                                                                      |
+| `secure_boot` ⚠️      |         | Sign kernel + rEFInd with your own keys (sbctl), per the PikaOS wiki                                                                                                                                    |
+| `runtimes`            |   ✅    | C/C++, mise (Node, Go, Bun, Python, uv), Java (Temurin), Rust, .NET                                                                                                                                     |
+| `shell`               |   ✅    | zsh + plugins, Starship, modern CLI tools, fastfetch, lazygit, lazydocker                                                                                                                               |
+| `hyprland`            |   ✅    | What Otter/PikaOS don't ship: image viewer, audio mixer, media keys, clipboard CLI                                                                                                                      |
+| `noctalia` ⚠️         |   ✅    | Switch the desktop shell to Noctalia + GTK/Qt theming                                                                                                                                                   |
+| `noctalia_greeter` ⚠️ |   ✅    | Noctalia Greeter (greetd) login screen, synced to Noctalia's look · needs `noctalia`                                                                                                                    |
+| `laptop`              |         | ASUS ROG tools (asusctl, ROG Control Center, supergfxctl), OpenLogi                                                                                                                                     |
+| `fonts`               |   ✅    | JetBrains Mono + Iosevka Nerd Fonts, Noto, emoji, CJK, Microsoft core fonts                                                                                                                             |
+| `input_method`        |         | Fcitx5 for typing Chinese/Japanese                                                                                                                                                                      |
+| `dev`                 |   ✅    | Docker, GitHub CLI, Bruno, Beekeeper, pnpm + Oxc, Zed, Neovim, JetBrains IDEs, etc. · needs `runtimes`                                                                                                  |
+| `ai`                  |   ✅    | Claude Code (CLI + Desktop), Oh My Pi, Hermes Agent (Docker sandbox, profiles, Mnemosyne), Ollama (+ optional Open WebUI), LM Studio Bionic, ComfyUI (CLI + Desktop), Upscayl · needs `runtimes`, `dev` |
+| `apps`                |   ✅    | Brave + Chrome, Bitwarden, Obsidian, LocalSend, Discord, Telegram, Spotify, Affinity, etc.                                                                                                              |
+| `photogimp`           |   ✅    | PhotoGIMP patch for GIMP (open and close GIMP once first) · needs `apps`                                                                                                                                |
+| `games`               |   ✅    | Minecraft (official, CurseForge, Modrinth) + emulators                                                                                                                                                  |
+| `gamedev`             |   ✅    | Godot (C#/.NET), Blender, Tiled, Audacity, Aseprite (built from source)                                                                                                                                 |
+| `kvm` ⚠️              |   ✅    | KVM/QEMU + libvirt + virt-manager, UEFI + TPM for Windows 11, virtio drivers                                                                                                                            |
+| `looking_glass`       |         | Build the Looking Glass client (needs a second GPU + passthrough) · needs `kvm`                                                                                                                         |
+| `dotfiles`            |   ✅    | Apply these dotfiles with chezmoi, then hook Noctalia's colours into apps · needs `noctalia`                                                                                                            |
+| `personal`            |         | My taste: default apps, zsh as login shell, git and keyring settings, reminders                                                                                                                         |
+| `drives` ⚠️           |   ✅    | Choose drives to mount at boot (`/etc/fstab`, `/mnt/<label>`)                                                                                                                                           |
+| `plymouth`            |         | Boot splash: adi1090x "splash" Plymouth theme                                                                                                                                                           |
+| `refind` ⚠️           |         | rEFInd boot menu: config, kernel options and rEFInd-lite theme                                                                                                                                          |
+| `cleanup` ⚠️          |   ✅    | Offer to remove duplicates: Otter leftovers, extra file managers, Chromium, GNOME leftovers                                                                                                             |
 
 ## Configuration
 
@@ -162,18 +163,18 @@ single run from the environment:
 OPEN_WEBUI=1 ./setup.sh --only ai
 ```
 
-| Variable | Default | Meaning |
-| --- | --- | --- |
-| `JAVA_VERSION` | `27` | Temurin major version (falls back to OpenJDK) |
-| `SET_ZSH_DEFAULT` | `1` | `personal`: make zsh the login shell |
-| `SHELL_GREETING` | `1` | `personal`: run fastfetch when a terminal opens |
-| `OPEN_WEBUI` | `0` | `ai`: run Open WebUI in Docker for Ollama |
-| `DOTFILES_REPO` | this repo | Repo `dotfiles` clones on a new machine |
-| `AI_DIR` | `~/AI` | ComfyUI workspace |
-| `APPS_DIR` | `~/Applications` | AppImages |
-| `SRC_DIR` | `~/src` | Source builds (Aseprite) |
-| `VM_DIR` | `~/VMs` | virtio driver ISO |
-| `LOG_DIR` | `~/.local/state/setup` | Run logs |
+| Variable          |        Default         | Meaning                                         |
+| ----------------- | :--------------------: | ----------------------------------------------- |
+| `JAVA_VERSION`    |          `27`          | Temurin major version (falls back to OpenJDK)   |
+| `SET_ZSH_DEFAULT` |          `1`           | `personal`: make zsh the login shell            |
+| `SHELL_GREETING`  |          `1`           | `personal`: run fastfetch when a terminal opens |
+| `OPEN_WEBUI`      |          `0`           | `ai`: run Open WebUI in Docker for Ollama       |
+| `DOTFILES_REPO`   |       this repo        | Repo `dotfiles` clones on a new machine         |
+| `AI_DIR`          |         `~/AI`         | ComfyUI workspace                               |
+| `APPS_DIR`        |    `~/Applications`    | AppImages                                       |
+| `SRC_DIR`         |        `~/src`         | Source builds (Aseprite)                        |
+| `VM_DIR`          |        `~/VMs`         | virtio driver ISO                               |
+| `LOG_DIR`         | `~/.local/state/setup` | Run logs                                        |
 
 ## Per-machine templates
 
@@ -215,6 +216,40 @@ module also selects the Noctalia theme in apps that need a setting for it.
     ├── modules/              one file per module
     └── files/                assets (Plymouth theme, rEFInd theme, greeter)
 ```
+
+## Hermes Agent
+
+The `ai` module and the configs in `private_dot_hermes/` set up [Hermes Agent](https://hermes-agent.nousresearch.com/):
+
+- **Sandbox:** the terminal runs in Docker. Of your files it sees only `~/hermes-workspace`, mounted at
+  `/workspace` (plus Hermes' own read-only skill and cache mounts from `~/.hermes`).
+- **Vault:** `~/hermes-workspace/vault` is an Obsidian vault and its own git repo; chezmoi doesn't manage it.
+  The agent sees `read-only/` read-only and `private/` as an empty folder (an empty
+  `~/.local/share/hermes/vault-private-mask` is mounted over it). Its `.git` stays visible to the agent,
+  so anything committed under `private/` can be read from git history.
+- **Profiles:** `orchestrator`, `researcher` and `librarian`, each with its own `SOUL.md`. Only `librarian`
+  writes to the wiki, using the llm-wiki skill.
+- **Models:** the main model is unchanged. Auxiliary tasks (compression, titles, skill search, MCP,
+  kanban triage) use the local Ollama model `qwen3.5:4b-64k`.
+- **Memory:** built-in memory with small limits. `orchestrator` also uses
+  [Mnemosyne](https://github.com/mnemosyne-oss/mnemosyne), installed with pipx.
+
+Manual steps after a fresh install:
+
+1. Log out and back in (or reboot) so the `docker` group applies.
+2. Log in to providers: `hermes setup` (or `hermes auth add <provider>`) for the default profile, then
+   `hermes -p <profile> auth add <provider>` for each profile. Profiles never read `~/.hermes/.env`;
+   `--clone` copied it once, when setup created them.
+3. Fill in the keys in `~/.hermes/.env` and `~/.hermes/profiles/<profile>/.env` by hand. They aren't
+   managed, so never commit them: `ANTHROPIC_API_KEY` or `ANTHROPIC_TOKEN`, `GOOGLE_API_KEY`,
+   `HERMES_CUSTOM_API_GROQ_COM_API_KEY`. Setup writes `OBSIDIAN_VAULT_PATH` and `WIKI_PATH`
+   (`/workspace/vault`, the path inside the sandbox) itself.
+4. Telegram (optional): `hermes gateway setup`, or put `TELEGRAM_BOT_TOKEN` and `TELEGRAM_ALLOWED_USERS`
+   (your numeric user ID) in `~/.hermes/.env`. Then run `hermes gateway restart`.
+5. Open `~/hermes-workspace/vault` as a vault in Obsidian.
+6. After changing `docker_volumes`, `docker_forward_env`, `docker_run_as_host_user` or a forwarded `.env`
+   value, delete the sandbox so it's recreated:
+   `docker ps -aq --filter label=hermes-agent=1 | xargs -r docker rm -f`, then `hermes gateway restart`.
 
 ## Roadmap
 
