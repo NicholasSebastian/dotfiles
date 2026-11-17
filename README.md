@@ -221,8 +221,14 @@ module also selects the Noctalia theme in apps that need a setting for it.
 
 The `ai` module and the configs in `private_dot_hermes/` set up [Hermes Agent](https://hermes-agent.nousresearch.com/):
 
-- **Sandbox:** the terminal runs in Docker. Of your files it sees only `~/hermes-workspace`, mounted at
-  `/workspace` (plus Hermes' own read-only skill and cache mounts from `~/.hermes`).
+- **Sandbox:** the terminal runs in Docker. Of your files it sees `~/hermes-workspace`, mounted at
+  `/workspace` (plus Hermes' own read-only skill and cache mounts from `~/.hermes`). The default profile's
+  sandbox also mounts all of `~/.hermes` read-write at `/root/.hermes`, so the agent can edit its own
+  configuration. That includes `.env`, `auth.json` and every profile's files, and a changed
+  `terminal.docker_volumes` or `terminal.backend` takes effect on the next sandbox start, so for the
+  default profile the sandbox is not a security boundary. The three named profiles don't get this mount.
+  `config.yaml` is managed by chezmoi: `chezmoi apply` asks before overwriting the agent's edits, so copy
+  the ones you want to keep into `private_dot_hermes/private_config.yaml.tmpl`.
 - **Vault:** `~/hermes-workspace/vault` is an Obsidian vault and its own git repo; chezmoi doesn't manage it.
   The agent sees `read-only/` read-only and `private/` as an empty folder (an empty
   `~/.local/share/hermes/vault-private-mask` is mounted over it). Its `.git` stays visible to the agent,

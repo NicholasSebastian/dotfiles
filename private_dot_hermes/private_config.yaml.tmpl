@@ -21,6 +21,7 @@ terminal:
     - "{{ .chezmoi.homeDir }}/hermes-workspace:/workspace"
     - "{{ .chezmoi.homeDir }}/hermes-workspace/vault/read-only:/workspace/vault/read-only:ro"
     - "{{ .chezmoi.homeDir }}/.local/share/hermes/vault-private-mask:/workspace/vault/private:ro"  # empty: hides vault/private
+    - "{{ .chezmoi.homeDir }}/.hermes:/root/.hermes"  # Hermes' own home, read-write: the agent can edit its config, and can read .env and auth.json
   container_disk: 0  # 0 = no per-container disk quota (overlay2 here cannot enforce one; Hermes warns on every start otherwise)
 
 prompt_caching:
