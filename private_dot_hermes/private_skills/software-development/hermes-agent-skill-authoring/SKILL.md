@@ -22,6 +22,8 @@ There are two places a SKILL.md can live:
 
 In-repo skills must meet the repo's **hardline authoring standards** (see AGENTS.md, "Skill authoring standards (HARDLINE)" — that section is the source of truth; this skill is the operational walkthrough). Reviewers reject PRs that violate them, so meeting them up front is cheaper than a salvage pass later.
 
+**Docker sandbox:** host `~/.hermes` is mounted at `/root/.hermes`; with `HOME=/root` and `HERMES_HOME=/root/.hermes` set, `~/.hermes` paths work in shell and file tools. Verify with `echo $HOME $HERMES_HOME` before assuming.
+
 ## When to Use
 
 - User asks you to add a skill "in this branch / repo / commit"

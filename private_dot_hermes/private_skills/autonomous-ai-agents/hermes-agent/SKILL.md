@@ -65,6 +65,16 @@ hermes dashboard               # web admin panel + embedded chat
 hermes proxy                   # OpenAI-compatible local proxy backed by your OAuth provider
 ```
 
+## Docker Sandbox Path Mapping (when `terminal.backend: docker`)
+
+`terminal`, `read_file`, `write_file`, `patch` and `search_files` run INSIDE the container, not on the host. The host's `~/.hermes` is volume-mapped to `/root/.hermes`.
+
+- Host paths like `/home/<user>/.hermes` don't exist in the sandbox ("Path not found"). Use `/root/.hermes/...` (or `$HERMES_HOME`) in file tools.
+- The sandbox is configured with `HOME=/root` and `HERMES_HOME=/root/.hermes`, so `~/.hermes` and `$HERMES_HOME` work in shell commands. Verify with `echo $HOME $HERMES_HOME; ls -d $HERMES_HOME` — on older or misconfigured setups `$HOME` may be `/home/pn` and `$HERMES_HOME` empty; then use `/root/.hermes` explicitly.
+- Source (if git-installed) is readable at `/root/.hermes/hermes-agent/` — check it (e.g. `hermes_cli/config.py`) when docs are ambiguous.
+- The `hermes` CLI is usually NOT on PATH in the sandbox, so `hermes config set ...` can't run there. Give the user the exact command to run on the host, or (only if asked) edit `/root/.hermes/config.yaml`. Never invent CLI output.
+- Sandbox state (packages, `/tmp`, processes) is separate from the host; the host GUI, host ports and host tmux sessions aren't reachable.
+
 ## Key Paths
 
 ```
