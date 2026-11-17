@@ -9,19 +9,7 @@ MODULE_DEFAULT=1
 MODULE_DEPS=(noctalia)                   # the hypr config starts Noctalia instead of Otter's shell
 }
 
-# Applies the dotfiles from chezmoi's source directory (https://www.chezmoi.io/).
-# On a new machine that directory is empty, so the repo ($DOTFILES_REPO in
-# config.sh) is cloned into it first, like 'chezmoi init --apply' would.
-# The repo always wins: every managed file that differs is overwritten, after
-# a copy of it is kept as FILE.setup-bak.TS (like every other file setup changes).
-#
-# Then Noctalia's colour templates are made to reach every app. Most templates
-# write a file the app (or the dotfiles) already loads; these apps also need a
-# setting that picks the generated theme, set here when the app's settings
-# file exists: Claude Code, Oh My Pi, Vesktop, darktable, OBS, Heroic.
-# Templates for apps that haven't been opened yet stay unrendered until they
-# have (Noctalia checks for their config folder), so the summary lists them.
-# Runs after the app modules on purpose, so their settings files exist.
+# Applies the chezmoi source (cloned from $DOTFILES_REPO if empty; repo wins, old files backed up).
 
 _DOTFILES_OPEN_ONCE=()                   # installed apps that need a first start
 
@@ -46,10 +34,7 @@ _dotfiles_json_write() {
   _dotfiles_rewrite "$f" <"$out"
 }
 
-# _dotfiles_ini_set FILE SECTION KEY VALUE [SEP]: print FILE with KEY SEP VALUE
-# (SEP defaults to "=") in [SECTION]: replaced in place, or added as the last
-# line of the section (before its trailing blank lines) or of the file. An
-# existing "KEY = ..." line matches whatever its spacing.
+# _dotfiles_ini_set FILE SECTION KEY VALUE [SEP]: print FILE with KEY set or added (SEP default =).
 _dotfiles_ini_set() {
   awk -v s="[$2]" -v k="$3" -v v="$4" -v sep="${5:-=}" '
     function emit() { print k sep v; done = 1 }
@@ -94,8 +79,7 @@ _dotfiles_apply() {
     return 0
   fi
 
-  # List what changes; files whose content gets replaced are backed up first.
-  # Most entries usually differ only in permissions, so those are just counted.
+  # List what changes (replaced files are backed up first); permission-only changes are counted.
   while IFS= read -r line; do
     path="${line:3}"
     if [[ "${line:1:1}" != M ]]; then
@@ -114,9 +98,7 @@ _dotfiles_apply() {
 
 # --- Noctalia colours in apps ------------------------------------------------
 
-# Hook dependencies of the papirus-icons template (gawk's strtonum) and the
-# brave one (Pillow for the system python3). PikaOS only has them today as
-# dependencies of other packages.
+# Hook dependencies of the papirus-icons (gawk strtonum) and brave (Pillow) templates.
 _dotfiles_noctalia_deps() {
   apt_install gawk python3-pil
 }
@@ -145,8 +127,7 @@ _dotfiles_omp() {
   done
 }
 
-# The apps module points Vesktop at ~/.config/vesktop; the sandbox folder is
-# the fallback for when that move hasn't happened.
+# The apps module points Vesktop at ~/.config/vesktop; the sandbox folder is the fallback.
 _dotfiles_vesktop() {
   local app=dev.vencord.Vesktop f="" c
   flatpak_installed "$app" || return 0
@@ -199,8 +180,7 @@ _dotfiles_obs() {
   fi
 }
 
-# Heroic comes with PikaOS (pika-gameutils-meta). Its themes folder is a
-# setting; the theme itself is picked in its UI (kept in its browser storage).
+# Heroic ships with PikaOS (pika-gameutils-meta); only its themes folder is set, pick theme in UI.
 # shellcheck disable=SC2016  # $p is a jq variable
 _dotfiles_heroic() {
   local f="$HOME/.config/heroic/config.json" p="$HOME/.config/heroic/themes"
@@ -253,9 +233,7 @@ _dotfiles_noctalia_apps() {
 
 _DOTFILES_SCHEME=(wallpaper m3-tonal-spot)  # palette source and scheme: colours follow the wallpaper
 
-# Noctalia keeps the palette choice in its state file (color-scheme-set writes
-# it there, not to the dotfiles' settings.toml). With Noctalia running it's set
-# through its IPC; otherwise the state file is edited, and read at next start.
+# Noctalia keeps the palette choice in its state file: set via IPC if running, else edit the file.
 _dotfiles_noctalia_scheme() {
   local state="${XDG_STATE_HOME:-$HOME/.local/state}/noctalia/settings.toml" cur
   if (( $1 )); then
@@ -277,8 +255,7 @@ _dotfiles_noctalia_scheme() {
     | _dotfiles_rewrite "$state"
 }
 
-# Render the templates now that settings.toml, the configs that load the
-# generated files and the app settings above are all in place.
+# Render the templates now that settings.toml, the configs and app settings above are in place.
 _dotfiles_noctalia_render() {
   local settings="$HOME/.config/noctalia/settings.toml" running=0
   need noctalia noctalia

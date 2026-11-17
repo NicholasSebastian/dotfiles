@@ -8,15 +8,11 @@ MODULE_DESC="Personal taste: Brave/imv/Ghostty as defaults, zsh setup, git setti
 MODULE_DEFAULT=0
 }
 
-# Everything opinionated lives here; the other modules only install things
-# and configure them neutrally. Each part checks for the tool it configures,
-# so this runs fine on its own (tools that aren't there are skipped).
+# Everything opinionated lives here; each part skips tools that aren't installed.
 
 # --- Default apps ------------------------------------------------------------
 
-# Point PikaOS's Hyprland config ($TERM/$TERMINAL, Nemo's "Open in Terminal")
-# at Ghostty instead of otter-term. The cleanup module calls this too, after
-# removing otter-term. Files that don't exist are skipped.
+# Point PikaOS's Hyprland config and Nemo's "Open in Terminal" at Ghostty; cleanup also calls it.
 _personal_use_ghostty() {
   local hypr="$HOME/.config/hypr" key=org.cinnamon.desktop.default-applications.terminal cur
   if [[ -f "$hypr/env.lua" ]]; then
@@ -35,8 +31,7 @@ _personal_use_ghostty() {
 }
 
 _personal_default_apps() {
-  # xdg-mime writes ~/.config/mimeapps.list directly. (xdg-settings needs a
-  # recognised desktop environment and often fails under Hyprland.)
+  # xdg-mime writes ~/.config/mimeapps.list directly; xdg-settings often fails under Hyprland.
   if is_dry || have brave-browser; then
     xdg_default brave-browser.desktop \
       x-scheme-handler/http x-scheme-handler/https text/html application/xhtml+xml
@@ -122,18 +117,14 @@ _personal_login_shell() {
 _personal_shell() {
   if (( SET_ZSH_DEFAULT )); then _personal_login_shell; fi
 
-  # Tool paths first (setup.sh writes them again at the end; then unchanged),
-  # so on a fresh ~/.zshrc they come before the personal block
+  # Tool paths first (setup.sh rewrites them at the end) so they precede the personal block
   write_shell_env
   rc_block "$HOME/.zshrc" "$_PERSONAL_START" "$_PERSONAL_END" "$(_personal_zshrc)"
 }
 
 # --- Git ---------------------------------------------------------------------
 
-# git's libsecret credential helper: keeps HTTPS passwords/tokens (e.g. your
-# GitHub token) in GNOME Keyring. Debian ships only its source, in the git
-# package, so it's built here. Absolute path in the git config, so apps
-# started without ~/.local/bin on PATH find it too.
+# git's libsecret credential helper (HTTPS tokens in GNOME Keyring), built from Debian's source.
 _PERSONAL_CRED_HELPER="$HOME/.local/bin/git-credential-libsecret"
 _personal_credential_helper() {
   local src=/usr/share/doc/git/contrib/credential/libsecret build="$MODULE_TMP/libsecret"
@@ -153,8 +144,7 @@ _personal_credential_helper() {
 
 _personal_git() {
   _personal_credential_helper
-  # Git defaults (kept from your old .gitconfig, with modern tweaks).
-  # Format: "key value"; everything after the first space is the value.
+  # Git defaults as "key value" (everything after the first space is the value).
   local git_settings=(
     "merge.conflictStyle zdiff3"           # diff3, minus the duplicated lines
     "diff.colorMoved default"
@@ -200,16 +190,10 @@ _personal_git() {
 
 # --- Keyring -----------------------------------------------------------------
 
-# GNOME Keyring unlocked by your login password (PAM), so apps stop asking for
-# a separate keyring password. PAM only unlocks the keyring named "login".
+# GNOME Keyring unlocked by your login password (PAM only unlocks the keyring named "login").
 _PERSONAL_KEYRING_CHANGED=0
 
-# Each login service gets pam_gnome_keyring in its auth stack (grabs the
-# password) and session stack (starts the daemon and unlocks). Appended lines
-# run after common-auth/common-session, which is the order it needs. They're
-# 'optional', so they can never make a login fail, and '-' skips them quietly
-# if the module is missing. Services whose package already has the lines
-# (greetd, otter-greeter) are left alone.
+# Each login service gets optional pam_gnome_keyring lines ('-' skips if missing); packaged skipped.
 _personal_keyring_pam() {
   apt_install gnome-keyring libpam-gnome-keyring
 
@@ -253,8 +237,7 @@ _personal_keyring_pam() {
   done
 }
 
-# New secrets should go to "login" (the one PAM unlocks), not a second
-# keyring with its own password. The old keyring is left as it is.
+# New secrets go to "login" (which the keyring PAM unlocks), not a second keyring; old one is kept.
 _personal_keyring_default() {
   local kr="$HOME/.local/share/keyrings"
   # No file: gnome-keyring uses "login" anyway

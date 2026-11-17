@@ -9,16 +9,7 @@ MODULE_DEFAULT=0
 MODULE_RISKY=1
 }
 
-# Follows https://wiki.pika-os.com/en/guides-wiki/secure-boot (option 2):
-#   pikman install sbctl-booster-extra
-#   sbctl create-keys   (the wiki's 'sbctl setup --setup' first would, since
-#                        sbctl 0.18, enroll keys without Microsoft's or fail
-#                        outside Setup Mode, so it's left out)
-#   sbctl enroll-keys --microsoft
-#   apt reinstall linux-image-$(uname -r)
-#   sbctl sign rEFInd (EFI/refind or EFI/BOOT) + its ext4 driver; sbctl verify
-# Keys are only enrolled when the firmware is in Setup Mode (which you switch
-# on yourself in the BIOS) *and* you confirm the step.
+# Follows the PikaOS secure-boot wiki (option 2); keys enroll only in Setup Mode, after a prompt.
 
 _secure_boot_refind_files() {
   local esp="$1" dir f
@@ -106,8 +97,7 @@ secure_boot_run() {
     info "Secure Boot keys unchanged, skipping kernel reinstall"
   fi
 
-  # -s saves each file in sbctl's database so it's re-signed after updates;
-  # signing an already-signed file is a no-op.
+  # -s saves each file in sbctl's database so it's re-signed after updates; re-signing is a no-op.
   if (( ${#files[@]} == 0 )); then
     soft_fail "no rEFInd files under $esp/EFI/{refind,BOOT}; sign your bootloader by hand"
   fi

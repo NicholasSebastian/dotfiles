@@ -8,9 +8,7 @@ MODULE_DESC="zsh + plugins, Starship, modern CLI tools, fastfetch, lazygit, lazy
 MODULE_DEFAULT=1
 }
 
-# The tool-path block in ~/.bashrc and ~/.zshrc is written by setup.sh at the
-# end of the run (lib/env.sh); zsh as login shell and the zsh config are in
-# the personal module.
+# The tool-path block in ~/.bashrc and ~/.zshrc comes from lib/env.sh; personal module sets up zsh.
 shell_run() {
   local tools=(
     "zsh"

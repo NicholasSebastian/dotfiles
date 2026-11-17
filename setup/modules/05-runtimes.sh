@@ -46,8 +46,7 @@ runtimes_run() {
     fi
   fi
 
-  # Rust: rustup is the standard installer. --no-modify-path: the managed
-  # ~/.zshrc block already puts ~/.cargo/bin on PATH.
+  # Rust: rustup with --no-modify-path, because the managed ~/.zshrc block sets PATH.
   if have rustup; then
     info "rustup already installed (update with: rustup update)"
   else

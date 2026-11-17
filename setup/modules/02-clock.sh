@@ -9,8 +9,7 @@ MODULE_DEFAULT=0
 MODULE_RISKY=1
 }
 
-# Windows keeps the hardware clock in local time, Linux in UTC. Matching
-# Windows stops the clock jumping by your UTC offset whenever you switch OS.
+# Windows keeps the hardware clock in local time, Linux in UTC; matching avoids clock jumps.
 clock_run() {
   local rtc ntp
   rtc="$(timedatectl show -p LocalRTC --value 2>/dev/null || echo unknown)"

@@ -8,8 +8,7 @@ MODULE_DESC="ASUS ROG tools (asusctl, ROG Control Center, supergfxctl), OpenLogi
 MODULE_DEFAULT=0
 }
 
-# ASUS ROG: fan/power profiles, keyboard backlight, and dGPU switching.
-# Not in Debian; installed only if PikaOS repos package them.
+# ASUS ROG fan/power profiles, backlight, dGPU switching; not in Debian, only if PikaOS packages it.
 _laptop_rog() {
   local pkg
   local -a pkgs=()
@@ -24,10 +23,7 @@ _laptop_rog() {
   if have supergfxctl; then enable_now supergfxd.service; fi
 }
 
-# OpenLogi: Logitech Options+ replacement.
-# Not in apt or on Flathub, so its .deb comes from the latest GitHub release.
-# Its background agent is a user service that has to be enabled.
-# https://github.com/AprilNEA/OpenLogi
+# OpenLogi (Logitech Options+ alternative): .deb + agent. https://github.com/AprilNEA/OpenLogi
 _laptop_openlogi() {
   local deb="$MODULE_TMP/openlogi.deb" unit=openlogi-agent.service
   if pkg_installed openlogi; then

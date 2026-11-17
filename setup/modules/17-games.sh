@@ -15,8 +15,7 @@ games_run() {
     com.modrinth.ModrinthApp               # Modrinth App
     # org.prismlauncher.PrismLauncher      # apparently what Linux people typically use to play Minecraft
 
-    # Multi-system: NES, SNES, GB/GBA via mGBA, DS via melonDS, PSP via PPSSPP, Genesis, PS1...)
-    # Standalone emulators below are for newer consoles only.
+    # RetroArch covers older systems (NES-PS1, GBA, DS, PSP); standalone emulators below are newer.
     org.libretro.RetroArch
 
     # Sony
@@ -39,8 +38,7 @@ games_run() {
   )
   flatpak_install "${apps[@]}"
 
-  # CurseForge: official .deb (the AppImage can't handle curseforge:// links).
-  # No checksum is published; it's fetched over TLS.
+  # CurseForge: official .deb (the AppImage can't handle curseforge:// links); TLS only, no hash.
   if pkg_installed curseforge; then
     info "CurseForge already installed"
   else

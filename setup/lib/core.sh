@@ -1,12 +1,5 @@
 # shellcheck shell=bash
-# Core helpers: output, dry-run, prompts, follow-ups, backups, file writes.
-#
-# Globals set by setup.sh before any module runs:
-#   DRY_RUN FORCE        0/1
-#   SETUP_TMP            scratch dir for this run (removed on exit)
-#   RUN_DIR              per-run state shared between module subshells
-#   MODULE MODULE_TMP    current module id and its scratch dir
-#   USER_NAME TS         login name, run timestamp
+# Core helpers: output, dry-run, prompts, follow-ups, backups, file writes (globals from setup.sh).
 
 # --- Output ------------------------------------------------------------------
 
@@ -53,9 +46,7 @@ run_with_input() {
   is_dry || printf '%s\n' "$input" | "$@"
 }
 
-# Pipe an upstream install script into an interpreter:
-#   install_script URL sh|bash [script args...]
-# Upstream publishes no checksums for these scripts; TLS is enforced.
+# install_script URL sh|bash [args...]: pipe an upstream install script (no checksums; TLS only).
 install_script() {
   local url="$1" interp="$2"; shift 2
   cmd "curl -fsSL $url | $interp -s -- $*"
@@ -101,11 +92,7 @@ followup() { printf '%s\t%s\n' "$1" "${*:2}" >>"$RUN_DIR/followups"; }
 
 has_tty() { { : </dev/tty; } 2>/dev/null; }
 
-# The question goes through stdout like all other output, not straight to
-# /dev/tty: stdout is piped through the logger, which can lag behind, so a
-# direct write could land in the middle of earlier output (e.g. a long diff)
-# and the run would look stuck. It ends in a newline so the log file gets it
-# as its own line. Only the answer is read from the terminal.
+# The question goes via stdout (not /dev/tty) so it can't land mid-output behind the lagging logger.
 ask_yes_no() {
   local reply
   has_tty || return 1
@@ -115,9 +102,7 @@ ask_yes_no() {
   [[ "$reply" == [yY]* ]]
 }
 
-# ask_choice QUESTION OPTION...: numbered menu; sets CHOICE to the picked
-# number. Enter or anything invalid picks 1, so put the safe option first.
-# Returns 1 without a terminal.
+# ask_choice QUESTION OPTION...: numbered menu setting CHOICE; bad input picks 1; 1 without a tty.
 CHOICE=1
 ask_choice() {
   local question="$1" reply i; shift
@@ -131,8 +116,7 @@ ask_choice() {
   printf '  -> answer: %s\n' "${!CHOICE}"
 }
 
-# Risky modules call this before changing boot/login/system state. It asks
-# even with --yes; only --force skips the question. Declining skips the module.
+# Risky modules call this before changing system state; asks even with --yes, only --force skips it.
 confirm_risky() {
   warn "$MODULE changes boot, login or system state. It will:"
   printf '       - %s\n' "$@"
@@ -151,10 +135,7 @@ confirm_step() {
 
 # --- Files -------------------------------------------------------------------
 
-# Copy a file aside before changing it. Files in $HOME get FILE.setup-bak.TS
-# next to them; system files go to /var/backups/setup/<path>.TS, because a
-# stray copy inside /etc/apt/sources.list.d, preferences.d etc. makes apt
-# complain on every run (and some .d directories would even load it).
+# Back up a file before changing it: FILE.setup-bak.TS in $HOME, else /var/backups/setup/ (apt).
 backup_file() {
   local file="$1" bak="/var/backups/setup$1.$TS"
   [[ -e "$file" ]] || return 0
@@ -166,10 +147,7 @@ backup_file() {
   as_owner "$file" cp -a "$file" "$bak"
 }
 
-# write_file DEST [MODE] < content
-# Writes only when the content differs, backs up the old file first, follows
-# symlinks (so symlinked files stay links), and uses sudo outside $HOME.
-# Afterwards, write_changed is true if the file was (or in dry-run would be) written.
+# write_file DEST [MODE] < content: write only on change, with backup, symlink-safe; sets a flag.
 WRITE_CHANGED=0
 write_changed() { (( WRITE_CHANGED )); }
 write_file() {
@@ -202,17 +180,13 @@ show_diff() { diff -u "$1" "$2" | sed 's/^/      | /' || true; }
 # same_tree SRC DEST: true if DEST holds exactly the files of SRC.
 same_tree() { diff -rq "$1" "$2" >/dev/null 2>&1; }
 
-# copy_tree SRC DEST: copy SRC's contents into DEST as root, owned by root
-# with default modes (for vendored files installed under /usr or the ESP).
+# copy_tree SRC DEST: copy SRC's contents into DEST as root with default modes.
 copy_tree() {
   run sudo mkdir -p "$2"
   run sudo cp -rT --no-preserve=mode,ownership "$1" "$2"
 }
 
-# strip_block FILE START END
-# Print FILE without its managed START...END block and trailing blank lines.
-# A START without its END (hand-edited file) is kept as is, rather than
-# dropping everything after it.
+# strip_block FILE START END: print FILE without its managed block; a START lacking its END is kept.
 strip_block() {
   awk -v s="$2" -v e="$3" '
     $0 == s { skip = 1; nh = 0 }
@@ -226,17 +200,13 @@ strip_block() {
     }' "$1"
 }
 
-# block_body FILE START END: the lines between the START and END markers
-# (nothing if FILE doesn't exist).
+# block_body FILE START END: the lines between the START and END markers (nothing if no FILE).
 block_body() {
   [[ -f "$1" ]] || return 0
   awk -v s="$2" -v e="$3" '$0 == e { f = 0 } f; $0 == s { f = 1 }' "$1"
 }
 
-# rc_block FILE START END BODY
-# Put BODY between the START and END lines of FILE: replaces that block where
-# it is (dropping any duplicates), or appends it after a blank line. The rest
-# of FILE is kept. Written with write_file (backup, dry-run diff).
+# rc_block FILE START END BODY: replace (or append) the START..END block of FILE with BODY.
 rc_block() {
   local file="$1" start="$2" end="$3" body="$4"
   {

@@ -1,10 +1,7 @@
 # shellcheck shell=bash
 # Package helpers: apt, Flatpak, mise, plus users/groups and services.
 
-# - sudo resets the environment, so DEBIAN_FRONTEND goes through `env`
-#   (sudo-rs also ignores VAR=value written straight after sudo; without
-#   this, debconf dialogs open invisibly and apt hangs).
-# - The Dpkg options keep your config files when a package ships a newer one.
+# sudo resets the env so DEBIAN_FRONTEND goes through `env`; Dpkg options keep your config files.
 APT_GET=(
   sudo env DEBIAN_FRONTEND=noninteractive apt-get -y
   -o Dpkg::Options::=--force-confdef -o Dpkg::Options::=--force-confold
@@ -29,10 +26,7 @@ pkgs_available() {
 
 apt_available() { [[ -n "$(pkgs_available "$1")" ]]; }
 
-# install_batch LABEL ITEMS_VAR CMD...
-# Run CMD with every item of the array named ITEMS_VAR. If that fails, retry
-# item by item (without echoing) so one bad item doesn't block the rest;
-# misses are soft failures.
+# install_batch LABEL ITEMS_VAR CMD...: run CMD on all items, else one by one; misses soft-fail.
 install_batch() {
   local label="$1" item
   local -n _batch_items="$2"
@@ -44,12 +38,7 @@ install_batch() {
   done
 }
 
-# apt_install PKG|./file.deb ...
-# Skips what's installed, reports packages apt doesn't know, installs the
-# rest in one batch and retries one by one if the batch fails, so one bad
-# name doesn't block the others. Misses are soft failures.
-# --no-install-recommends stops "recommended" extras snowballing (a GTK app
-# pulling in GDM); set APT_RECOMMENDS=1 for PikaOS's own meta packages.
+# apt_install PKG|./file.deb ...: batch, per-item retry, soft-fail; APT_RECOMMENDS=1 adds recs.
 apt_install() {
   (( $# )) || return 0
   local -a names=() debs=() rest=() todo=() opts=()
@@ -79,10 +68,7 @@ apt_install() {
 # Answer a debconf question before the package is installed.
 debconf_preseed() { run_with_input "$1" sudo debconf-set-selections; }
 
-# install_keyring NAME KEYFILE FINGERPRINT [DEST]
-# Checks the key's primary fingerprint, then stores it as DEST (default
-# /etc/apt/keyrings/NAME.gpg) for use with Signed-By: armored if DEST ends in
-# .asc, de-armored otherwise (apt picks the format by the extension).
+# install_keyring NAME KEYFILE FINGERPRINT [DEST]: verify fingerprint, store as DEST (.asc armored).
 install_keyring() {
   local name="$1" keyfile="$2" want="${3// /}" dest="${4:-/etc/apt/keyrings/$1.gpg}" got src="$2"
   got="$(gpg --show-keys --with-colons "$keyfile" 2>/dev/null | awk -F: '$1 == "fpr" { print $10; exit }')"
@@ -125,9 +111,7 @@ flatpak_installed() { flatpak info --system "$1" >/dev/null 2>&1; }
 # True if APP is running.
 flatpak_running() { in_lines "$1" "$(flatpak ps --columns=application 2>/dev/null || true)"; }
 
-# flatpak_overrides KEY [APP]: the per-user override list KEY (filesystems,
-# sockets, ...) for APP, or for all apps, as ";a;b;" so callers can match
-# whole entries with *";entry;"*.
+# flatpak_overrides KEY [APP]: per-user override list KEY for APP (or all) as ";a;b;" for matching.
 flatpak_overrides() {
   local v
   v="$(flatpak override --user --show ${2:+"$2"} 2>/dev/null | sed -n "s/^$1=//p" || true)"
@@ -142,9 +126,7 @@ mise_ensure() {
   is_dry || have mise || die "mise didn't install"
 }
 
-# mise_use TOOL[@VERSION]... (global). Skips tools already set globally to the
-# same requested version and installed; the rest go in one call, retried one
-# by one on failure.
+# mise_use TOOL[@VERSION]... (global): skips tools already set to that version; rest in one call.
 mise_use() {
   (( $# )) || return 0
   mise_ensure
@@ -166,11 +148,7 @@ mise_use() {
   hash -r
 }
 
-# Entries are "apt-package|mise-tool":
-#   "zsh"           apt only
-#   "fd-find|fd"    apt, or mise if apt doesn't have it
-#   "|zellij"       mise only
-# The mise tool can be any mise backend, e.g. "cargo:name" or "github:owner/repo".
+# apt_or_mise entries: "apt-package|mise-tool" ("zsh" apt only, "fd-find|fd" either, "|zellij" mise)
 apt_or_mise() {
   local entry apt_pkg mise_tool avail=""
   local -a names=() to_apt=() to_mise=()

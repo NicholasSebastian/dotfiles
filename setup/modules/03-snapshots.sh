@@ -11,8 +11,7 @@ MODULE_DEFAULT=1
 snapshots_run() {
   apt_install timeshift ufw
 
-  # ufw.conf is world-readable, so this works without sudo (and in dry-run).
-  # An already-enabled firewall keeps your own defaults.
+  # ufw.conf is world-readable (no sudo, works in dry-run); an enabled firewall keeps your defaults.
   if grep -qs '^ENABLED=yes' /etc/ufw/ufw.conf; then
     info "ufw is already enabled"
   else

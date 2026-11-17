@@ -1,11 +1,6 @@
 #!/usr/bin/env bash
 # shellcheck source-path=SCRIPTDIR
-# =============================================================================
-# setup.sh - post-install setup for PikaOS (Hyprland edition)
-# =============================================================================
-# Modules live in modules/NN-<id>.sh and are sourced, never executed. Each
-# declares MODULE_ID/DESC/DEFAULT (and optionally DEPS/RISKY) and a <id>_run
-# function; the menu, --list and dependency order are built from those headers.
+# post-install setup for PikaOS; modules in modules/NN-<id>.sh are sourced, not run.
 
 set -Eeuo pipefail
 shopt -s inherit_errexit
@@ -58,8 +53,7 @@ load_modules() {
 
     unset MODULE_ID MODULE_DESC MODULE_DEFAULT MODULE_RISKY
     MODULE_DEPS=()
-    # Modules are shellchecked on their own; following them here would only
-    # repeat that, so the dynamic path isn't resolved.
+    # Modules are shellchecked on their own, so the dynamic path isn't resolved here.
     # shellcheck source=/dev/null
     source "$f"
 
@@ -234,9 +228,7 @@ choose_modules() {
 
 # --- Running -----------------------------------------------------------------
 
-# Run a function in a strict, isolated subshell. The result goes in STEP_RC
-# (0 ok, 3 skipped, else failed) instead of the return value: calling this
-# from `if` or `||` would silently switch off errexit inside the module.
+# Run a function in an isolated strict subshell; result in STEP_RC (0 ok, 3 skipped), not `||`.
 STEP_RC=0
 run_step() {
   local id="$1" fn="$2"
@@ -272,8 +264,7 @@ run_modules() {
 
     log "[$i/$n] $id - ${MOD_DESC[$id]}"
     run_step "$id" "${id}_run"
-    # Exit 3 is module_skip only if it left its reason file; a command that
-    # failed with exit 3 (unzip, curl, ...) is a real failure
+    # Exit 3 is a skip only if the reason file exists; otherwise 3 is a failure.
     if (( STEP_RC == 0 )); then
       STATUS[$id]=ok
     elif (( STEP_RC == 3 )) && [[ -f "$RUN_DIR/skip.$id" ]]; then
@@ -284,9 +275,7 @@ run_modules() {
   done
 }
 
-# Stop apt from ever installing another display manager. You log in through
-# otter-greeter or greetd; anything else (gdm3, sddm...) would compete. Display
-# managers that are already installed are left out so their updates still work.
+# Stop apt from installing another display manager (already installed ones are left alone).
 block_display_managers() {
   local dm
   local -a blocked=()
@@ -307,8 +296,7 @@ preflight() {
   block_display_managers
 }
 
-# Safety net: if the login screen changed without a module meaning to
-# (noctalia_greeter records its change), switch it back.
+# Safety net: if the login screen changed without a module meaning to, switch it back.
 check_display_manager() {
   local before="$1" expected after
   expected="$(cat "$RUN_DIR/dm_expected" 2>/dev/null || printf '%s' "$before")"
@@ -324,10 +312,7 @@ check_display_manager() {
 
 LOGGER_PID="" KEEPALIVE_PID="" OUT_FD="" ERR_FD=""
 
-# Output goes to the terminal unchanged and as it comes (progress bars too),
-# and to the log file with timestamps, without colours, and with only the
-# final state of lines redrawn with \r. awk does the cleanup: a bash pattern
-# substitution is so slow on long redrawn lines that the run looked hung.
+# Terminal output is unchanged; the log gets timestamps, no colours, final \r states (awk: fast).
 log_writer() {
   tee >(awk '{ sub(/.*\r/, ""); gsub(/\033\[[0-9;?]*[A-Za-z]/, "")
                print strftime("%F %T"), $0; fflush() }' >>"$1")
@@ -452,8 +437,7 @@ main() {
   setup_env
   is_dry || start_sudo
 
-  # From here on nothing reads stdin: a hidden prompt fails instead of
-  # hanging. Confirmations and sudo use the terminal directly.
+  # From here on nothing reads stdin, so a hidden prompt fails instead of hanging.
   exec </dev/null
 
   local dm_before

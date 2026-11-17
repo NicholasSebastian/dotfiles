@@ -1,10 +1,7 @@
 # shellcheck shell=bash
-# GitHub releases and verified downloads. Nothing here touches the network
-# in dry-run.
+# GitHub releases and verified downloads; nothing here touches the network in dry-run.
 
-# Call the GitHub API. Uses $GITHUB_TOKEN or an existing `gh` login when
-# available (the anonymous limit is 60 requests/hour). The token goes in a
-# header file, so it never shows up in `ps`.
+# Call the GitHub API with $GITHUB_TOKEN or `gh` login if any; token goes via header file, not `ps`.
 gh_api() {
   local path="$1" token="${GITHUB_TOKEN:-}" hdr="$SETUP_TMP/.gh-header"
   local -a auth=()
@@ -17,8 +14,7 @@ gh_api() {
     "https://api.github.com/$path"
 }
 
-# Latest release JSON, cached for the run (several modules ask twice). A
-# failed request leaves no cache, so the caller sees the error.
+# Latest release JSON, cached for the run; a failed request leaves no cache.
 gh_latest_json() {
   local repo="$1" cache="$SETUP_TMP/gh-${1//\//_}.json"
   if [[ ! -s "$cache" ]]; then
@@ -30,18 +26,14 @@ gh_latest_json() {
 
 gh_latest_tag() { gh_latest_json "$1" | jq -r '.tag_name // empty'; }
 
-# Print "URL<TAB>SHA256" of the first asset whose name matches REGEX (jq/
-# Oniguruma syntax). The sha256 comes from the API's per-asset digest and is
-# empty for old releases without one.
+# Print "URL<TAB>SHA256" of the first asset matching REGEX (jq syntax); sha empty on old releases.
 gh_latest_asset() {
   gh_latest_json "$1" | jq -r --arg re "$2" '
     [.assets[] | select(.name | test($re))][0] // empty
     | "\(.browser_download_url)\t\((.digest // "") | sub("^sha256:"; ""))"'
 }
 
-# download URL DEST [SHA256]
-# Downloads to DEST.part and only moves it into place once complete and
-# verified, so an interrupted download never looks like a finished one.
+# download URL DEST [SHA256]: fetch to DEST.part, move into place only once complete and verified.
 download() {
   local url="$1" dest="$2" sha="${3:-}" part="$2.part"
   if is_dry; then cmd "download $url -> $dest${sha:+ (sha256 ${sha:0:12}…)}"; return 0; fi

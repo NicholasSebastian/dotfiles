@@ -25,8 +25,7 @@ _gamedev_apps() {
 
 # --- Aseprite ----------------------------------------------------------------
 
-# Latest release, built with its own build script.
-# Upstream: https://github.com/aseprite/aseprite/blob/main/INSTALL.md
+# Latest release, built with its own script; see github.com/aseprite/aseprite/blob/main/INSTALL.md
 _gamedev_aseprite() {
   local dir="$SRC_DIR/aseprite" bin="$SRC_DIR/aseprite/build/bin/aseprite"
 
@@ -64,12 +63,7 @@ _gamedev_aseprite() {
     run git clone --recursive --branch "${tag:-<latest tag>}" https://github.com/aseprite/aseprite.git "$dir"
   fi
 
-  # Build with Aseprite's own helper in unattended mode (--auto: release
-  # build of the default configuration, --norun: don't launch it). It
-  # downloads the exact prebuilt Skia this version needs. Once a
-  # CMakeCache.txt exists it asks which build to use (even with --auto) and
-  # reuses the first build's Skia dir, so both are reset first; compiled
-  # objects are kept, so updates still build incrementally.
+  # --auto --norun; Skia is prebuilt; CMakeCache.txt/.build reset first, compiled objects kept.
   run rm -rf "$dir/.build" "$dir/build/CMakeCache.txt"
   run_in "$dir" ./build.sh --auto --norun
 

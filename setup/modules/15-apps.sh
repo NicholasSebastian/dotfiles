@@ -14,8 +14,7 @@ _apps_browsers() {
   # Brave's script adds its signed apt repo and installs brave-browser
   if have brave-browser; then info "Brave already installed"; else install_script https://dl.brave.com/install.sh sh || soft_fail "Brave's install script failed; see https://brave.com/linux"; fi
 
-  # Chrome's .deb adds Google's apt repo for updates. Google publishes no
-  # checksum for the 'current' .deb; it's fetched over TLS.
+  # Chrome's .deb adds Google's apt repo; no checksum for the 'current' .deb (TLS only).
   if have google-chrome-stable; then
     info "Google Chrome already installed"
   else
@@ -30,10 +29,7 @@ _apps_browsers() {
 
 # --- Desktop apps ------------------------------------------------------------
 
-# Comfy, the Spicetify theme Noctalia's spicetify template colours: the
-# template writes Themes/Comfy/color.ini, and config-xpui.ini (dotfiles)
-# selects Comfy. Comfy's own color.ini is skipped so it never replaces
-# Noctalia's.
+# Comfy, the Spicetify theme Noctalia colours: its own color.ini is skipped so Noctalia's stays.
 _apps_spicetify_comfy() {
   local themes="${XDG_CONFIG_HOME:-$HOME/.config}/spicetify/Themes" repo="$MODULE_TMP/comfy"
   if [[ -f "$themes/Comfy/user.css" ]]; then
@@ -48,11 +44,7 @@ _apps_spicetify_comfy() {
   run cp -rn "$repo/Comfy/." "$themes/Comfy/"
 }
 
-# Spicetify (themes/extensions for Spotify), patched into the Flatpak's files
-# as its docs describe: that folder is root-owned, so it's made writable
-# first. It needs Spotify's prefs file, which appears once you've opened
-# Spotify and logged in. A Spotify update replaces the patched files, so
-# re-run this module afterwards.
+# Spicetify: needs Spotify's prefs (open + log in once); re-run after a Spotify update.
 _apps_spicetify() {
   local spotify=/var/lib/flatpak/app/com.spotify.Client/current/active/files/extra/share/spotify
   local prefs="$HOME/.var/app/com.spotify.Client/config/spotify/prefs"
@@ -77,12 +69,7 @@ _apps_spicetify() {
   followup manual "Spicetify: restart Spotify to see it. After a Spotify update, run 'spicetify backup apply' (or re-run './setup.sh --only apps')."
 }
 
-# Vesktop reads its config from ~/.config/vesktop (where dotfiles can manage
-# it) instead of the Flatpak's own ~/.var/app/dev.vencord.Vesktop/config/
-# vesktop: the xdg-config/vesktop permission mounts the host folder over
-# that path inside the sandbox. The first time, the existing Flatpak config
-# (settings, themes, login session) moves to ~/.config/vesktop; if that
-# already exists it wins, and the Flatpak copy is renamed aside.
+# Vesktop config: ~/.config/vesktop (mounted over the Flatpak's); existing one wins, old copy moved.
 _apps_vesktop_config() {
   local app=dev.vencord.Vesktop host="${XDG_CONFIG_HOME:-$HOME/.config}/vesktop"
   local old="$HOME/.var/app/dev.vencord.Vesktop/config/vesktop" fs
@@ -110,11 +97,7 @@ _apps_vesktop_config() {
   run flatpak override --user --filesystem=xdg-config/vesktop:create "$app"
 }
 
-# Run Vesktop natively on Wayland: as a Flatpak it falls back to X11
-# (XWayland) whenever it's allowed to, so take its X11 access away, as
-# https://vesktop.dev/wiki/linux/tips/#wayland-support says (Flatseal's
-# "X11 windowing system" switch does the same). Per-user override, so it
-# survives Flatpak updates.
+# Vesktop native Wayland: drop its Flatpak X11 access (per-user override, survives updates).
 _apps_vesktop_wayland() {
   if ! is_dry && ! flatpak_installed dev.vencord.Vesktop; then return 0; fi
   local sockets
@@ -126,11 +109,7 @@ _apps_vesktop_wayland() {
   fi
 }
 
-# Show Vesktop as "Discord" (name + Discord's icon) when the real Discord
-# isn't installed. The override goes in ~/.local/share/applications, which
-# shadows the Flatpak's own entry and survives Flatpak updates; it's rebuilt
-# from the Flatpak's entry each run so Exec= stays current, and removed again
-# once Discord itself is installed.
+# Vesktop as "Discord": local .desktop override, rebuilt each run, removed once Discord is there.
 _apps_vesktop_as_discord() {
   local src=/var/lib/flatpak/exports/share/applications/dev.vencord.Vesktop.desktop
   local dest="$HOME/.local/share/applications/dev.vencord.Vesktop.desktop"
@@ -139,8 +118,7 @@ _apps_vesktop_as_discord() {
   if flatpak_installed com.discordapp.Discord || have discord; then has_discord=1; fi
 
   if (( has_discord )) || [[ ! -f "$src" ]]; then
-    # Discord itself is installed, or Vesktop isn't (left out, or its install
-    # failure was already reported): drop an override we made earlier
+    # Discord is installed, or Vesktop isn't: drop an override we made earlier
     if [[ -f "$dest" && "$(head -n1 "$dest")" == "$marker" ]]; then
       run rm -f "$dest"
       changed=1
@@ -165,8 +143,7 @@ _apps_vesktop_as_discord() {
   fi
 }
 
-# Qalculate replaces Otter's calculator once otter-calc is gone (the cleanup
-# module offers to remove it, and installs Qalculate itself when it does).
+# Qalculate replaces Otter's calculator once otter-calc is gone (cleanup module handles removal).
 _apps_calculator() {
   if pkg_installed otter-calc; then
     info "Otter's calculator (otter-calc) is installed; Qalculate not added"
@@ -206,9 +183,7 @@ _apps_desktop() {
   )
   flatpak_install "${apps[@]}"
   _apps_calculator
-  # LocalSend receives on port 53317 (TCP + UDP). With ufw on "deny incoming"
-  # it can send but never receive. ufw stores rules even while disabled, and
-  # adding an existing rule is a no-op.
+  # LocalSend listens on 53317 (TCP+UDP); ufw's default deny-incoming would block receiving.
   if is_dry || have ufw || [[ -x /usr/sbin/ufw ]]; then
     run sudo ufw allow 53317 comment 'LocalSend'
   fi
@@ -220,9 +195,7 @@ _apps_desktop() {
 
 # --- Creative ----------------------------------------------------------------
 
-# Path of an AppImage Gear Lever has integrated, by its X-AppImage-Name.
-# Gear Lever moves the file into its own folder (~/AppImages by default,
-# renamed) and writes a launcher entry whose TryExec points at it.
+# Path of an AppImage Gear Lever integrated, by X-AppImage-Name (Gear Lever moves the file).
 _apps_gearlever_appimage() {
   local name="$1" f exe
   for f in "$HOME"/.local/share/applications/*.desktop; do
@@ -244,10 +217,7 @@ _apps_creative() {
   )
   flatpak_install "${apps[@]}"
 
-  # ArtCraft's Crafting Apps (open source, pure Rust, early alpha): the
-  # ArtCraft Launcher installs them and keeps them updated. It isn't on
-  # Flathub or in apt, so its .deb comes from the latest GitHub release.
-  # https://getartcraft.com/apps
+  # ArtCraft Launcher (getartcraft.com/apps): not in Flathub/apt, so its .deb is from GitHub.
   if pkg_installed artcraft-launcher; then
     info "ArtCraft Launcher already installed"
   else
@@ -260,8 +230,7 @@ _apps_creative() {
     fi
   fi
 
-  # Affinity: community AppImage (AffinityOnLinux, not affiliated with Serif)
-  # with its own Wine setup. AppImages need FUSE 2.
+  # Affinity: community AppImage (AffinityOnLinux) with its own Wine setup; needs FUSE 2.
   local appimage="$APPS_DIR/Affinity.AppImage" integrated
   apt_install libfuse2t64
   if integrated="$(_apps_gearlever_appimage Affinity)"; then
@@ -280,12 +249,7 @@ _apps_creative() {
 
 # --- Network -----------------------------------------------------------------
 
-# Cloudflare WARP (1.1.1.1 VPN / DNS client) from Cloudflare's apt repo.
-# PikaOS is Debian sid (codename 'nest'), which that repo doesn't publish, so
-# Cloudflare's own instructions ($(lsb_release -cs)) break 'apt update'; this
-# uses Debian 13 'trixie', the newest Debian suite it has. The key and list go
-# where those instructions put them (so a hand-added 'nest' list is replaced):
-# the package's postinst nags about the key if that keyring is missing or old.
+# Cloudflare WARP apt repo: PikaOS 'nest' isn't published, so Debian 13 'trixie' is used.
 _APPS_WARP_KEY_FPR="C068A2B5771775193CBE1F2F6E2DD2174FA1C3BA"   # RPM's gpg-pubkey(4fa1c3ba-61abda35)
 _APPS_WARP_KEYRING=/usr/share/keyrings/cloudflare-warp-archive-keyring.gpg
 _apps_warp() {
@@ -318,10 +282,7 @@ _apps_warp() {
 
 # --- Web apps ----------------------------------------------------------------
 
-# Icon for a web app: ICON is either a name from the icon themes (Papirus,
-# from the noctalia module, has many brands) or the https URL of a PNG, which
-# is downloaded once to $_APPS_WEBAPP_ICONS/SLUG-<url hash>.png (a new URL means a new file). Prints the Icon= value
-# (everything else goes to stderr); the generic browser icon if neither works out.
+# Web app icon: a theme icon name or PNG URL (cached once); prints the Icon= value, generic if none.
 _APPS_WEBAPP_ICONS="${XDG_DATA_HOME:-$HOME/.local/share}/webapp-icons"
 _apps_webapp_icon() {
   local slug="$1" icon="$2" dest
@@ -354,9 +315,7 @@ _apps_webapp() {
   fi
   icon="$(_apps_webapp_icon "$slug" "$icon")"
 
-  # Chromium names --app windows "<browser>-<host>__<path>-Default". Matching
-  # it lets the dock/taskbar group each web app separately instead of
-  # lumping them all under the browser.
+  # Match Chromium's --app window name (<browser>-<host>__<path>-Default) for per-app dock grouping.
   local rest="${url#*://}" host path
   host="${rest%%/*}"
   path="${rest#"$host"}"; path="${path#/}"; path="${path//\//_}"
@@ -376,8 +335,7 @@ EOF
 }
 
 _apps_webapps() {
-  # Name|URL|icon: a Papirus icon name where Papirus has the brand, else the
-  # site's own app icon (or dashboard-icons' copy of it) as a PNG URL.
+  # Name|URL|icon: a Papirus icon name where it has the brand, else the site's PNG icon URL.
   local dash=https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/png
   local webapps=(
     "WhatsApp|https://web.whatsapp.com|whatsapp"

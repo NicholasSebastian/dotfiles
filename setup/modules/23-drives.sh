@@ -9,11 +9,7 @@ MODULE_DEFAULT=1
 MODULE_RISKY=1
 }
 
-# Lists every filesystem on every drive, mounted or not, and asks which ones
-# to mount at boot. The picks go in a managed block in /etc/fstab (by UUID,
-# with nofail so a missing drive never blocks boot) and are mounted right away.
-# Drives that aren't connected keep their entries.
-# The rest of /etc/fstab is left alone; entries there are never offered.
+# Asks which filesystems to mount at boot via a managed /etc/fstab block (by UUID, nofail).
 
 _DRIVES_FSTAB=/etc/fstab
 _DRIVES_START='# >>> pikaos-setup: drives >>>'
@@ -34,14 +30,12 @@ _drives_managed_pairs() {
     | awk '/^UUID=/ { sub(/^UUID=/, "", $1); print $1 "\t" $2 }'
 }
 
-# _drives_is_windows DEV CUR: 0 if the NTFS volume holds a Windows install,
-# 1 if not, 2 if it can't be checked (dry run: no sudo).
+# _drives_is_windows DEV CUR: 0 if the NTFS volume holds Windows, 1 if not, 2 if unchecked (dry).
 _drives_is_windows() {
   local dev="$1" cur="$2" out
   if [[ -n "$cur" ]]; then [[ -d "$cur/Windows/System32" ]]; return; fi
   if is_dry; then return 2; fi
-  # Captured first: 'ntfsls | grep -q' would SIGPIPE ntfsls under pipefail.
-  # -f reads hibernated (Fast Startup) volumes too.
+  # Captured first ('ntfsls | grep -q' would SIGPIPE under pipefail); -f reads hibernated volumes.
   out="$(sudo ntfsls -f -p /Windows "$dev" 2>/dev/null || true)"
   grep -qix system32 <<<"$out"
 }
@@ -55,8 +49,7 @@ _drives_scan() {
 
   if in_lines ntfs "$(lsblk -nlo FSTYPE)"; then apt_install ntfs-3g; fi   # ntfsls
 
-  # Fields are split on \x1f, not tabs: tab is IFS whitespace, so an empty
-  # field (no label, no partition type) would vanish and shift the rest.
+  # Fields split on \x1f, not tabs: tab is IFS whitespace, so empty fields would vanish.
   while IFS=$'\x1f' read -r dev fs label uuid ptype size cur; do
     if [[ "$_DRIVES_FS" != *" $fs "* ]]; then
       info "Not offered: $dev ${label:-(no label)} ($fs) - not a data filesystem"; continue
@@ -85,8 +78,7 @@ _drives_scan() {
     | [.path, .fstype, (.label // ""), .uuid, ((.parttype // "") | ascii_downcase), .size,
        ((.mountpoints // []) | map(select(. != null)) | .[0] // "")] | map(tostring) | join("\u001f")')
 
-  # Mount points: keep the managed one (stable if the label changes), else
-  # /mnt/<label> with anything unusual turned into '_', made unique.
+  # Mount points: keep the managed one, else /mnt/<label> with odd chars as '_', made unique.
   local i name base n managed_mps
   local -A used=()
   managed_mps="$(printf '%s\n' "${_DRIVES_MANAGED[@]}")"
@@ -167,10 +159,7 @@ _drives_entry() {
   esac
 }
 
-# Sorted by mount point, so the block doesn't change when the kernel names
-# the disks differently (sda/sdb swap between boots). Entries of managed
-# drives that aren't connected are kept as they are (nofail makes that
-# harmless); untick a drive while it's connected to remove it.
+# Sorted by mount point so the block is stable across disk renames; unconnected drives are kept.
 _drives_body() {
   local i type opts pass kept mp comment line first=1
   local -A here=()
@@ -234,8 +223,7 @@ drives_run() {
     for i in "${!_DRIVES_DEV[@]}"; do
       if (( _DRIVES_ON[i] )); then run sudo mkdir -p "${_DRIVES_MP[i]}"; fi
     done
-    # Check our entries before writing (only ours: an unrelated broken line
-    # elsewhere in fstab shouldn't block this; findmnt can't read /dev/fd)
+    # Check only our entries before writing: an unrelated broken fstab line shouldn't block this
     if ! is_dry && [[ -n "$new" ]]; then
       printf '%s\n' "$new" >"$MODULE_TMP/fstab.check"
       if ! findmnt --verify --tab-file "$MODULE_TMP/fstab.check" >/dev/null; then

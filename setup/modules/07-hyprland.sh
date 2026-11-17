@@ -8,11 +8,7 @@ MODULE_DESC="What Otter/PikaOS don't ship: image viewer, audio mixer, media keys
 MODULE_DEFAULT=1
 }
 
-# Only what PikaOS's Otter desktop doesn't already ship. Otter provides the
-# file manager (otter-files), screenshots (otter-shot), colour picker
-# (otter-pick), lock screen, idle, night light, notifications, OSD, polkit
-# agent and calculator, and PikaOS ships Papers (PDFs), File Roller (archives)
-# and mpv (video). Ghostty is the terminal.
+# Only what PikaOS's Otter desktop lacks (it has files, shots, lock, idle, OSD, Papers, mpv).
 
 hyprland_run() {
   local pkgs=(

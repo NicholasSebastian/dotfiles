@@ -9,13 +9,7 @@ MODULE_DEFAULT=1
 MODULE_DEPS=(apps)                       # GIMP comes from the apps module
 }
 
-# PhotoGIMP's zip ships its settings for GIMP 3.0 (.config/GIMP/3.0), but
-# GIMP reads a folder per minor version (3.2 reads GIMP/3.2). So the files
-# go into the newest version folder GIMP has created. Flathub's GIMP has
-# the xdg-config/GIMP permission, so it keeps them in the normal
-# ~/.config/GIMP, not inside ~/.var/app/org.gimp.GIMP (whose config/GIMP
-# stays an empty mount point); older builds without that permission used
-# the sandbox folder, so both are checked.
+# GIMP reads the newest version folder (the zip ships 3.0), so files go into that one.
 photogimp_run() {
   local cfg="" ver="" d v
   for d in "${XDG_CONFIG_HOME:-$HOME/.config}/GIMP" "$HOME/.var/app/org.gimp.GIMP/config/GIMP"; do

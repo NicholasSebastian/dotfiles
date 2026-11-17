@@ -1,10 +1,7 @@
 # shellcheck shell=bash
 # Environment for this run, and the tool-path block in ~/.bashrc and ~/.zshrc.
 
-# Put every user-level tool dir on PATH before anything runs. Directories
-# that don't exist yet are harmless and start working as soon as a module
-# creates them (setup.sh runs `hash -r` after each module), so e.g. tools
-# from mise in `runtimes` are usable by `dev` in the same run.
+# Put user-level tool dirs on PATH up front; missing ones start working once a module creates them.
 setup_env() {
   export PNPM_HOME="$HOME/.local/share/pnpm"
   export DOTNET_ROOT="$HOME/.dotnet"
@@ -21,8 +18,7 @@ setup_env() {
 RC_START='# >>> pikaos-setup >>>'
 RC_END='# <<< pikaos-setup <<<'
 
-# The tool-path block for SHELL (bash|zsh): what the runtimes and shell
-# modules need in every new terminal, whatever your shell.
+# The tool-path block for SHELL (bash|zsh), needed in every new terminal.
 env_block() {
   cat <<'EOF'
 # --- Tool paths ---

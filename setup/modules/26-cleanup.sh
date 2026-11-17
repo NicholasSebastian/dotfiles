@@ -9,13 +9,7 @@ MODULE_DEFAULT=1
 MODULE_RISKY=1
 }
 
-# Goes through packages that other modules made redundant and asks, group by
-# group, which to remove. Nothing is removed without an answer: --yes and
-# --force don't skip these questions. Every package is checked with an apt
-# simulation first, and one that would take anything else along (e.g. a
-# PikaOS meta package, or something another kept package needs) is kept and
-# not offered. All picks go into one 'apt-get remove' (configs are kept, not
-# purged); configs that pointed at removed apps are fixed afterwards.
+# Asks group by group which redundant packages to remove; nothing goes unanswered (--yes skips no).
 
 _CLEANUP_NO_TTY="needs your answers but there is no terminal"
 _CLEANUP_REMOVE=()                       # packages picked for removal
@@ -23,8 +17,7 @@ _CLEANUP_ALLOW=(pika-shell-profile-common)  # may go along with them (only holds
 _CLEANUP_FM_KEEP=""
 _CLEANUP_BROWSER_BIN="" _CLEANUP_BROWSER_NAME=""   # replaces chromium in keybinds
 
-# GNOME desktop pieces left over from an earlier GNOME install. gnome-keyring,
-# gnome-disk-utility, ibus and im-config are left alone on purpose.
+# GNOME desktop leftovers from an earlier GNOME install; gnome-keyring, disk-utility, ibus stay.
 _CLEANUP_GNOME=(
   gnome-shell gnome-shell-common gnome-control-center gnome-control-center-data
   gnome-session-bin gnome-session-common gnome-session-canberra
@@ -65,8 +58,7 @@ _cleanup_installed() {
   done
 }
 
-# _cleanup_sim_each DIR PKG...: simulate removing each PKG on its own (plus the
-# picks so far), several at a time; DIR/PKG lists what would go.
+# _cleanup_sim_each DIR PKG...: simulate removing each PKG alone (plus picks); DIR/PKG lists losses.
 _cleanup_sim_each() {
   local dir="$1"; shift
   rm -rf "$dir"; mkdir -p "$dir"
@@ -84,13 +76,7 @@ _cleanup_brief() {
   if (( ${#w[@]} > 8 )); then printf ' (and %d more)' $(( ${#w[@]} - 8 )); fi
 }
 
-# _cleanup_filter EXTRA_ALLOW_CSV PKG...
-# Print the PKGs that can be removed (with everything picked so far) without
-# taking anything else along, apart from the PKGs themselves, _CLEANUP_ALLOW
-# and EXTRA_ALLOW_CSV. Usually one simulation; if that fails, each PKG is
-# checked on its own and the ones that would take more along are kept (which
-# can make others fail in turn, so it repeats until nothing changes).
-# Messages go to stderr because callers capture stdout.
+# _cleanup_filter EXTRA_ALLOW_CSV PKG...: print PKGs removable alone (stdout is captured).
 _cleanup_filter() {
   local extra="$1" base ok out p dir="$MODULE_TMP/sim"; shift
   local -a keep=("$@") next=()
@@ -132,8 +118,7 @@ _cleanup_candidates() {
   if (( ${#inst[@]} )); then _cleanup_filter "$extra" "${inst[@]}"; fi
 }
 
-# List PKG... and whatever else apt would remove with them (beyond what the
-# earlier picks already take along).
+# List PKG... and whatever else apt would remove with them (beyond earlier picks).
 _cleanup_show() {
   local also
   printf '       - %s\n' "$@"
@@ -151,8 +136,7 @@ _cleanup_ask_one() {
   if ask_yes_no "$question"; then _CLEANUP_REMOVE+=("$@"); fi
 }
 
-# _cleanup_ask_all QUESTION PKG...: keep all, remove all, or pick one by one.
-# Does nothing without PKGs.
+# _cleanup_ask_all QUESTION PKG...: keep all, remove all, or pick one by one; nothing without PKGs.
 _cleanup_ask_all() {
   (( $# > 1 )) || return 0
   local question="$1" p; shift
@@ -228,9 +212,7 @@ _cleanup_file_manager() {
   done
 }
 
-# Otter's shell pieces, once Noctalia is what starts at login. The greeter,
-# terminal and file manager have their own questions; packages that the kept
-# ones still need (wallpaper, portal helpers, fonts) are kept automatically.
+# Otter's shell pieces, once Noctalia starts at login; packages kept apps still need are kept.
 _cleanup_otter_shell() {
   local -a all=() c=()
   pkg_installed noctalia || return 0
@@ -291,8 +273,7 @@ _cleanup_remove() {
 # Picked now, or already removed (e.g. by an earlier run).
 _cleanup_gone() { _cleanup_picked "$1" || ! pkg_installed "$1"; }
 
-# Fill gaps the removal left, and add what the kept apps are missing.
-# Checks what's gone rather than only this run's picks, like _cleanup_fix_configs.
+# Fill gaps the removal left, and add what the kept apps miss (checks what's gone, not picks).
 _cleanup_fill_gaps() {
   # Qalculate replaces Otter's calculator (the apps module does the same on later runs)
   if _cleanup_gone otter-calc; then flatpak_install io.github.Qalculate; fi
@@ -300,9 +281,7 @@ _cleanup_fill_gaps() {
   if ! _cleanup_gone nemo; then apt_install nemo-fileroller; fi
 }
 
-# Point configs that used removed apps at what's left. Checks what's gone
-# rather than only this run's picks, so a re-run also fixes configs left
-# behind by an earlier removal. Every edit is a no-op once it's done.
+# Point configs that used removed apps at what's left; checks what's gone, so re-runs fix it.
 _cleanup_fix_configs() {
   local keys="$HOME/.config/hypr/keybinds.lua" fm="$_CLEANUP_FM_KEEP" p
   local -A desktop=([nemo]=nemo.desktop [otter-files]=org.otter_shell.OtterFiles.desktop [nautilus]=org.gnome.Nautilus.desktop)
@@ -342,8 +321,7 @@ _cleanup_fix_configs() {
     sed "${sed_args[@]}" "$keys" | write_file "$keys" 0644
   fi
 
-  # PikaOS's portals.conf for Hyprland names Otter's portal (and stays behind,
-  # since removal keeps config files); override it per user
+  # PikaOS's Hyprland portals.conf names Otter's portal and survives removal; override it per user
   if _cleanup_gone otter-files && grep -qs '^default=otter' /etc/xdg/xdg-desktop-portal/hyprland-portals.conf; then
     write_file "$HOME/.config/xdg-desktop-portal/hyprland-portals.conf" 0644 < <(printf '[preferred]\ndefault=hyprland;gtk\n')
     if write_changed; then

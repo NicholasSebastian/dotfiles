@@ -9,26 +9,14 @@ MODULE_DEFAULT=1
 MODULE_RISKY=1
 }
 
-# Follows https://wiki.pika-os.com/en/guides-wiki/noctalia-shell-switch
-# Otter stays installed and otter-greeter stays your login screen; only Otter's
-# bar/notifications/launcher/etc. stop starting at login.
-#
-# The edited files are built in a scratch dir, shown as a diff, syntax-checked
-# with luac and only then written, so a broken edit never reaches your config.
-# Differences from the wiki, on purpose:
-#   - multi-line Otter bindings (volume/brightness/caps-lock OSD, screenshot
-#     variants) are commented out whole, not just single-line ones
-#   - the control center is on SUPER+SHIFT+S, because SUPER+S already
-#     toggles floating windows in your keybinds.lua
+# Switches Otter's shell to Noctalia; edits are diffed and luac-checked before writing.
 
 _NOCTALIA_OTTER_EXEC='otter-(wallpaper|osd|notifications|polkit|idle|theme-gen|weather|search|clip|bar)'
 _NOCTALIA_OTTER_KEYS='otter-(launcher|screenshot|shot|rec|transcribectl|overview|osd)'
 _NOCTALIA_BLOCK_START='-- >>> pikaos-setup: noctalia >>>'
 _NOCTALIA_BLOCK_END='-- <<< pikaos-setup: noctalia <<<'
 
-# Comment out every statement that starts with START (an ERE) and contains
-# TARGET anywhere in it. A statement runs until its parentheses balance, so
-# bindings split over several lines are handled whole.
+# Comment out every statement starting with START (ERE) and containing TARGET; multi-line whole.
 _noctalia_comment_out() {
   local start="$1" target="$2" file="$3"
   awk -v start="$start" -v target="$target" '
@@ -51,8 +39,7 @@ _noctalia_comment_out() {
   ' "$file"
 }
 
-# Add hl.exec_cmd("noctalia") inside the hyprland.start block (after the last
-# Otter line there), so it runs once at login rather than on every reload.
+# Add hl.exec_cmd("noctalia") after the last Otter line in hyprland.start (runs once at login).
 _noctalia_add_exec() {
   local file="$1"
   if grep -qE '^[[:space:]]*hl[.]exec_cmd[(]"noctalia"[)]' "$file"; then cat "$file"; return 0; fi
@@ -125,10 +112,7 @@ _noctalia_switch() {
     [[ -f "$f" ]] || module_skip "$f not found, so the config wasn't changed. Follow the wiki guide by hand."
   done
 
-  # A config that already starts Noctalia was switched before: by this module
-  # (its marked blocks are kept up to date) or by the dotfiles repo, whose hypr
-  # files carry the binds and layer rules without the markers. Then only Otter
-  # leftovers are still commented out; adding the blocks again would duplicate them.
+  # Config already starting Noctalia was switched before; only Otter leftovers get commented out.
   local switched=0
   if grep -qE '^[[:space:]]*hl[.]exec_cmd[(]"noctalia"[)]' "$exec_lua"; then switched=1; fi
 
@@ -189,8 +173,7 @@ _noctalia_switch() {
     info "Edited files pass luac -p"
   fi
 
-  # One-time backup of the untouched Otter config: your undo button.
-  # -L copies the real files even if ~/.config/hypr is a symlink.
+  # One-time backup of the untouched Otter config (your undo); -L copies real files via symlinks.
   if [[ ! -e "$backup" ]]; then run cp -aL "$hypr" "$backup"; fi
 
   for f in "${changed[@]}"; do write_file "$hypr/$f" 0644 <"$new/$f"; done
@@ -210,9 +193,7 @@ _noctalia_switch() {
   followup manual "Noctalia undo: restore ~/.config/hypr/*.setup-bak.$TS, or: rm -rf ~/.config/hypr && cp -a $backup ~/.config/hypr"
 }
 
-# What Noctalia's "GTK and Qt Applications" template needs to colour your
-# apps from its palette (no Kvantum: Noctalia generates the Qt colours).
-# QT_QPA_PLATFORMTHEME=qt6ct is already set in PikaOS's hypr/env.lua.
+# For Noctalia's "GTK and Qt Applications" template; Qt6 platform theme is qt6ct (PikaOS env.lua).
 _noctalia_theming() {
   local pkgs=(
     nwg-look                               # GTK settings: theme, icons, cursor, font
@@ -220,9 +201,7 @@ _noctalia_theming() {
   )
   apt_install "${pkgs[@]}"
 
-  # adw-gtk3: libadwaita look for GTK3 apps. From apt if packaged (Debian and
-  # PikaOS call it adw-gtk3-theme), otherwise the official release (.tar.xz,
-  # sha256-checked) into ~/.local/share/themes.
+  # adw-gtk3 (libadwaita look for GTK3): apt adw-gtk3-theme if packaged, else sha256-checked build.
   local themes="$HOME/.local/share/themes"
   if [[ -d /usr/share/themes/adw-gtk3 || -d "$themes/adw-gtk3" ]]; then
     info "adw-gtk3 theme already installed"
@@ -238,8 +217,7 @@ _noctalia_theming() {
     fi
   fi
 
-  # Qt settings. The KDE-patched qt6ct reads KDE colour schemes, so KDE apps
-  # (Krita, Kdenlive) follow the colour scheme too. Plain qt6ct otherwise.
+  # Qt: prefer the KDE-patched qt6ct (reads KDE colour schemes; Krita/Kdenlive follow), else qt6ct.
   if apt_available qt6ct-kde; then
     apt_install qt6ct-kde
   elif pkg_installed qt6ct; then
@@ -251,8 +229,7 @@ _noctalia_theming() {
 
   # Same GTK theme for Flatpak apps
   flatpak_install org.gtk.Gtk3theme.adw-gtk3 org.gtk.Gtk3theme.adw-gtk3-dark
-  # Noctalia's colours for Flatpak GTK apps: let them read ~/.config/gtk-3.0
-  # and gtk-4.0 (gtk.css imports Noctalia's generated noctalia.css).
+  # Let Flatpak GTK apps read ~/.config/gtk-3.0 and gtk-4.0 so Noctalia's noctalia.css applies.
   local fs
   fs="$(flatpak_overrides filesystems)"
   if [[ "$fs" == *";xdg-config/gtk-3.0:ro;"* && "$fs" == *";xdg-config/gtk-4.0:ro;"* ]]; then
@@ -262,8 +239,7 @@ _noctalia_theming() {
   fi
 }
 
-# Theming only runs once the switch went through (it exits the module when
-# skipped or declined), as when theming was its own module needing noctalia.
+# Theming runs only after the switch went through; a skipped/declined switch exits the module.
 noctalia_run() {
   _noctalia_switch
   _noctalia_theming

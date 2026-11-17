@@ -70,9 +70,7 @@ kvm_run() {
       run sudo virsh net-start default
     fi
 
-    # ufw's "deny incoming" also blocks VMs asking the host for an IP address
-    # (DHCP) and DNS on libvirt's bridge, so they'd boot with no network.
-    # Adding an existing ufw rule is a no-op.
+    # ufw's deny-incoming blocks VMs' DHCP/DNS on libvirt's bridge; re-adding a rule is a no-op.
     if (( has_ufw )); then
       run sudo ufw allow in on virbr0 comment 'libvirt VMs: DHCP/DNS'
       run sudo ufw route allow in on virbr0 comment 'libvirt VMs: internet'
@@ -82,8 +80,7 @@ kvm_run() {
     info "KVM/libvirt is already set up"
   fi
 
-  # virtio drivers for Windows guests (not risky; just a download). Fedora
-  # publishes no checksum next to the 'stable' link.
+  # virtio drivers for Windows guests; Fedora publishes no checksum next to the 'stable' link.
   if [[ -f "$VM_DIR/virtio-win.iso" ]]; then
     info "virtio-win.iso already in $VM_DIR"
   else

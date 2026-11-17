@@ -15,10 +15,7 @@ _dev_docker() {
   # docker-cli holds the 'docker' command; it's only a Recommends of docker.io
   apt_install docker.io docker-cli docker-compose docker-buildx
 
-  # Docker writes its own firewall rules and bypasses ufw, so '-p 3000:3000'
-  # would be reachable from any network you join. Bind published ports to
-  # localhost by default; use '-p 0.0.0.0:3000:3000' when you mean it.
-  # An existing daemon.json is yours and left alone.
+  # Docker bypasses ufw; published ports bind to 127.0.0.1 unless a daemon.json already exists.
   if [[ ! -e /etc/docker/daemon.json ]]; then
     printf '{ "ip": "127.0.0.1" }\n' | write_file /etc/docker/daemon.json
     if systemctl is-active -q docker.service 2>/dev/null; then
@@ -61,8 +58,7 @@ _dev_tools() {
 _dev_js() {
   mise_use pnpm@latest
 
-  # Global installs are for quick use and editors. Projects should still add
-  # them as dev dependencies, as the Oxc docs recommend: pnpm add -D oxlint oxfmt
+  # Global installs are for quick use; projects should still add them as dev deps (pnpm add -D).
   local globals=(
     oxlint
     oxfmt
@@ -98,8 +94,7 @@ _dev_editors() {
     run rm -rf "$nvim_dir/.git"
   fi
 
-  # JetBrains IDEs from Flathub. IntelliJ IDEA is one product since 2025.3:
-  # the core is free, Ultimate features need a subscription (30-day trial).
+  # JetBrains IDEs from Flathub; IDEA's core is free, Ultimate needs a subscription (30-day trial).
   local jetbrains=(
     com.jetbrains.IntelliJ-IDEA-Ultimate    # IntelliJ IDEA (free core)
     # com.jetbrains.IntelliJ-IDEA-Community # IntelliJ IDEA Open: open-source build, no Ultimate trial

@@ -21,8 +21,7 @@ fonts_run() {
     warn "ttf-mscorefonts-installer not available (contrib repo off?), skipping"
   fi
 
-  # Nerd Fonts, from the latest release with GitHub's sha256. Checks for font
-  # files, not just the folder, so an interrupted install is retried.
+  # Nerd Fonts from the latest release (GitHub sha256); font-file check lets failed installs retry.
   local nerd_fonts=(
     JetBrainsMono                          # code
     Iosevka                                # narrow alternative

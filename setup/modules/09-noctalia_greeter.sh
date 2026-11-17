@@ -10,18 +10,7 @@ MODULE_DEPS=(noctalia)
 MODULE_RISKY=1
 }
 
-# Upstream: https://docs.noctalia.dev/greeter/installation/ and
-# https://docs.noctalia.dev/noctalia/getting-started/installation/#debian
-#
-# PikaOS is Debian sid, so this uses Noctalia's 'unstable/' suite. Its
-# noctalia-greeter package (checked: 1.7.0-2) configures greetd itself: it
-# ships /etc/greetd/noctalia-greeter.toml (greeter user _greetd) plus a
-# greetd.service drop-in that points greetd at that file. So
-# /etc/greetd/config.toml is left alone.
-#
-# Nothing changes until you reboot: the old login screen is disabled, not
-# stopped, so your current session keeps running (upstream uses --now, which
-# would end it on the spot). An undo script goes to ~/restore-login-screen.sh.
+# Old login screen is disabled, not stopped (lives until reboot); undo: ~/restore-login-screen.sh.
 
 _NG_REPO_URI="https://pkg.noctalia.dev/deb/"
 _NG_SUITE="unstable/"
@@ -32,8 +21,7 @@ _NG_TOML="/var/lib/noctalia-greeter/greeter.toml"
 _NG_COMPOSITOR=/usr/bin/noctalia-greeter-compositor
 _NG_PATCH="$SETUP_DIR/files/noctalia-greeter/keep-unused-outputs-black.patch"
 
-# Add Noctalia's APT repo, pinned low so it only supplies packages PikaOS
-# doesn't have and never replaces PikaOS's own (like the noctalia shell).
+# Add Noctalia's APT repo, pinned low so it never replaces PikaOS's own packages.
 _noctalia_greeter_add_repo() {
   info "noctalia-greeter isn't in PikaOS's repos, adding Noctalia's Debian sid repo (pinned low)"
   if is_dry; then
@@ -63,23 +51,14 @@ _noctalia_greeter_add_repo() {
   followup manual "Noctalia's repo key expires 2027-06-01. If 'apt update' then complains, re-run './setup.sh --only noctalia_greeter' to fetch the renewed key (same fingerprint). If the run instead stops on a fingerprint mismatch, Noctalia replaced the key: check the new fingerprint against Noctalia's docs before putting it in _NG_KEY_FPR in modules/09-noctalia_greeter.sh."
 }
 
-# Make greetd the login screen in both places Debian keeps it: the
-# display-manager.service link and /etc/X11/default-display-manager. Display
-# manager packages' maintainer scripts rebuild the link from that file when
-# they're upgraded or removed, so a stale entry (PikaOS ships otter-greeterd)
-# would switch the login screen back, or to nothing once otter-greeter is
-# gone. The cleanup module calls this too, after removing otter-greeter.
+# Make greetd the login screen in display-manager.service and /etc/X11/default-display-manager.
 _noctalia_greeter_make_default() {
   printf '/usr/sbin/greetd\n' | write_file /etc/X11/default-display-manager 0644
   if [[ "$(dm_unit)" != greetd.service ]]; then run sudo systemctl enable --force greetd.service; fi
   printf '%s\n' greetd.service >"$RUN_DIR/dm_expected"
 }
 
-# PikaOS enables eCryptfs's PAM profile (pam_ecryptfs.so in common-auth, as
-# 'required') though nothing uses an encrypted home. It once crashed greetd's
-# auth worker (SIGSEGV in pam_ecryptfs), which leaves the greeter waiting with
-# no error, so the login silently does nothing. Turned off when no eCryptfs
-# home exists; undo: sudo pam-auth-update --enable ecryptfs-utils
+# Turn off unused PAM eCryptfs: it can crash greetd's auth worker and silently break login.
 _noctalia_greeter_no_ecryptfs() {
   grep -qs 'pam_ecryptfs' /etc/pam.d/common-auth || return 0
   if [[ -d /home/.ecryptfs || -d "$HOME/.ecryptfs" ]]; then
@@ -94,11 +73,7 @@ _noctalia_greeter_no_ecryptfs() {
   fi
 }
 
-# _noctalia_greeter_set_output FILE NAME RATES: print FILE with [output] name
-# and refresh_rate set to NAME and RATES, right under the [output] header.
-# An empty NAME removes name (= all monitors); RATES "-" leaves refresh_rate
-# as it is, empty removes it. Adds an [output] section at the end if needed.
-# Other keys and sections are kept.
+# _noctalia_greeter_set_output FILE NAME RATES: print FILE with [output] name/refresh_rate set.
 _noctalia_greeter_set_output() {
   local n="${2//\\/\\\\}" r="${3//\\/\\\\}"
   n="${n//\"/\\\"}"; r="${r//\"/\\\"}"
@@ -125,10 +100,7 @@ _noctalia_greeter_set_output() {
     }' "$1"
 }
 
-# CONNECTOR<TAB>HZ per monitor: the highest refresh rate at the monitor's
-# preferred resolution (the greeter uses that resolution, and applies
-# refresh_rate at it). Hyprland lists the preferred mode first, like DRM.
-# Without a running Hyprland (e.g. a Niri session) this prints nothing.
+# CONNECTOR<TAB>HZ per monitor: top refresh rate at preferred resolution; empty without Hyprland.
 _noctalia_greeter_max_rates() {
   have hyprctl || return 0
   hyprctl monitors all -j 2>/dev/null | jq -r '
@@ -138,14 +110,7 @@ _noctalia_greeter_max_rates() {
     | "\(.name)\t\($hz | round)"' 2>/dev/null || true
 }
 
-# Upstream turns every monitor except the pinned one off while the greeter
-# runs (choose_outputs() in src/compositor/noctalia_compositor.c), so they
-# lose signal. This builds the compositor from the installed version's
-# source with files/noctalia-greeter/keep-unused-outputs-black.patch, which
-# keeps them on and black instead, and installs it over the packaged binary.
-# A noctalia-greeter upgrade puts the stock binary back (monitors switch off
-# again, nothing breaks); the next run notices via the stamp and rebuilds.
-# Back to stock: sudo apt install --reinstall noctalia-greeter
+# Build the greeter compositor with a patch that keeps unused monitors on (black) instead of off.
 _noctalia_greeter_patch_compositor() {
   local ver stamp="$LOG_DIR/noctalia-greeter-compositor.stamp" want=""
   local src="$MODULE_TMP/noctalia-greeter-src"
@@ -192,10 +157,7 @@ _noctalia_greeter_patch_compositor() {
   followup manual "Noctalia Greeter: after a noctalia-greeter update, re-run './setup.sh --only noctalia_greeter' to rebuild the patched compositor (until then the other monitors switch off again). Back to stock: sudo apt install --reinstall noctalia-greeter"
 }
 
-# Which monitor shows the login screen. Noctalia Greeter shows it on every
-# monitor, or on one pinned with [output] name in greeter.toml; it can't do a
-# subset (https://docs.noctalia.dev/greeter/displays/). The directory is
-# _greetd's (mode 750), so the file is read and written with sudo.
+# Which monitor shows the login screen: all, or one pinned via [output] name; needs sudo.
 _noctalia_greeter_displays() {
   local conn id key cur="" known=1 exists=0 i c=0 hz rates="" rate_info=""
   local -A max_hz=()
@@ -217,8 +179,7 @@ _noctalia_greeter_displays() {
     if [[ -n "$conn" && "$hz" =~ ^[0-9]+$ ]]; then max_hz[$conn]=$hz; fi
   done < <(_noctalia_greeter_max_rates)
 
-  # Current setting (dry run: only if sudo needs no password). The copy in
-  # $MODULE_TMP is meant to be ours, so sudo not covering '>' is intended.
+  # Current setting (dry run: only if sudo needs no password); sudo not covering '>' is intended.
   : >"$old"
   # shellcheck disable=SC2024
   if is_dry; then
@@ -233,8 +194,7 @@ _noctalia_greeter_displays() {
       v = $0; sub(/^[^=]*=[[:space:]]*"/, "", v); sub(/".*$/, "", v); print v; exit
     }' "$old")"
 
-  # One entry per monitor. Pin the stable id (connector numbers can change
-  # between boots) unless it's empty or shared by two identical monitors.
+  # One entry per monitor; pin the stable id unless it's empty or shared by identical monitors.
   for i in "${!conns[@]}"; do
     key="${conns[i]}"
     if [[ -n "${ids[i]}" ]] && (( $(printf '%s\n' "${ids[@]}" | grep -cxF -- "${ids[i]}") == 1 )); then key="${ids[i]}"; fi
@@ -243,8 +203,7 @@ _noctalia_greeter_displays() {
     if [[ -n "$hz" ]]; then rates+="${rates:+; }$key:$hz"; rate_info+="${rate_info:+, }${conns[i]} $hz Hz"; fi
     if [[ -n "$cur" && ( "$cur" == "${conns[i]}" || "$cur" == "${ids[i]}" ) ]]; then c=$(( i + 1 )); fi
   done
-  # The current choice goes first, so Enter keeps it. A pin to a monitor
-  # that isn't connected counts as "All monitors": that's what the greeter does.
+  # Current choice goes first so Enter keeps it; a pin to a disconnected monitor means All monitors.
   if (( known )); then
     labs[c]+=" (current)"
     if (( c > 0 )); then
@@ -263,9 +222,7 @@ _noctalia_greeter_displays() {
     key="$cur"
     if [[ -n "$key" ]]; then _noctalia_greeter_patch_compositor; fi
   fi
-  # Every monitor at its highest refresh rate (the greeter otherwise uses
-  # the EDID-preferred mode, often 60 Hz); "-" keeps any existing setting
-  # when the rates can't be read from this session.
+  # Use each monitor's highest refresh rate; "-" keeps any existing setting if rates can't be read.
   if [[ -n "$rates" ]]; then info "Login screen refresh rates: $rate_info"; else rates="-"; info "Couldn't read the monitors' refresh rates (needs a running Hyprland); refresh rate left as it is"; fi
   _noctalia_greeter_set_output "$old" "$key" "$rates" >"$new"
   if (( known )) && cmp -s "$old" "$new"; then
@@ -293,13 +250,7 @@ _noctalia_greeter_displays() {
   followup reboot "Noctalia Greeter: from the next boot the login screen shows on ${key:-all monitors}${rate_info:+, at $rate_info}."
 }
 
-# Copy Noctalia's look (wallpaper, colours, font, monitor layout) to the
-# login screen now; [shell.greeter_sync] auto_sync in the dotfiles keeps it
-# in sync afterwards. Sync runs a root helper through pkexec; the package's
-# passwordless-sync rule lets only this user, in an active local session,
-# run only that helper with --sync, so it never prompts (there's no polkit
-# agent to show a prompt). https://docs.noctalia.dev/greeter/sync/
-# Undo: sudo noctalia-greeter passwordless-sync disable $USER
+# Copy Noctalia's look to the login screen now via passwordless pkexec sync (undo: sync disable).
 _noctalia_greeter_sync() {
   local out
   if ! run sudo noctalia-greeter passwordless-sync enable "$USER_NAME"; then
@@ -373,8 +324,7 @@ noctalia_greeter_run() {
   _noctalia_greeter_displays
   _noctalia_greeter_no_ecryptfs
 
-  # An [initial_session] means automatic login: the greeter would only
-  # appear after you log out, never at boot
+  # An [initial_session] means automatic login: the greeter only appears after logging out.
   if grep -qs '^\[initial_session\]' "$_NG_CFG"; then
     followup manual "Noctalia Greeter: $_NG_CFG has an [initial_session] (automatic login), so you'll only see the greeter after logging out."
   fi
@@ -396,8 +346,7 @@ echo "Login screen restored to $old_unit. Optional: sudo apt remove noctalia-gre
 EOF
   fi
 
-  # Switch login screens for the next boot. No --now: stopping the current
-  # one would end this session on the spot.
+  # Switch login screens for the next boot; no --now, as stopping the current one ends this session.
   if [[ -n "$old_unit" && "$old_unit" != greetd.service ]]; then run sudo systemctl disable "$old_unit"; fi
   _noctalia_greeter_make_default
   _noctalia_greeter_sync

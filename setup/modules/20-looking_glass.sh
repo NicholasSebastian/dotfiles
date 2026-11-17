@@ -17,9 +17,7 @@ looking_glass_run() {
     return 0
   fi
 
-  # The docs' apt list plus libgmp-dev, libxfixes-dev and libwayland-bin,
-  # which the docs list as required but leave out of the one-liner.
-  # PikaOS uses PipeWire, so the PipeWire libraries are right here.
+  # Docs' apt list plus libgmp-dev, libxfixes-dev, libwayland-bin (required, not in its one-liner).
   local deps=(
     binutils-dev cmake fonts-dejavu-core libfontconfig-dev gcc g++ pkg-config make
     libegl-dev libgl-dev libgles-dev libgmp-dev libspice-protocol-dev nettle-dev
