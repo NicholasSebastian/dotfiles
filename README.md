@@ -223,7 +223,8 @@ The `ai` module and the configs in `private_dot_hermes/` set up [Hermes Agent](h
 
 - **Sandbox:** the terminal runs in Docker. Of your files it sees `~/hermes-workspace`, mounted at
   `/workspace` (plus Hermes' own read-only skill and cache mounts from `~/.hermes`). The default profile's
-  sandbox also mounts all of `~/.hermes` read-write at `/root/.hermes`, so the agent can edit its own
+  sandbox also mounts all of `~/.hermes` read-write at `/root/.hermes`, with `HOME=/root` and
+  `HERMES_HOME=/root/.hermes` set inside it, so the agent can edit its own
   configuration. That includes `.env`, `auth.json` and every profile's files, and a changed
   `terminal.docker_volumes` or `terminal.backend` takes effect on the next sandbox start, so for the
   default profile the sandbox is not a security boundary. The three named profiles don't get this mount.
