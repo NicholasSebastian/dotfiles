@@ -4,24 +4,14 @@
 # shellcheck disable=SC2034  # header variables are read by setup.sh after sourcing
 {
 MODULE_ID=ai
-MODULE_DESC="Claude Code (CLI + Desktop), Oh My Pi, Hermes Agent (Docker sandbox, profiles, Mnemosyne), Ollama (+ optional Open WebUI), ComfyUI (CLI + Desktop), Upscayl"
+MODULE_DESC="Claude Code (CLI + Desktop), Oh My Pi, graphify, Hermes Agent (Docker sandbox, profiles, Mnemosyne), Ollama (+ optional Open WebUI), ComfyUI (CLI + Desktop), Upscayl"
 MODULE_DEFAULT=1
 MODULE_DEPS=(runtimes dev)               # bun, uv; Docker for Hermes' terminal sandbox and Open WebUI
 }
 
 # --- Coding agents -----------------------------------------------------------
 
-# Hermes Desktop: built from the Hermes checkout. Plain 'hermes desktop' builds
-# and then runs the app in the foreground, which would block the run;
-# --build-only builds it, then exits. 'hermes update' rebuilds it from then on.
-# The launcher entry is only written after a build succeeds, so a failed build
-# is retried on the next run.
-#
-# Hermes rewrites its .desktop entry on every launch unless desktop.manage_launcher_entry
-# is false. The dotfiles' config.yaml declares that too, but this module has no dotfiles
-# dependency, so set it in the live config first. The entry then forces the GPU on: the
-# app's sticky NVIDIA fallback otherwise renders in software (SwiftShader) and the UI lags.
-# Electron flags come from desktop.electron_flags in the dotfiles' config.yaml.
+# Hermes Desktop: --build-only; entry only after success; GPU forced (NVIDIA fallback = SwiftShader)
 _ai_hermes_desktop() {
   local entry="$HOME/.local/share/applications/com.nousresearch.hermes.desktop"
   if [[ -f "$entry" ]]; then
@@ -52,10 +42,12 @@ _ai_cli() {
   # Oh My Pi ('omp'). mise's GitHub backend is one of upstream's documented methods.
   mise_use "github:can1357/oh-my-pi"
 
-  # Hermes Agent (Nous Research): upstream's installer, the only Linux install
-  # (Hermes Desktop has no Linux package). It installs to ~/.hermes and links
-  # ~/.local/bin/hermes. --non-interactive skips its setup wizard, which needs
-  # a terminal; stdin is /dev/null while modules run.
+  # graphify (PyPI 'graphifyy'): the skill is re-registered every run so it matches the package.
+  need uv runtimes
+  if have graphify; then info "graphify already installed"; else run uv tool install graphifyy; fi
+  run graphify install --platform agents || soft_fail "graphify: registering the skill failed; retry with 'graphify install --platform agents'"
+
+  # Hermes Agent: upstream installer (only Linux install); --non-interactive as stdin is /dev/null.
   if have hermes; then
     info "Hermes Agent already installed"
   else
@@ -76,12 +68,7 @@ _ai_cli() {
   fi
 }
 
-# Claude Desktop (beta on Linux): Chat, Cowork and Claude Code in one app,
-# from Anthropic's apt repo as https://code.claude.com/docs/en/desktop-linux
-# describes, so it updates with 'apt upgrade'. The key is pinned by
-# fingerprint and kept armored at the path the package writes its identical
-# copy to. The package leaves a sources file without its marker line alone,
-# so the two never rewrite each other's.
+# Claude Desktop (beta): from Anthropic's apt repo (updates via apt); key pinned by fingerprint.
 _AI_CLAUDE_KEY_FPR="31DDDE24DDFAB679F42D7BD2BAA929FF1A7ECACE"
 _AI_CLAUDE_KEYRING=/usr/share/keyrings/claude-desktop-archive-keyring.asc
 _ai_claude_desktop() {
@@ -101,10 +88,7 @@ EOF
   if write_changed; then changed=1; fi
   if (( changed )); then apt_update; fi
 
-  # apt_install leaves out recommended packages, so the ones the app uses are
-  # listed: sound, tray icon, bubblewrap/socat/ssh for Claude Code sessions,
-  # QEMU + UEFI firmware + virtiofsd for Cowork's VM, and GNOME Keyring to
-  # keep the sign-in (not on KDE: it conflicts with KDE Wallet there).
+  # apt_install skips recommends, so the app's needs are listed; gnome-keyring skipped on KDE.
   local pkgs=(libasound2t64 libayatana-appindicator3-1 bubblewrap socat openssh-client qemu-system-x86 ovmf virtiofsd)
   if ! pkg_installed plasma-workspace; then pkgs+=(gnome-keyring); fi
   if ! pkg_installed claude-desktop; then fresh=1; fi
@@ -129,8 +113,7 @@ _AI_LOCAL_MODELFILE="$SETUP_DIR/files/ollama/qwen3.5-4b-64k.Modelfile"
 _ai_local() {
   if have ollama; then info "Ollama already installed"; else install_script https://ollama.com/install.sh sh; fi
 
-  # Ollama tuning: 65k context, with flash attention and an 8-bit KV cache to fit in VRAM.
-  # Hermes Agent rejects models whose context is under 64k.
+  # Ollama: 65k context (Hermes rejects <64k), flash attention + 8-bit KV cache to fit in VRAM.
   write_file /etc/systemd/system/ollama.service.d/override.conf <<'EOF'
 [Service]
 Environment="OLLAMA_CONTEXT_LENGTH=65536"
@@ -142,10 +125,7 @@ EOF
     run sudo systemctl restart ollama
   fi
 
-  # LM Studio Bionic: LM Studio's agent app, official .deb (separate from the
-  # classic LM Studio app). Its postinst adds an AppArmor profile so Electron's
-  # sandbox works; unlike Comfy Desktop it adds no apt repo. ~1 GB download,
-  # no checksum published; it's fetched over TLS.
+  # LM Studio Bionic .deb: adds an AppArmor profile, no apt repo; ~1 GB, no checksum (TLS only).
   # if pkg_installed lmstudio-bionic; then
   #   info "LM Studio Bionic already installed"
   # else
@@ -162,8 +142,7 @@ EOF
       info "Open WebUI container already exists"
       followup manual "Open WebUI: if it shows no models, recreate it: sudo docker rm -f open-webui, then re-run './setup.sh --only ai'"
     else
-      # Host network: Ollama only listens on 127.0.0.1:11434, which the
-      # bridge network can't reach. HOST/PORT keep the UI on localhost:3000.
+      # Host network: Ollama listens on 127.0.0.1 only; HOST/PORT keep the UI on localhost:3000.
       run sudo docker run -d --name open-webui --restart always \
         --network=host -e HOST=127.0.0.1 -e PORT=3000 \
         -e OLLAMA_BASE_URL=http://127.0.0.1:11434 \
@@ -192,10 +171,7 @@ EOF
 
 # --- Hermes Agent setup ------------------------------------------------------
 
-# Workspace the Docker sandbox sees as /workspace, with an Obsidian vault in it.
-# vault/read-only is mounted read-only and vault/private is masked by an empty
-# folder, both via terminal.docker_volumes in private_dot_hermes' configs,
-# which name these paths under {{ .chezmoi.homeDir }}: keep them in sync.
+# Sandbox /workspace + Obsidian vault; keep paths in sync with private_dot_hermes' docker_volumes.
 _AI_HERMES_WS="$HOME/hermes-workspace"
 _AI_HERMES_MASK="$HOME/.local/share/hermes/vault-private-mask"
 _AI_HERMES_IMAGE=nousresearch/hermes-sandbox:desktop   # Hermes' default terminal.docker_image
@@ -206,9 +182,7 @@ declare -gA _AI_HERMES_DESC=(
   [librarian]="Sole writer of the Obsidian wiki at /workspace/vault via llm-wiki; stages new material in review/ and applies it only after approval."
 )
 
-# Profiles get their config.yaml and SOUL.md from the dotfiles (the dotfiles
-# module runs later); this creates them, sets the non-secret .env keys and
-# installs the plugins.
+# config.yaml/SOUL.md come from the dotfiles (later); this creates profiles, .env keys, plugins.
 _ai_hermes() {
   if ! is_dry && ! have hermes; then soft_fail "Hermes setup skipped: the hermes command isn't available"; return 0; fi
 
@@ -226,9 +200,7 @@ _ai_hermes() {
 EOF
   fi
 
-  # Pull the sandbox image now. Hermes otherwise pulls it inside your first
-  # message, behind a 60 s probe timeout: that turn then takes minutes.
-  # sudo: the docker group doesn't apply until the next login.
+  # Pull the sandbox image now, or Hermes pulls it mid-first-message (60 s probe timeout, minutes).
   if ! is_dry && sudo docker image inspect "$_AI_HERMES_IMAGE" >/dev/null 2>&1; then
     info "Hermes sandbox image already pulled"
   else
@@ -265,11 +237,7 @@ EOF
   _ai_hermes_mnemosyne
 }
 
-# Mnemosyne memory for the orchestrator profile only (memory.provider is set in
-# its dotfiles config). pipx keeps it out of Hermes' runtime venv, which
-# 'hermes update' replaces; wrapper mode writes a real plugin folder into the
-# profile that imports from the pipx venv. That venv must run Hermes' Python
-# major.minor, so a Hermes update that changes it gets a fresh venv here.
+# Mnemosyne (orchestrator only): pipx venv must match Hermes' Python major.minor; recreated if not.
 _ai_hermes_mnemosyne() {
   local home="$HOME/.hermes/profiles/orchestrator" mm venv venv_mm
   local -a force=()
@@ -311,9 +279,7 @@ _ai_creative() {
   need uv runtimes
   if have comfy; then info "comfy-cli already installed"; else run uv tool install comfy-cli; fi
 
-  # ComfyUI gets its own Python 3.12 environment. Your global Python (from
-  # mise) tracks the newest release, which PyTorch's GPU builds usually
-  # don't support yet, and this keeps PyTorch's ~5 GB out of it anyway.
+  # ComfyUI gets its own Python 3.12 venv: global Python is too new for PyTorch GPU builds.
   local venv="$AI_DIR/.venv"
   if [[ ! -x "$venv/bin/python" ]]; then
     run mkdir -p "$AI_DIR"
@@ -324,9 +290,7 @@ _ai_creative() {
   gpu="$(_ai_gpu)"
   if [[ "$gpu" == cpu ]]; then warn "No NVIDIA/AMD GPU found, ComfyUI will run on CPU"; fi
 
-  # Checks for ComfyUI's main.py rather than the folder, so a failed install
-  # is retried on the next run. Running inside the venv (what 'activate'
-  # does) makes comfy-cli install ComfyUI's packages there.
+  # Checks main.py, not the folder, so a failed install is retried; runs in the venv for comfy-cli.
   if [[ -f "$AI_DIR/ComfyUI/main.py" ]]; then
     info "ComfyUI already installed in $AI_DIR/ComfyUI"
   else
@@ -334,11 +298,7 @@ _ai_creative() {
       comfy --skip-prompt --workspace "$AI_DIR/ComfyUI" install "--$gpu"
   fi
 
-  # Comfy Desktop: official .deb. It installs and launches its own ComfyUI
-  # instances (in ~/ComfyUI-Installs). Its postinst adds Comfy's apt repo, so
-  # updates come through apt, and an AppArmor profile so Electron's sandbox
-  # works (the AppImage would need --no-sandbox). No checksum is published;
-  # it's fetched over TLS.
+  # Comfy Desktop .deb: postinst adds Comfy's apt repo + AppArmor profile; no checksum, TLS only.
   if pkg_installed comfyui-desktop-2; then
     info "Comfy Desktop already installed"
   else
