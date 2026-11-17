@@ -10,7 +10,8 @@ Spawn a subagent with an isolated context + terminal session.
 
 - **Single:** `delegate_task(goal, context)`.
 - **Batch:** `delegate_task(tasks=[{goal, ...}, ...])` runs children in
-  parallel, capped by `delegation.max_concurrent_children` (default 3).
+  parallel, capped by `delegation.max_concurrent_children` (check
+  `hermes_cli/config_defaults.py` for the current default).
 - **Background:** `delegate_task(background=true)` returns a handle
   immediately and keeps the parent loop going; the child's result
   re-enters the conversation as a new turn when it finishes.
@@ -22,6 +23,47 @@ Spawn a subagent with an isolated context + terminal session.
   `terminal(background=True, notify_on_complete=True)`.
 
 Config: `delegation.*` in `config.yaml`.
+
+**Strategies (`delegation.backend`, from the `advanced-delegation` plugin):**
+`default` (delegation.model/provider or parent), `model_map` (named
+provider/model routes under `delegation.backends.model_map.options`), or
+`profile_routes` (child runs AS a listed profile: its model, credentials,
+skills, SOUL.md, terminal policy). One mode at a time; the other mode's
+block is kept. Mode changes apply from the next session. Plugin source and
+README: `$HERMES_HOME/plugins/advanced-delegation/`.
+
+**Subagent fallback — check this whenever routes are configured:**
+- A child pinned by provider/model (every model_map route) gets NO
+  fallback unless one is declared; `delegation.fallback_providers` defaults
+  to null and does NOT inherit the top-level `fallback_providers`.
+- Precedence: route's own `fallback_providers` → `delegation.fallback_providers`
+  → none. `[]` on a route disables it. Profile routes use the target
+  profile's own top-level chain.
+- Fallback entries can't carry reasoning effort; the global
+  `agent.reasoning_overrides` entry for that model applies.
+- Keep slow models (≈20+ min/task) out of subagent chains, and remember
+  `:free` OpenRouter fallbacks share the daily request quota with the main
+  agent — parallel batches burn it fast.
+
+**Planning profile routes (decide per profile before writing config):**
+- Read every profile's `SOUL.md`, `profile.yaml` description and config diff
+  vs default (`disabled_toolsets`, mounts, skills.disabled, memory provider)
+  first — existing profiles often encode a kanban pipeline with human
+  approval gates and deliberately disable `delegation`.
+- Subagents can't ask the user and resolve approvals non-interactively, so a
+  profile whose SOUL requires user approval is only a safe route for
+  staging work; add a SOUL line that approval must come from the user
+  directly, never relayed by an agent. Keep durable/approval-gated flows on
+  kanban; use profile routes for in-turn fan-out.
+- Switching from model_map loses per-task model tiers: each tier needs its
+  own profile (e.g. cheap read-only lookup profile, deep read-only analysis
+  profile, optional workspace-write engineer).
+- Listing a profile hands its keys and terminal access to the delegator:
+  lock new worker profiles down with mounts (vault read-only, no Hermes-home
+  mount), not just SOUL text; enable profile_routes only in the profiles that
+  should delegate.
+- New profiles need their own `.env`/`auth.json` credentials and the default
+  profile's aux/fallback sections; prefer `hermes profile create` on the host.
 
 ### Cron (scheduled jobs)
 

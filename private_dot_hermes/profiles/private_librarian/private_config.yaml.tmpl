@@ -8,6 +8,9 @@ model:
   api_mode: anthropic_messages
 
 agent:
+  image_input_mode: native  # keep Claude seeing images directly now that auxiliary.vision is pinned
+  reasoning_overrides:
+    "openrouter/deepseek/deepseek-v4.1-flash-1017": low  # main-chain fallback step 3
   max_turns: 150
   reasoning_effort: medium
   verbose: false
@@ -64,7 +67,7 @@ custom_providers:
   - name: Groq
     base_url: "https://api.groq.com/openai/v1"
     key_env: HERMES_CUSTOM_API_GROQ_COM_API_KEY
-    model: openai/gpt-oss-120b
+    model: qwen/qwen3.8-27b
     api_mode: chat_completions
     models:
       allam-2-7b: {}
@@ -80,30 +83,50 @@ custom_providers:
       whisper-large-v3-turbo: {}
     models_discovered: true
 
+fallback_providers:
+  - provider: openrouter
+    model: thinkingmachines/inkling-2-small:free
+  - provider: openrouter
+    model: nvidia/nemotron-3.5-super-vl:free
+  - provider: openrouter
+    model: deepseek/deepseek-v4.1-flash-1017
+
 auxiliary:
+  openrouter_model: "nvidia/nemotron-3.5-super-vl:free"  # aux auto-chain backup (default is paid gemini-3.6-flash)
+  vision:
+    provider: "custom:groq"
+    model: qwen/qwen3.8-27b
+  voice_chat:
+    provider: anthropic
+    model: claude-haiku-5-5
+    reasoning_effort: none
+  kanban_decomposer:
+    provider: anthropic
+    model: claude-haiku-5-5
+    reasoning_effort: high
   compression:
-    provider: ollama
-    model: "qwen3.5:4b-64k"
-    base_url: "http://localhost:11434/v1"
-    reasoning_effort: low
+    provider: openrouter
+    model: deepseek/deepseek-v4.1-flash-1017
+    reasoning_effort: none
+    extra_body:
+      provider: {order: [deepseek, morph, inference-net], allow_fallbacks: true}
   title_generation:
     provider: ollama
     model: "qwen3.5:4b-64k"
     base_url: "http://localhost:11434/v1"
     reasoning_effort: low
-  skills_hub:
-    provider: ollama
-    model: "qwen3.5:4b-64k"
-    base_url: "http://localhost:11434/v1"
   mcp:
-    provider: ollama
-    model: "qwen3.5:4b-64k"
-    base_url: "http://localhost:11434/v1"
+    provider: openrouter
+    model: deepseek/deepseek-v4.1-flash-1017
     reasoning_effort: low
+    extra_body:
+      provider: {order: [deepseek, morph, inference-net], allow_fallbacks: true}
   triage_specifier:
-    provider: ollama
-    model: "qwen3.5:4b-64k"
-    base_url: "http://localhost:11434/v1"
+    provider: openrouter
+    model: deepseek/deepseek-v4.1-flash-1017
+    reasoning_effort: low
+    extra_body:
+      provider: {order: [deepseek, morph, inference-net], allow_fallbacks: true}
   profile_describer:
     provider: ollama
     model: "qwen3.5:4b-64k"
@@ -120,6 +143,11 @@ auxiliary:
     reasoning_effort: medium
 
 delegation:
+  fallback_providers:
+    - provider: openrouter
+      model: deepseek/deepseek-v4.1-flash-1017
+    - provider: openrouter
+      model: nvidia/nemotron-3.5-super-vl:free
   backend: model_map
   backends:
     model_map:
@@ -129,6 +157,11 @@ delegation:
           provider: anthropic
           model: claude-haiku-5-5
           reasoning_effort: low
+          fallback_providers:
+            - provider: openrouter
+              model: nvidia/nemotron-3.5-super-vl:free
+            - provider: openrouter
+              model: deepseek/deepseek-v4.1-flash-1017
         - name: standard
           description: "Multi-step work needing judgment: research that compares sources, drafting, organizing findings."
           provider: anthropic
@@ -139,6 +172,11 @@ delegation:
           provider: anthropic
           model: claude-opus-5-5
           reasoning_effort: high
+          fallback_providers:
+            - provider: anthropic
+              model: claude-sonnet-5-5
+            - provider: openrouter
+              model: deepseek/deepseek-v4.1-flash-1017
       default: standard
 
 moa:
@@ -152,7 +190,7 @@ moa:
           model: claude-haiku-5-5
           enabled: true
         - provider: "custom:groq"
-          model: openai/gpt-oss-120b
+          model: qwen/qwen3.8-27b
           enabled: true
       aggregator:
         provider: anthropic
@@ -165,7 +203,7 @@ moa:
       model: claude-haiku-5-5
       enabled: true
     - provider: "custom:groq"
-      model: openai/gpt-oss-120b
+      model: qwen/qwen3.8-27b
       enabled: true
   aggregator:
     provider: anthropic
