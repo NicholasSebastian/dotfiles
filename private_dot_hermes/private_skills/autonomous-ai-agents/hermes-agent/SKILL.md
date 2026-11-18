@@ -67,9 +67,7 @@ hermes proxy                   # OpenAI-compatible local proxy backed by your OA
 
 ## Docker Sandbox Path Mapping (when `terminal.backend: docker`)
 
-`terminal`, `read_file`, `write_file`, `patch` and `search_files` run INSIDE the container, not on the host. The host's `~/.hermes` is volume-mapped to `/root/.hermes`.
-
-- Host paths like `/home/<user>/.hermes` don't exist in the sandbox ("Path not found"). Use `/root/.hermes/...` (or `$HERMES_HOME`) in file tools.
+`terminal`, `read_file`, `write_file`, `patch` and `search_files` run INSIDE the container, not on the host. Where the host's `~/.hermes` appears varies by config and can change between sessions: run `mount | grep hermes` first. It may be mounted at `/root/.hermes`, or rw at its host path (`/home/<user>/.hermes`) with `/root/.hermes` holding only read-only caches/skills. Use whichever path the mounts show is rw; paths from earlier sessions (and SOUL files) may be stale.
 - `write_file` may refuse paths under `/root/.hermes`, warning that the folder is a per-task mirror the host never reads. Check whether that's true: if `state.db-wal` or `gateway_state.json` was modified seconds ago (`ls -la --time-style=full-iso`), the host is using that folder live. With the user's approval, retry with `cross_profile=True`, and ask the user to confirm the change shows up in the app. For files you only hand to the user, write to `/workspace/...` instead.
 - The sandbox is configured with `HOME=/root` and `HERMES_HOME=/root/.hermes`, so `~/.hermes` and `$HERMES_HOME` work in shell commands. Verify with `echo $HOME $HERMES_HOME; ls -d $HERMES_HOME` — on older or misconfigured setups `$HOME` may be `/home/pn` and `$HERMES_HOME` empty; then use `/root/.hermes` explicitly.
 - Source (if git-installed) is readable at `/root/.hermes/hermes-agent/` — check it (e.g. `hermes_cli/config.py`) when docs are ambiguous.

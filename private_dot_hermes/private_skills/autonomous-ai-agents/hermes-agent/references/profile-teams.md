@@ -5,7 +5,7 @@ Use this when the user wants specialists plus a front-door coordinator, for exam
 ## Procedure
 
 1. **Inspect before proposing.** For every profile under `$HERMES_HOME/profiles/`, read `SOUL.md`, `profile.yaml` (description, `ui_meta.hermes-bots.title`), `cron/jobs.json` and the skills list. Also check the Kanban board's task count by assignee, which matters for renames, and `manage_connections status`. Existing profiles often already encode a coordinator → worker → curator chain with approval gates. Extend that chain; don't replace it.
-2. **Write the detailed plan to a file before changing anything.** Put it in `/workspace/plans/<name>.md`. The user reviews the full plan first, then picks how it's applied. The plan should contain:
+2. **Write the detailed plan to a file before changing anything.** Put it in `<workspace>/plans/<name>.md`, using the workspace's real host path from `mount` so the user can open it. The user reviews the full plan first, then picks how it's applied. The plan should contain:
    - constraints, and their consequences for the design
    - a team table (profile, change, reads, writes)
    - the flow diagram
@@ -25,7 +25,10 @@ Use this when the user wants specialists plus a front-door coordinator, for exam
 
 - **Edit another profile's files directly**, at `profiles/<p>/SOUL.md`, `profiles/<p>/profile.yaml` and `profiles/<p>/skills/<category>/<skill>/SKILL.md`. `skill_manage` only writes to the active profile. Preserve the other keys in profile.yaml (`description_auto`, `ui_meta`, `_ui_meta_revisions`).
 - **Rename a profile with `hermes profile rename <old> <new>`** on the host or in the desktop UI, never with `mv`. The command also removes or stops the old gateway service, unroutes the multiplexer and records the rename for Bot Mode. Profile ids must be lowercase `[a-z0-9_-]`, so the display name goes in `ui_meta.hermes-bots.title` (for example, id `bot-boss`, title `Bot Boss`). Editing files before the rename is fine, because the directory moves with them. Afterwards, update any other SOUL that names the old id.
-- **Create new profiles on the host** (`hermes profile create`, or clone a profile so its model, aux and fallback sections match). Don't hand-assemble profile directories.
+- **Create new profiles on the host** (`hermes profile create <name> --clone-from <existing>`, or the desktop app's clone option, so model, aux and fallback sections match). Give the user the command; the sandbox has no Hermes Python env, and running create there would register vault keys/services inside the container. Don't hand-assemble profile directories (Hermes wouldn't register them).
+- **After a clone, finish the profile yourself:** a clone may have no `profile.yaml` (create it with `description`, `description_auto: false`, `ui_meta.hermes-bots.title`); its SOUL.md is the source's (back it up, then replace); move source-specific custom skills into the backup folder; create its workspace output/state folders.
+- **If `write_file` refuses an overwrite as stale/partial even after a full `read_file`,** write the new content to a staging file in the workspace and `cp` it into place with `terminal`, then delete the staging file and re-read to verify.
+- **Per-profile credentials:** skills that store tokens under `$HERMES_HOME` (e.g. google-workspace's `google_token.json`) need a separate auth per profile. Grant each profile only the scopes its role needs.
 - **Transport between bots:** use Kanban. The dispatcher spawns the assigned profile with its own SOUL and skills, and you get state, approvals and an audit trail. For a fan-in board, create N specialist tasks plus one synthesis task assigned to the coordinator, with those N tasks as parents. The `message_agent` tool (`tools/bot_mode_dm.py`) exists, but it is only injected into a "Bot Chat" session on a Bot-Mode-managed install. Check `bot_mode_probe.py` before offering it.
 
 ## Design rules that make bots behave

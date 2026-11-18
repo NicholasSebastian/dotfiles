@@ -28,6 +28,7 @@ terminal:
     - "{{ .chezmoi.homeDir }}/.hermes:{{ .chezmoi.homeDir }}/.hermes"  # Hermes' own home, read-write, at its host path so file paths the agent reports open on the host
   container_disk: 0  # 0 = no per-container disk quota (overlay2 here cannot enforce one; Hermes warns on every start otherwise)
 
+  font_family: JetBrainsMono Nerd Font
 prompt_caching:
   cache_ttl: auto
 
@@ -239,6 +240,7 @@ desktop:
     - "--enable-zero-copy"
   manage_launcher_entry: false
 
+  font_family: Noto Sans
 gateway:
   service_install_choice: install
   multiplex_profiles: true  # the gateway writes this into the default profile at every start; declared so chezmoi and Hermes agree
@@ -253,3 +255,5 @@ telemetry:
     offer_version: 2
     enabled: false
     send: false
+browser:
+  use_real_profile: true

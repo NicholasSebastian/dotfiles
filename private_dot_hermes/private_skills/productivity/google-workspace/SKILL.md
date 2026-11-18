@@ -67,9 +67,12 @@ Calendar/Drive/Sheets/Docs?"**
   Passwords) and takes 2 minutes to set up. No Google Cloud project needed.
   Load the himalaya skill and follow its setup instructions.
 
-- **Email + Calendar** → Continue with this skill, but use
-  `--services email,calendar` during auth so the consent screen only asks for
-  the scopes they actually need.
+- **Email + Calendar** → Continue with this skill. Run `$GSETUP --help` first:
+  if it lists `--services`, pass `--services email,calendar` during auth so the
+  consent screen only asks for the needed scopes. If it doesn't, the script
+  requests its whole fixed `SCOPES` list (Gmail send/modify, full Calendar,
+  Drive, Docs, Sheets, Contacts) — tell the user before auth, and don't call a
+  bot "read-only" unless its token actually is.
 
 - **Calendar/Drive/Sheets/Docs only** → Continue with this skill and use a
   narrower `--services` set like `calendar,drive,sheets,docs`.
@@ -165,7 +168,7 @@ Should print `AUTHENTICATED`. Setup is complete — token refreshes automaticall
 
 ### Notes
 
-- Token is stored at `~/.hermes/google_token.json` and auto-refreshes.
+- Token is stored at `$HERMES_HOME/google_token.json` (per profile) and auto-refreshes. Each profile that uses Google needs its own client-secret copy and its own auth run with `HERMES_HOME` set to that profile's directory.
 - Pending OAuth session state/verifier are stored temporarily at `~/.hermes/google_oauth_pending.json` until exchange completes.
 - If `gws` is installed, `google_api.py` points it at the same `~/.hermes/google_token.json` credentials file. Users do not need to run a separate `gws auth login` flow.
 - To revoke: `$GSETUP --revoke`
