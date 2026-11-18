@@ -83,6 +83,15 @@ the `cronjob` tool, the `hermes cron` CLI (`list`, `add`, `edit`,
   `skip_memory=True` by default, and cron deliveries are framed with a
   header/footer instead of being mirrored into the target gateway
   session (keeps role alternation intact).
+- **Fires only while the gateway runs.** The ticker lives in the gateway.
+  `hermes cron tick` (external-scheduler mode) skips agent jobs until a
+  gateway is up. On a desktop that isn't always on, runs happen when the
+  machine and app are running.
+- **Missed runs:** each job has a catch-up option (`--catch-up on|off`;
+  the default comes from `cron.catch_up_missed`). Recurring jobs run once
+  when the machine comes back, and one-shot jobs skip. Late fires happen
+  at unpredictable times, so prompts for time-of-day jobs need a
+  "late fire merges into the next window" rule.
 
 User docs: https://hermes-agent.nousresearch.com/docs/user-guide/features/cron
 
