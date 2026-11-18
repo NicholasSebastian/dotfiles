@@ -221,19 +221,21 @@ module also selects the Noctalia theme in apps that need a setting for it.
 
 The `ai` module and the configs in `private_dot_hermes/` set up [Hermes Agent](https://hermes-agent.nousresearch.com/):
 
-- **Sandbox:** the terminal runs in Docker. Of your files it sees `~/hermes-workspace`, mounted at
-  `/workspace` (plus Hermes' own read-only skill and cache mounts from `~/.hermes`). The default profile's
-  sandbox also mounts all of `~/.hermes` read-write at `/root/.hermes`, with `HOME=/root` and
-  `HERMES_HOME=/root/.hermes` set inside it, so the agent can edit its own
-  configuration. That includes `.env`, `auth.json` and every profile's files, and a changed
+- **Sandbox:** the terminal runs in Docker and starts in the sandbox's own home, `/root`. Of your files it
+  sees `~/hermes-workspace`, mounted at the same path it has on the host (e.g. `/home/<you>/hermes-workspace`),
+  so the file paths the agent reports there open on your machine; each `SOUL.md` tells it to save files there.
+  Hermes adds its own read-only skill and cache mounts from `~/.hermes` at `/root/.hermes`. The default
+  profile's sandbox also mounts all of `~/.hermes` read-write at its host path, so the agent can edit its own
+  configuration. Hermes' read-only mounts only cover `/root/.hermes`, so through this path skills, caches
+  and the rest are writable too. That includes `.env`, `auth.json` and every profile's files, and a changed
   `terminal.docker_volumes` or `terminal.backend` takes effect on the next sandbox start, so for the
   default profile the sandbox is not a security boundary. The three named profiles don't get this mount.
   `config.yaml` is managed by chezmoi: `chezmoi apply` asks before overwriting the agent's edits, so copy
   the ones you want to keep into `private_dot_hermes/private_config.yaml.tmpl`.
 - **Vault:** `~/hermes-workspace/vault` is an Obsidian vault and its own git repo; chezmoi doesn't manage it.
   The agent sees `read-only/` read-only and `private/` as an empty folder (an empty
-  `~/.local/share/hermes/vault-private-mask` is mounted over it). Its `.git` stays visible to the agent,
-  so anything committed under `private/` can be read from git history.
+  `~/.local/share/hermes/vault-private-mask` is mounted over it). Its `.git` stays visible to the agent, so
+  anything committed under `private/` can be read from git history.
 - **Profiles:** `orchestrator`, `researcher` and `librarian`, each with its own `SOUL.md`. Only `librarian`
   writes to the wiki, using the llm-wiki skill.
 - **Models:** main models are Anthropic (default, `orchestrator` and `librarian`: `claude-sonnet-5-5`;
@@ -252,13 +254,13 @@ Manual steps after a fresh install:
    `--clone` copied it once, when setup created them.
 3. Fill in the keys in `~/.hermes/.env` and `~/.hermes/profiles/<profile>/.env` by hand. They aren't
    managed, so never commit them: `ANTHROPIC_API_KEY` or `ANTHROPIC_TOKEN`,
-   `HERMES_CUSTOM_API_GROQ_COM_API_KEY`. Setup writes `OBSIDIAN_VAULT_PATH` and `WIKI_PATH`
-   (`/workspace/vault`, the path inside the sandbox) itself.
+   `HERMES_CUSTOM_API_GROQ_COM_API_KEY`. `OBSIDIAN_VAULT_PATH` and `WIKI_PATH` (`~/hermes-workspace/vault`,
+   which the sandbox mounts at the same path) are set in each `config.yaml`'s `terminal.docker_env`.
 4. Telegram (optional): `hermes gateway setup`, or put `TELEGRAM_BOT_TOKEN` and `TELEGRAM_ALLOWED_USERS`
    (your numeric user ID) in `~/.hermes/.env`. Then run `hermes gateway restart`.
 5. Open `~/hermes-workspace/vault` as a vault in Obsidian.
-6. After changing `docker_volumes`, `docker_forward_env`, `docker_run_as_host_user` or a forwarded `.env`
-   value, delete the sandbox so it's recreated:
+6. After changing `docker_volumes`, `docker_env` or `docker_run_as_host_user`,
+   delete the sandbox so it's recreated:
    `docker ps -aq --filter label=hermes-agent=1 | xargs -r docker rm -f`, then `hermes gateway restart`.
 
 ## Roadmap

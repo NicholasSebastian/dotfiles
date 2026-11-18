@@ -17,13 +17,14 @@ agent:
 
 terminal:
   backend: docker
-  cwd: "/workspace"
   docker_run_as_host_user: true  # files the agent writes in the vault stay owned by you, so Obsidian can edit them
-  docker_forward_env: [OBSIDIAN_VAULT_PATH, WIKI_PATH]
+  docker_env:  # the vault for the obsidian and llm-wiki skills, read in the sandbox
+    OBSIDIAN_VAULT_PATH: "{{ .chezmoi.homeDir }}/hermes-workspace/vault"
+    WIKI_PATH: "{{ .chezmoi.homeDir }}/hermes-workspace/vault"
   docker_volumes:
-    - "{{ .chezmoi.homeDir }}/hermes-workspace:/workspace"
-    - "{{ .chezmoi.homeDir }}/hermes-workspace/vault/read-only:/workspace/vault/read-only:ro"
-    - "{{ .chezmoi.homeDir }}/.local/share/hermes/vault-private-mask:/workspace/vault/private:ro"  # empty: hides vault/private
+    - "{{ .chezmoi.homeDir }}/hermes-workspace:{{ .chezmoi.homeDir }}/hermes-workspace"  # at its host path, so file paths the agent reports open on the host
+    - "{{ .chezmoi.homeDir }}/hermes-workspace/vault/read-only:{{ .chezmoi.homeDir }}/hermes-workspace/vault/read-only:ro"
+    - "{{ .chezmoi.homeDir }}/.local/share/hermes/vault-private-mask:{{ .chezmoi.homeDir }}/hermes-workspace/vault/private:ro"  # empty: hides vault/private
   container_disk: 0  # 0 = no per-container disk quota (overlay2 here cannot enforce one; Hermes warns on every start otherwise)
 
 prompt_caching:
@@ -35,7 +36,7 @@ memory:
 
 skills:
   creation_nudge_interval: 15
-  project_discovery: false  # the sandbox cwd (/workspace) is not a host path; scanning it for project skills only spams warnings
+  project_discovery: false  # the sandbox cwd (/root) is not a host path; scanning it for project skills only spams warnings
 
 plugins:
   disabled: []

@@ -10,6 +10,7 @@ README.md
 !.hermes/config.yaml
 !.hermes/profiles
 !.hermes/profiles/**/config.yaml
+!.hermes/profiles/**/SOUL.md
 !.hermes/skills/.curator_state
 !.hermes/SOUL.md
 .config/hypr/*.setup-bak.*

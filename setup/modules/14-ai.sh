@@ -171,15 +171,16 @@ EOF
 
 # --- Hermes Agent setup ------------------------------------------------------
 
-# Sandbox /workspace + Obsidian vault; keep paths in sync with private_dot_hermes' docker_volumes.
+# Sandbox workspace + Obsidian vault, mounted at their host paths;
+# keep paths in sync with private_dot_hermes' docker_volumes.
 _AI_HERMES_WS="$HOME/hermes-workspace"
 _AI_HERMES_MASK="$HOME/.local/share/hermes/vault-private-mask"
 _AI_HERMES_IMAGE=nousresearch/hermes-sandbox:desktop   # Hermes' default terminal.docker_image
 _AI_HERMES_PROFILES=(orchestrator researcher librarian)
 declare -gA _AI_HERMES_DESC=(
   [orchestrator]="Clarifies outcomes and acceptance criteria, routes research to researcher and approved material to librarian, reviews results. Does no research itself."
-  [researcher]="Answers bounded research questions with cited briefs (uncertainty, counter-evidence, gaps) saved to /workspace/research/."
-  [librarian]="Sole writer of the Obsidian wiki at /workspace/vault via llm-wiki; stages new material in review/ and applies it only after approval."
+  [researcher]="Answers bounded research questions with cited briefs (uncertainty, counter-evidence, gaps) saved to ~/hermes-workspace/research/."
+  [librarian]="Sole writer of the Obsidian wiki at ~/hermes-workspace/vault via llm-wiki; stages new material in review/ and applies it only after approval."
 )
 
 # config.yaml/SOUL.md come from the dotfiles (later); this creates profiles, .env keys, plugins.
@@ -215,17 +216,6 @@ EOF
       run hermes profile create "$p" --clone --description "${_AI_HERMES_DESC[$p]}" || soft_fail "Hermes: creating profile $p failed"
     fi
     run hermes profile describe "$p" --text "${_AI_HERMES_DESC[$p]}" || soft_fail "Hermes: describing profile $p failed"
-  done
-
-  # Each profile reads only its own .env; the agent sees the vault at /workspace/vault
-  local -a sel
-  local key
-  for p in "" "${_AI_HERMES_PROFILES[@]}"; do
-    sel=()
-    if [[ -n "$p" ]]; then sel=(-p "$p"); fi
-    for key in OBSIDIAN_VAULT_PATH WIKI_PATH; do
-      run hermes "${sel[@]}" config set "$key" /workspace/vault || soft_fail "Hermes: setting $key${p:+ for $p} failed"
-    done
   done
 
   if [[ -d "$HOME/.hermes/plugins/advanced-delegation" ]]; then
