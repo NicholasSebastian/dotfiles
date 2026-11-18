@@ -184,6 +184,15 @@
       "type": "registry"
     },
     "Oh My Pi": {
+      "favorite_config_option_values": {
+        "model": [
+          "anthropic/claude-opus-5-5",
+          "anthropic/claude-sonnet-5-5",
+          "anthropic/claude-haiku-5-5",
+          "openrouter/deepseek/deepseek-v4.1-flash-1017",
+          "openrouter/nvidia/nemotron-3-ultra-550b-a55b:free"
+        ]
+      },
       "default_config_options": {
         "thinking": "medium",
         "mode": "default"
