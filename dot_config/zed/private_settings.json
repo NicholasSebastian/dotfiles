@@ -164,6 +164,16 @@
       "show_go_models": true
     }
   },
+  "edit_predictions": {
+    "open_ai_compatible_api": {
+      "api_url": "https://openrouter.ai",
+      "model": "qwen/qwen-2.5-coder-32b-instruct",
+      "prompt_format": "qwen",
+      "max_output_tokens": 64
+    },
+    "allow_data_collection": "no",
+    "provider": "open_ai_compatible_api"
+  },
   "agent_servers": {
     "claude-acp": {
       "default_config_options": {
@@ -176,7 +186,7 @@
     "Oh My Pi": {
       "default_config_options": {
         "thinking": "medium",
-        "mode": "plan"
+        "mode": "default"
       },
       "type": "custom",
       "command": "omp",
@@ -184,6 +194,9 @@
     }
   },
   "agent": {
+    "auto_compact": {
+      "threshold": "50%"
+    },
     "default_width": 320.0,
     "dock": "right",
     "threads_sidebar": {
