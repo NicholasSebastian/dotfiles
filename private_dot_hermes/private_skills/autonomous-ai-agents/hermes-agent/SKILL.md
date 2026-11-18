@@ -70,6 +70,7 @@ hermes proxy                   # OpenAI-compatible local proxy backed by your OA
 `terminal`, `read_file`, `write_file`, `patch` and `search_files` run INSIDE the container, not on the host. The host's `~/.hermes` is volume-mapped to `/root/.hermes`.
 
 - Host paths like `/home/<user>/.hermes` don't exist in the sandbox ("Path not found"). Use `/root/.hermes/...` (or `$HERMES_HOME`) in file tools.
+- `write_file` may refuse paths under `/root/.hermes`, warning that the folder is a per-task mirror the host never reads. Check whether that's true: if `state.db-wal` or `gateway_state.json` was modified seconds ago (`ls -la --time-style=full-iso`), the host is using that folder live. With the user's approval, retry with `cross_profile=True`, and ask the user to confirm the change shows up in the app. For files you only hand to the user, write to `/workspace/...` instead.
 - The sandbox is configured with `HOME=/root` and `HERMES_HOME=/root/.hermes`, so `~/.hermes` and `$HERMES_HOME` work in shell commands. Verify with `echo $HOME $HERMES_HOME; ls -d $HERMES_HOME` — on older or misconfigured setups `$HOME` may be `/home/pn` and `$HERMES_HOME` empty; then use `/root/.hermes` explicitly.
 - Source (if git-installed) is readable at `/root/.hermes/hermes-agent/` — check it (e.g. `hermes_cli/config.py`) when docs are ambiguous.
 - The `hermes` CLI is usually NOT on PATH in the sandbox, so `hermes config set ...` can't run there. Give the user the exact command to run on the host, or (only if asked) edit `/root/.hermes/config.yaml`. Never invent CLI output.
