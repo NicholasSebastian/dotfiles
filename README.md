@@ -229,20 +229,20 @@ The `ai` module and the configs in `private_dot_hermes/` set up [Hermes Agent](h
   configuration. Hermes' read-only mounts only cover `/root/.hermes`, so through this path skills, caches
   and the rest are writable too. That includes `.env`, `auth.json` and every profile's files, and a changed
   `terminal.docker_volumes` or `terminal.backend` takes effect on the next sandbox start, so for the
-  default profile the sandbox is not a security boundary. The three named profiles don't get this mount.
+  default profile the sandbox is not a security boundary. The named profiles don't get this mount.
   `config.yaml` is managed by chezmoi: `chezmoi apply` asks before overwriting the agent's edits, so copy
   the ones you want to keep into `private_dot_hermes/private_config.yaml.tmpl`.
 - **Vault:** `~/hermes-workspace/vault` is an Obsidian vault and its own git repo; chezmoi doesn't manage it.
   The agent sees `read-only/` read-only and `private/` as an empty folder (an empty
   `~/.local/share/hermes/vault-private-mask` is mounted over it). Its `.git` stays visible to the agent, so
   anything committed under `private/` can be read from git history.
-- **Profiles:** `orchestrator`, `researcher` and `librarian`, each with its own `SOUL.md`. Only `librarian`
-  writes to the wiki, using the llm-wiki skill.
-- **Models:** main models are Anthropic (default, `orchestrator` and `librarian`: `claude-sonnet-5-5`;
+- **Profiles:** `bot-boss`, `researcher` and `librarian`, defined by their `config.yaml` and `SOUL.md` in
+  `private_dot_hermes/profiles/`. Only `librarian` writes to the wiki, using the llm-wiki skill.
+- **Models:** main models are Anthropic (default, `bot-boss` and `librarian`: `claude-sonnet-5-5`;
   `researcher`: `claude-haiku-5-5`). Auxiliary tasks (compression, titles, skill search, MCP, kanban triage,
   profile descriptions) use the local Ollama model `qwen3.5:4b-64k`; approvals and the skill curator use
   `claude-haiku-5-5`.
-- **Memory:** built-in memory with small limits. `orchestrator` also uses
+- **Memory:** built-in memory with small limits. `bot-boss` also uses
   [Mnemosyne](https://github.com/mnemosyne-oss/mnemosyne), installed with pipx.
 
 Manual steps after a fresh install:
@@ -251,7 +251,7 @@ Manual steps after a fresh install:
    `nousresearch/hermes-sandbox:desktop`; if that failed, run `docker pull` for it before the first chat.
 2. Log in to providers: `hermes setup` (or `hermes auth add <provider>`) for the default profile, then
    `hermes -p <profile> auth add <provider>` for each profile. Profiles never read `~/.hermes/.env`;
-   `--clone` copied it once, when setup created them.
+   each has its own.
 3. Fill in the keys in `~/.hermes/.env` and `~/.hermes/profiles/<profile>/.env` by hand. They aren't
    managed, so never commit them: `ANTHROPIC_API_KEY` or `ANTHROPIC_TOKEN`,
    `HERMES_CUSTOM_API_GROQ_COM_API_KEY`. `OBSIDIAN_VAULT_PATH` and `WIKI_PATH` (`~/hermes-workspace/vault`,

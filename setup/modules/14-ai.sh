@@ -176,14 +176,9 @@ EOF
 _AI_HERMES_WS="$HOME/hermes-workspace"
 _AI_HERMES_MASK="$HOME/.local/share/hermes/vault-private-mask"
 _AI_HERMES_IMAGE=nousresearch/hermes-sandbox:desktop   # Hermes' default terminal.docker_image
-_AI_HERMES_PROFILES=(orchestrator researcher librarian)
-declare -gA _AI_HERMES_DESC=(
-  [orchestrator]="Clarifies outcomes and acceptance criteria, routes research to researcher and approved material to librarian, reviews results. Does no research itself."
-  [researcher]="Answers bounded research questions with cited briefs (uncertainty, counter-evidence, gaps) saved to ~/hermes-workspace/research/."
-  [librarian]="Sole writer of the Obsidian wiki at ~/hermes-workspace/vault via llm-wiki; stages new material in review/ and applies it only after approval."
-)
+_AI_HERMES_MNEMOSYNE_PROFILE=bot-boss   # the profile whose config.yaml sets memory.provider: mnemosyne
 
-# config.yaml/SOUL.md come from the dotfiles (later); this creates profiles, .env keys, plugins.
+# Profiles (config.yaml, SOUL.md) come from the dotfiles; this prepares the workspace and installs plugins.
 _ai_hermes() {
   if ! is_dry && ! have hermes; then soft_fail "Hermes setup skipped: the hermes command isn't available"; return 0; fi
 
@@ -208,16 +203,6 @@ EOF
     run sudo docker pull "$_AI_HERMES_IMAGE" || soft_fail "Hermes: pulling $_AI_HERMES_IMAGE failed; retry with 'docker pull $_AI_HERMES_IMAGE'"
   fi
 
-  local p
-  for p in "${_AI_HERMES_PROFILES[@]}"; do
-    if [[ -d "$HOME/.hermes/profiles/$p" ]]; then
-      info "Hermes profile $p already exists"
-    else
-      run hermes profile create "$p" --clone --description "${_AI_HERMES_DESC[$p]}" || soft_fail "Hermes: creating profile $p failed"
-    fi
-    run hermes profile describe "$p" --text "${_AI_HERMES_DESC[$p]}" || soft_fail "Hermes: describing profile $p failed"
-  done
-
   if [[ -d "$HOME/.hermes/plugins/advanced-delegation" ]]; then
     info "Hermes plugin advanced-delegation already installed"
   else
@@ -227,9 +212,9 @@ EOF
   _ai_hermes_mnemosyne
 }
 
-# Mnemosyne (orchestrator only): pipx venv must match Hermes' Python major.minor; recreated if not.
+# Mnemosyne: pipx venv must match Hermes' Python major.minor; recreated if not.
 _ai_hermes_mnemosyne() {
-  local home="$HOME/.hermes/profiles/orchestrator" mm venv venv_mm
+  local home="$HOME/.hermes/profiles/$_AI_HERMES_MNEMOSYNE_PROFILE" mm venv venv_mm
   local -a force=()
   apt_install pipx
   if is_dry; then
@@ -247,9 +232,9 @@ _ai_hermes_mnemosyne() {
   fi
   if (( ${#force[@]} )) || [[ ! -d "$home/plugins/mnemosyne" ]]; then
     run "$venv/bin/mnemosyne-hermes" --hermes-home "$home" install --mode wrapper --python "$venv/bin/python" --no-profile-links "${force[@]}" \
-      || soft_fail "Mnemosyne: plugin install into the orchestrator profile failed"
+      || soft_fail "Mnemosyne: plugin install into the $_AI_HERMES_MNEMOSYNE_PROFILE profile failed"
   else
-    info "Mnemosyne already installed for the orchestrator profile"
+    info "Mnemosyne already installed for the $_AI_HERMES_MNEMOSYNE_PROFILE profile"
   fi
 }
 
