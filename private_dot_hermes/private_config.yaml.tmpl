@@ -1,5 +1,5 @@
 # Managed by chezmoi. Only values that differ from Hermes' defaults: Hermes merges this file over its built-in defaults.
-_config_version: 51
+_config_version: 53
 
 model:
   default: claude-sonnet-5-5
@@ -33,9 +33,7 @@ prompt_caching:
   cache_ttl: auto
 
 memory:
-  memory_char_limit: 1100
-  user_char_limit: 700
-
+  provider: ''
 skills:
   creation_nudge_interval: 15
   project_discovery: false  # the sandbox cwd (/root) is not a host path; scanning it for project skills only spams warnings

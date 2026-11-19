@@ -1,9 +1,0 @@
-{
-  "last_report_path": "/home/nicholas/.hermes/logs/curator/20261112-160250",
-  "last_run_at": "2026-11-12T16:02:50.727977+00:00",
-  "last_run_duration_seconds": 0.054157,
-  "last_run_summary": "auto: no changes; llm: skipped (consolidation off)",
-  "last_run_summary_shown_at": "2026-11-12T16:02:50.727977+00:00",
-  "paused": false,
-  "run_count": 2
-}
