@@ -5,12 +5,6 @@ README.md
 !.claude/settings.json
 .omp/*
 !.omp/agent
-.hermes/*
-!.hermes/config.yaml
-!.hermes/profiles
-!.hermes/profiles/**/config.yaml
-!.hermes/profiles/**/SOUL.md
-!.hermes/SOUL.md
 .config/hypr/*.setup-bak.*
 .config/hypr/.luarc.json
 .config/hypr/noctalia.lua

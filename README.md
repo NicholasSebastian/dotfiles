@@ -219,7 +219,7 @@ module also selects the Noctalia theme in apps that need a setting for it.
 
 ## Hermes Agent
 
-The `ai` module and the configs in `private_dot_hermes/` set up [Hermes Agent](https://hermes-agent.nousresearch.com/):
+The `ai` module sets up [Hermes Agent](https://hermes-agent.nousresearch.com/). `~/.hermes` isn't managed by chezmoi:
 
 - **Sandbox:** the terminal runs in Docker and starts in the sandbox's own home, `/root`. Of your files it
   sees `~/hermes-workspace`, mounted at the same path it has on the host (e.g. `/home/<you>/hermes-workspace`),
@@ -230,14 +230,13 @@ The `ai` module and the configs in `private_dot_hermes/` set up [Hermes Agent](h
   and the rest are writable too. That includes `.env`, `auth.json` and every profile's files, and a changed
   `terminal.docker_volumes` or `terminal.backend` takes effect on the next sandbox start, so for the
   default profile the sandbox is not a security boundary. The named profiles don't get this mount.
-  `config.yaml` is managed by chezmoi: `chezmoi apply` asks before overwriting the agent's edits, so copy
-  the ones you want to keep into `private_dot_hermes/private_config.yaml.tmpl`.
+  `config.yaml` and the profiles live only in `~/.hermes`.
 - **Vault:** `~/hermes-workspace/vault` is an Obsidian vault and its own git repo; chezmoi doesn't manage it.
   The agent sees `read-only/` read-only and `private/` as an empty folder (an empty
   `~/.local/share/hermes/vault-private-mask` is mounted over it). Its `.git` stays visible to the agent, so
   anything committed under `private/` can be read from git history.
 - **Profiles:** `bot-boss`, `researcher` and `librarian`, defined by their `config.yaml` and `SOUL.md` in
-  `private_dot_hermes/profiles/`. Only `librarian` writes to the wiki, using the llm-wiki skill.
+  `~/.hermes/profiles/`. Only `librarian` writes to the wiki, using the llm-wiki skill.
 - **Models:** main models are Anthropic (default, `bot-boss` and `librarian`: `claude-sonnet-5-5`;
   `researcher`: `claude-haiku-5-5`). Auxiliary tasks (compression, titles, skill search, MCP, kanban triage,
   profile descriptions) use the local Ollama model `qwen3.5:4b-64k`; approvals and the skill curator use
@@ -254,8 +253,8 @@ Manual steps after a fresh install:
    each has its own.
 3. Fill in the keys in `~/.hermes/.env` and `~/.hermes/profiles/<profile>/.env` by hand. They aren't
    managed, so never commit them: `ANTHROPIC_API_KEY` or `ANTHROPIC_TOKEN`,
-   `HERMES_CUSTOM_API_GROQ_COM_API_KEY`. `OBSIDIAN_VAULT_PATH` and `WIKI_PATH` (`~/hermes-workspace/vault`,
-   which the sandbox mounts at the same path) are set in each `config.yaml`'s `terminal.docker_env`.
+   `HERMES_CUSTOM_API_GROQ_COM_API_KEY`. Set `OBSIDIAN_VAULT_PATH` and `WIKI_PATH` (`~/hermes-workspace/vault`,
+   which the sandbox mounts at the same path) in each `config.yaml`'s `terminal.docker_env`.
 4. Telegram (optional): `hermes gateway setup`, or put `TELEGRAM_BOT_TOKEN` and `TELEGRAM_ALLOWED_USERS`
    (your numeric user ID) in `~/.hermes/.env`. Then run `hermes gateway restart`.
 5. Open `~/hermes-workspace/vault` as a vault in Obsidian.
