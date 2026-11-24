@@ -4,7 +4,7 @@
 # shellcheck disable=SC2034  # header variables are read by setup.sh after sourcing
 {
 MODULE_ID=ai
-MODULE_DESC="Claude Code (CLI + Desktop), Oh My Pi, Herdr, graphify, Hermes Agent (Docker sandbox, profiles, Mnemosyne), Ollama (+ optional Open WebUI), ComfyUI (CLI + Desktop), Upscayl"
+MODULE_DESC="Claude Code (CLI + Desktop), Oh My Pi, Herdr (TUI + Desktop), graphify, Hermes Agent (Docker sandbox, profiles, Mnemosyne), Ollama (+ optional Open WebUI), ComfyUI (CLI + Desktop), Upscayl"
 MODULE_DEFAULT=1
 MODULE_DEPS=(runtimes dev)               # bun, uv; Docker for Hermes' terminal sandbox and Open WebUI
 }
@@ -44,6 +44,15 @@ _ai_cli() {
 
   # Herdr: agent multiplexer; mise registry entry (aqua backend), an upstream-documented method. Update via mise, not 'herdr update'.
   mise_use herdr
+
+  # Herdr desktop app: upstream installer (only Linux method; checks the build's sha256), adds herdr-core ('hc')
+  # if missing. The app updates itself and the core afterwards. Needs a Vulkan driver.
+  if [[ -x "${XDG_DATA_HOME:-$HOME/.local/share}/herdr-app/herdr-app" ]]; then
+    info "Herdr Desktop already installed"
+  else
+    install_script https://releases.herdr.dev/app/install.sh sh || soft_fail "Herdr Desktop install failed; retry with 'curl -fsSL https://releases.herdr.dev/app/install.sh | sh'"
+    followup manual "Herdr Desktop: usage telemetry is on by default; turn it off in Settings > Privacy if wanted."
+  fi
 
   # graphify (PyPI 'graphifyy'): the skill is re-registered every run so it matches the package.
   need uv runtimes
