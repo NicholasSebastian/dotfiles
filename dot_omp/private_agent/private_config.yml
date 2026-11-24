@@ -1,56 +1,38 @@
-setupVersion: 2
-
+setupVersion: 3
 theme:
   dark: noctalia
   light: noctalia
-
 defaultThinkingLevel: auto
-
 modelRoles:
-  # Main work (Claude primary)
-  default: anthropic/claude-sonnet-5-5:auto
   plan: anthropic/claude-opus-5-5:high
   slow: anthropic/claude-opus-5-5:xhigh
   task: anthropic/claude-sonnet-5-5:auto
   advisor: anthropic/claude-opus-5-5:medium
-
-  # Light work
   smol: anthropic/claude-haiku-5-5:low
   commit: "@smol"
   widget: "@smol"
   vision: anthropic/claude-haiku-5-5:low
-
-  # Local (Ollama qwen3.5:4b) with Groq free-tier fallback
   tiny: ollama/qwen3.5:4b:off
   memory: ollama/qwen3.5:4b:low
   judge: openrouter/typesafe/jev-1.14
-
-  # Model-kind roles
   image: openrouter/google/gemini-3.1-flash-image
   web: web/parallel
-  speech: local/kokoro
+  speech: local/phonon-31m
   dictation: local/parakeet-tdt-0.6b-v3
-
 task:
   agentModelOverrides:
     explore: anthropic/claude-haiku-5-5:medium
-
 advisor:
   enabled: true
-
 memory:
   backend: local
-
 stt:
   enabled: true
-
 providers:
   anthropic:
     serverSideFallback: true
-
 retry:
   fallbackChains:
-    # Inherited by task
     default:
       - openrouter/thinkingmachines/inkling-small:free:high
       - openrouter/deepseek/deepseek-v4.1-flash-1017:high
@@ -65,7 +47,6 @@ retry:
     advisor:
       - openrouter/thinkingmachines/inkling-small:free:medium
       - openrouter/anthropic/claude-sonnet-5.5:medium
-    # Inherited by commit and widget
     smol:
       - openrouter/deepseek/deepseek-v4.1-flash-1017:low
       - openrouter/deepseek/deepseek-v4-flash:free:low
@@ -88,3 +69,5 @@ retry:
       - web/perplexity
       - web/exa
       - web/duckduckgo
+update:
+  auto: true
