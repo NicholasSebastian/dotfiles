@@ -4,7 +4,7 @@
 # shellcheck disable=SC2034  # header variables are read by setup.sh after sourcing
 {
 MODULE_ID=ai
-MODULE_DESC="Claude Code (CLI + Desktop), Oh My Pi, graphify, Hermes Agent (Docker sandbox, profiles, Mnemosyne), Ollama (+ optional Open WebUI), ComfyUI (CLI + Desktop), Upscayl"
+MODULE_DESC="Claude Code (CLI + Desktop), Oh My Pi, Herdr, graphify, Hermes Agent (Docker sandbox, profiles, Mnemosyne), Ollama (+ optional Open WebUI), ComfyUI (CLI + Desktop), Upscayl"
 MODULE_DEFAULT=1
 MODULE_DEPS=(runtimes dev)               # bun, uv; Docker for Hermes' terminal sandbox and Open WebUI
 }
@@ -41,6 +41,9 @@ _ai_cli() {
 
   # Oh My Pi ('omp'). mise's GitHub backend is one of upstream's documented methods.
   mise_use "github:can1357/oh-my-pi"
+
+  # Herdr: agent multiplexer; mise registry entry (aqua backend), an upstream-documented method. Update via mise, not 'herdr update'.
+  mise_use herdr
 
   # graphify (PyPI 'graphifyy'): the skill is re-registered every run so it matches the package.
   need uv runtimes
